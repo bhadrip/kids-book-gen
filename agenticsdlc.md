@@ -67,6 +67,31 @@ Do not copy the same rule into every file. Keep one canonical source and link to
 it. Remove or mark superseded guidance promptly. Stale documentation is worse
 than absent documentation because it creates confident, incorrect work.
 
+### Architecture as a living map
+
+[`ARCHITECTURE.md`](ARCHITECTURE.md) is the repository's navigable, living map
+of the system. It starts with purpose and boundaries, then links progressively
+to feature domains, components, data flows, contracts, decisions, and
+executable evidence. It is a map rather than a duplicate product specification:
+link to canonical low-level details instead of copying them into architecture
+documentation.
+
+Before a non-trivial change, read the relevant architecture section and linked
+domain documents. Do not infer a new cross-domain pattern from local code alone.
+
+Every pull request must assess its architecture impact:
+
+- **None:** explain why the change remains inside documented boundaries.
+- **Updated:** update `ARCHITECTURE.md` and any affected canonical detail, such
+  as a feature specification, ADR, schema/contract, runbook, or test.
+
+Update architecture documentation when a change affects a user journey, feature
+boundary, domain responsibility, dependency direction, interface, data model or
+lifecycle, external integration, trust boundary, runtime behavior, or operational
+constraint. Keep diagrams as versioned text, preferably Mermaid. For V0 this is
+a required PR checklist item; changes marked **Updated** should receive relevant
+engineer or code-owner review.
+
 ## Feature request contract
 
 A PM request must be understandable without implementation knowledge. The agent

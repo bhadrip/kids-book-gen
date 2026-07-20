@@ -11,6 +11,7 @@ V0 is intentionally built for local use on a developer's laptop. It does not
 yet include accounts, shared infrastructure, staging, or production hosting.
 The current product decisions, research, and implementation roadmap live in
 [`spec/`](spec/README.md) and [`tasks/mlp-v0.md`](tasks/mlp-v0.md).
+The living system map is in [ARCHITECTURE.md](ARCHITECTURE.md).
 
 ## How to contribute or run the project
 
