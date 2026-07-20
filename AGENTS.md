@@ -16,6 +16,10 @@ domain.
 4. Run the narrowest relevant checks while working, then the required handoff
    checks from `development.md`.
 
+For a parent-facing UI change, also read
+[spec/08-ux-guidelines.md](spec/08-ux-guidelines.md) and follow its required
+screen-state and accessibility evidence checklist.
+
 ## Non-negotiable rules
 
 - Keep changes small, runnable, testable, and within the boundaries documented

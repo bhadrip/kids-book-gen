@@ -109,18 +109,20 @@ planned slices. The authoritative task status and evidence remain in
 
 ## Detail map
 
-| Concern                                               | Canonical detail                   |
-| ----------------------------------------------------- | ---------------------------------- |
-| Product research, decisions, and terminology          | [spec/README.md](spec/README.md)   |
-| Quality gates, setup, architecture seams, and testing | [development.md](development.md)   |
-| Agent delivery workflow and context model             | [agenticsdlc.md](agenticsdlc.md)   |
-| Current feature/task status                           | [tasks/mlp-v0.md](tasks/mlp-v0.md) |
-| Durable non-obvious decisions                         | `spec/adr/` when introduced        |
-| Executable behavior                                   | Source, Zod schemas, and tests     |
+| Concern                                               | Canonical detail                                     |
+| ----------------------------------------------------- | ---------------------------------------------------- |
+| Product research, decisions, and terminology          | [spec/README.md](spec/README.md)                     |
+| Parent-facing interaction contract                    | [spec/08-ux-guidelines.md](spec/08-ux-guidelines.md) |
+| Quality gates, setup, architecture seams, and testing | [development.md](development.md)                     |
+| Agent delivery workflow and context model             | [agenticsdlc.md](agenticsdlc.md)                     |
+| Current feature/task status                           | [tasks/mlp-v0.md](tasks/mlp-v0.md)                   |
+| Durable non-obvious decisions                         | `spec/adr/` when introduced                          |
+| Executable behavior                                   | Source, Zod schemas, and tests                       |
 
 ## Architecture change log
 
-| Date       | Change                                                                                                 | Evidence                                                   |
-| ---------- | ------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------- |
-| 2026-07-20 | Established the living V0 architecture map and architecture-impact policy.                             | `AGENTS.md`, `agenticsdlc.md`                              |
-| 2026-07-20 | Added the local project-library boundary: create, list, and reopen versioned `project.json` artifacts. | `src/lib/projects/`, `e2e/home.spec.ts`, `tasks/mlp-v0.md` |
+| Date       | Change                                                                                                             | Evidence                                                   |
+| ---------- | ------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------- |
+| 2026-07-20 | Established the living V0 architecture map and architecture-impact policy.                                         | `AGENTS.md`, `agenticsdlc.md`                              |
+| 2026-07-20 | Added the local project-library boundary: create, list, and reopen versioned `project.json` artifacts.             | `src/lib/projects/`, `e2e/home.spec.ts`, `tasks/mlp-v0.md` |
+| 2026-07-20 | Added the parent-facing interaction contract for durable state, generation recovery, approvals, and accessibility. | `spec/08-ux-guidelines.md`, `AGENTS.md`                    |
