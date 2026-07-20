@@ -1,1 +1,10 @@
+node_modules/
+.next/
+.next-e2e/
+*.tsbuildinfo
+coverage/
+playwright-report/
+test-results/
+data/
 .env.local
+*.pdf

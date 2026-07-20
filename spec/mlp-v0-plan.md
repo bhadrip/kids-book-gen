@@ -15,6 +15,12 @@ This plan implements the core flow in [spec/mlp-v0.md](spec/mlp-v0.md). It inten
 - Use `gpt-5.6-luna` as the configurable text default and `gpt-image-2` as the configurable image default. Do not hard-code provider assumptions into product logic.
 - The initial reader is ages 7–10, English, parent read-aloud, about 10 minutes, and a screen-quality PDF.
 - No child-photo likeness generation, public sharing, printing, accounts, payments, or cloud deployment in P0.
+- We will implement a vertical slice at a time: foundation and durable artifacts first, then the text-only approval flow, visual approval, and finally full-book production. Each slice should be runnable before the next begins.
+- Use live OpenAI generation from the first functional slice, with fixtures reserved for automated tests and local development failures rather than as the primary product path.
+- The parent can begin with all seven agreed entry choices: the five narrative templates below, plus “Help me choose” and “Start from scratch.”
+- V0 supports the five narrative templates only. “Discover a real world” (nonfiction) and “Almost wordless visual journey” remain deferred because they need specialized evaluation and production workflows.
+- Offer only the six curated art presets in V0. Do not expose a free-form custom art-direction field.
+- A V0 book uses a 32-page, landscape, screen-PDF structure with cover, title/copyright front matter, approximately 13 story spreads, and closing/end matter.
 
 ## P0 scope
 
