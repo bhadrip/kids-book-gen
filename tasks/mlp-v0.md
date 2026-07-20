@@ -2,6 +2,21 @@
 
 This is the local task tracker for `mlp-v0`. Statuses: **done**, **in progress**, **blocked**, or **not started**.
 
+## Delivery snapshot
+
+- **Last verified:** 2026-07-20 at commit `0d6b5ea`.
+- **Current runnable outcome:** a parent can create and reopen a project, shape
+  an idea, generate and revise directions, select one with steering, generate
+  and revise a 13-spread text story, approve it, and resume from persisted
+  checkpoint and generation-job state.
+- **Quality evidence:** `just ci` passes with formatting, lint, strict
+  TypeScript, 14 Vitest tests, 5 fixture-only Playwright scenarios, and the
+  production build. Automated tests use no paid model calls and write projects
+  only below `test-results/`.
+- **Next incomplete product task:** `STR-02`, the hidden story-quality
+  evaluation and bounded automatic revision, before beginning Phase 4 visual
+  identity work.
+
 ## Phase 1 — Foundation and local setup
 
 | ID     | Task                                                                             | Status   | Evidence / notes                                                            |
@@ -14,7 +29,7 @@ This is the local task tracker for `mlp-v0`. Statuses: **done**, **in progress**
 
 ## Phase 2 — Domain model and local project storage
 
-### Current vertical slice — Create a local story project
+### Completed vertical slice — Create and reopen a local story project
 
 **Use case.** As a parent, I can start a local story project and reopen it
 from my project list so that my family's book has a durable place to continue.
@@ -31,16 +46,16 @@ from my project list so that my family's book has a durable place to continue.
 **Evidence required.** Vitest covers creation, validated loading, and malformed
 data; Playwright covers create-and-reload using an isolated project directory.
 
-| ID     | Task                                                                                                                               | Status          | Evidence / notes                                                                                         |
-| ------ | ---------------------------------------------------------------------------------------------------------------------------------- | --------------- | -------------------------------------------------------------------------------------------------------- |
-| DOM-01 | Define versioned Zod schemas for projects, briefs, directions, story packages, visual bibles, spreads, proofs, jobs, and feedback. | **in progress** | Current slice defines the versioned Project schema; remaining artifact schemas follow with their slices. |
-| DOM-02 | Define artifact lifecycle states, approval rules, provenance metadata, and dependent-artifact staleness rules.                     | **not started** |                                                                                                          |
-| DOM-03 | Implement injectable clocks and ID generation for deterministic tests.                                                             | **in progress** | Current slice injects clock and ID generation into project creation.                                     |
-| STO-01 | Implement a file-backed project repository at `data/projects/<project-id>/`.                                                       | **in progress** | Current slice creates and loads `project.json`.                                                          |
-| STO-02 | Implement atomic JSON/artifact writes and validated reads.                                                                         | **in progress** | Current slice atomically writes and validates `project.json`.                                            |
-| STO-03 | Implement project creation, loading, and restart-resume behavior.                                                                  | **in progress** | Current slice supports create and reload; jobs remain deferred.                                          |
-| JOB-01 | Implement a file-backed local job runner with persisted progress and safe recovery.                                                | **in progress** | Text generation persists in-progress/completed/failed jobs; per-unit resume and stop controls remain.    |
-| TST-01 | Test schema validation, lifecycle/staleness, persistence, and restart-resume behavior.                                             | **in progress** | Creation, atomic JSON, malformed-data rejection, and browser reload are covered in the current slice.    |
+| ID     | Task                                                                                                                               | Status          | Evidence / notes                                                                                                                                                 |
+| ------ | ---------------------------------------------------------------------------------------------------------------------------------- | --------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| DOM-01 | Define versioned Zod schemas for projects, briefs, directions, story packages, visual bibles, spreads, proofs, jobs, and feedback. | **in progress** | Projects, briefs, directions, selected directions, story packages/decisions, and text-generation jobs are versioned; visual, proof, and feedback schemas remain. |
+| DOM-02 | Define artifact lifecycle states, approval rules, provenance metadata, and dependent-artifact staleness rules.                     | **not started** |                                                                                                                                                                  |
+| DOM-03 | Implement injectable clocks and ID generation for deterministic tests.                                                             | **done**        | Project creation, workflow services, providers, repositories, and tests use injected clocks/IDs where nondeterminism exists.                                     |
+| STO-01 | Implement a file-backed project repository at `data/projects/<project-id>/`.                                                       | **done**        | The repository creates, lists, loads, and stores all current JSON artifacts below the project directory.                                                         |
+| STO-02 | Implement atomic JSON/artifact writes and validated reads.                                                                         | **done**        | Project and workflow artifacts use atomic replacement and schema-validated reads.                                                                                |
+| STO-03 | Implement project creation, loading, and restart-resume behavior.                                                                  | **in progress** | Create/reopen and truthful interrupted-job recovery are implemented; automatic per-unit resume remains with `JOB-01`/`GEN-04`.                                   |
+| JOB-01 | Implement a file-backed local job runner with persisted progress and safe recovery.                                                | **in progress** | Text generation persists in-progress/completed/failed jobs; per-unit resume and stop controls remain.                                                            |
+| TST-01 | Test schema validation, lifecycle/staleness, persistence, and restart-resume behavior.                                             | **in progress** | Creation, atomic JSON, malformed-data rejection, persisted job status, failure recovery, and browser reopen are covered; general lifecycle/staleness remains.    |
 
 ## Phase 3 — Idea, directions, and story approval
 
@@ -67,7 +82,7 @@ workflow, revision history, story approval, and schemas. Playwright exercises
 the complete parent-visible journey on an isolated fixture-only server, making
 zero paid model requests.
 
-### UX hardening slice — Visible, resumable generation
+### Completed UX hardening slice — Visible, resumable generation
 
 **Use case.** As a parent, I can see where I am in the story workflow and get
 immediate, accessible feedback while a draft is being generated so that I do
