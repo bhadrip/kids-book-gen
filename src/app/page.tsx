@@ -1,12 +1,14 @@
 import Link from "next/link";
 
+import { PendingForm } from "@/components/pending-form";
 import { readAppConfig } from "@/lib/config/app-config";
 
 export const runtime = "nodejs";
 
 export default async function HomePage() {
   const config = readAppConfig(process.env);
-  const generationReady = Boolean(config.openAiApiKey);
+  const generationReady =
+    config.textProvider === "fixture" || Boolean(config.openAiApiKey);
   const { FileProjectRepository } =
     await import("@/lib/projects/file-project-repository");
   const repository = new FileProjectRepository(config.projectRoot, {
@@ -24,13 +26,16 @@ export default async function HomePage() {
         A family idea, made into a real storybook.
       </h1>
       <p className="mt-6 max-w-2xl text-lg leading-8 text-stone-700">
-        The V0 foundation is ready. The next phase will help you shape an
-        original idea into a story your child can recognize and reread.
+        Start locally, shape an original idea, compare story directions, and
+        approve a saved text manuscript before moving into visual creation.
       </p>
-      <form
+      <PendingForm
         action="/api/projects"
         className="mt-10 rounded-3xl border border-stone-200 bg-white p-6 shadow-sm"
-        method="post"
+        pendingLabel="Creating local project…"
+        pendingMessage="Saving a private project folder on this computer."
+        submitClassName="mt-5 rounded-xl bg-stone-950 px-5 py-3 font-semibold text-white"
+        submitLabel="Create local project"
       >
         <h2 className="text-lg font-semibold text-stone-950">
           Start a local project
@@ -51,13 +56,7 @@ export default async function HomePage() {
           placeholder="e.g. Milo and the Moon Kite"
           required
         />
-        <button
-          className="mt-5 rounded-xl bg-stone-950 px-5 py-3 font-semibold text-white"
-          type="submit"
-        >
-          Create local project
-        </button>
-      </form>
+      </PendingForm>
       <section
         className="mt-10 rounded-3xl border border-stone-200 bg-white p-6 shadow-sm"
         aria-label="Saved projects"
@@ -94,7 +93,9 @@ export default async function HomePage() {
         </h2>
         <p className="mt-2 text-stone-700">
           {generationReady
-            ? `Ready to use ${config.textModel} and ${config.imageModel}.`
+            ? config.textProvider === "fixture"
+              ? "Ready to use local fixture generation."
+              : `Ready to use ${config.textModel} and ${config.imageModel}.`
             : "Add OPENAI_API_KEY to .env.local before generating a story."}
         </p>
       </section>

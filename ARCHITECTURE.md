@@ -75,9 +75,10 @@ of the code boundaries defined in [development.md](development.md).
 
 ## Current implementation status
 
-Foundation and local quality tooling are complete. The first project-storage
-slice is also runnable: a parent can create a titled local project, find it in
-the project library, and reopen it. The current data flow is:
+Foundation, local project storage, and the text-only approval flow are runnable.
+A parent can create and reopen a project, save an idea, iterate on directions,
+select one, revise a 13-spread story, and persist approval. The current data
+flow is:
 
 ```mermaid
 flowchart LR
@@ -85,15 +86,37 @@ flowchart LR
   Create --> Repo[FileProjectRepository]
   Home --> Repo
   Project[Project page] --> Repo
+  Idea[Idea checkpoint] --> Workflow[StoryWorkflowService]
+  Directions[Directions checkpoint] --> Workflow
+  Story[Story checkpoint] --> Workflow
+  Shell[Project journey and persisted statuses] --> Repo
+  Forms[Progressive forms and accessible pending state] --> Idea
+  Forms --> Directions
+  Forms --> Story
+  Workflow --> Provider[TextProvider]
+  Provider --> OpenAI[OpenAI adapter]
+  Provider --> Fixture[Deterministic fixture adapter]
+  Workflow --> Repo
   Repo --> Schema[Versioned Project Zod schema]
   Repo --> File[(data/projects/<project-id>/project.json)]
 ```
 
-`FileProjectRepository` performs validated reads and atomic writes. Its clock
-and ID generator are injected for deterministic tests. The persisted `Project`
-schema is the only implemented artifact schema so far; lifecycle, provenance,
-staleness, jobs, provider adapters, and the remaining parent workflow are
-planned slices. The authoritative task status and evidence remain in
+`FileProjectRepository` performs validated reads and atomic writes. Briefs,
+direction revisions, selected direction, story revisions, and approval
+decisions are schema-versioned JSON artifacts. `StoryWorkflowService` owns the
+text workflow; routes do not import the OpenAI SDK. A shared project journey
+derives ordered checkpoint statuses and the next recovery action from validated
+artifacts. `StoryWorkflowService` persists a versioned text-generation job
+before provider work and records its completed or failed terminal state while
+preserving the last safe artifact. Progressive forms use a small JSON response contract to keep
+accessible pending feedback visible while server work runs, then navigate to
+the saved result or recovery page. Playwright runs an isolated fixture-provider
+server on port 3100 with both its build and project data under test-only paths,
+so automated checks cannot reuse a live provider-configured development server
+or write into the parent's project library. General dependency staleness,
+per-unit job progress and resume/stop controls, visual providers, and the remaining book workflow are
+planned slices. The
+authoritative task status and evidence remain in
 [tasks/mlp-v0.md](tasks/mlp-v0.md), rather than being duplicated here.
 
 ## Architectural invariants
@@ -121,8 +144,10 @@ planned slices. The authoritative task status and evidence remain in
 
 ## Architecture change log
 
-| Date       | Change                                                                                                             | Evidence                                                   |
-| ---------- | ------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------- |
-| 2026-07-20 | Established the living V0 architecture map and architecture-impact policy.                                         | `AGENTS.md`, `agenticsdlc.md`                              |
-| 2026-07-20 | Added the local project-library boundary: create, list, and reopen versioned `project.json` artifacts.             | `src/lib/projects/`, `e2e/home.spec.ts`, `tasks/mlp-v0.md` |
-| 2026-07-20 | Added the parent-facing interaction contract for durable state, generation recovery, approvals, and accessibility. | `spec/08-ux-guidelines.md`, `AGENTS.md`                    |
+| Date       | Change                                                                                                             | Evidence                                                                      |
+| ---------- | ------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------- |
+| 2026-07-20 | Established the living V0 architecture map and architecture-impact policy.                                         | `AGENTS.md`, `agenticsdlc.md`                                                 |
+| 2026-07-20 | Added the local project-library boundary: create, list, and reopen versioned `project.json` artifacts.             | `src/lib/projects/`, `e2e/home.spec.ts`, `tasks/mlp-v0.md`                    |
+| 2026-07-20 | Added the parent-facing interaction contract for durable state, generation recovery, approvals, and accessibility. | `spec/08-ux-guidelines.md`, `AGENTS.md`                                       |
+| 2026-07-20 | Added the versioned text workflow and an isolated zero-token fixture path for automated browser tests.             | `src/lib/directions/`, `e2e/home.spec.ts`, `playwright.config.ts`             |
+| 2026-07-20 | Added the ordered project journey, artifact-derived recovery statuses, and accessible progressive form feedback.   | `src/components/`, `src/lib/projects/project-progress.ts`, `e2e/home.spec.ts` |

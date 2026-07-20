@@ -4,6 +4,7 @@ import { NextResponse } from "next/server";
 import { ZodError } from "zod";
 
 import { readAppConfig } from "@/lib/config/app-config";
+import { formRedirect } from "@/lib/http/form-response";
 import { FileProjectRepository } from "@/lib/projects/file-project-repository";
 import { createProjectInputSchema } from "@/lib/projects/project";
 
@@ -26,14 +27,7 @@ export async function POST(request: Request) {
     );
     const project = await repository().create(input);
 
-    if (!request.headers.get("accept")?.includes("application/json")) {
-      return NextResponse.redirect(
-        new URL(`/projects/${project.id}`, request.url),
-        303,
-      );
-    }
-
-    return NextResponse.json(project, { status: 201 });
+    return formRedirect(request, `/projects/${project.id}`);
   } catch (error) {
     if (error instanceof ZodError) {
       return NextResponse.json(

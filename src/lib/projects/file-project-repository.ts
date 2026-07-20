@@ -58,6 +58,31 @@ export class FileProjectRepository {
     }
   }
 
+  public async writeArtifact(
+    id: string,
+    filename: string,
+    value: unknown,
+  ): Promise<void> {
+    const projectId = projectIdSchema.parse(id);
+    await this.writeJsonAtomically(
+      join(this.projectDirectory(projectId), filename),
+      value,
+    );
+  }
+
+  public async readArtifact<T>(
+    id: string,
+    filename: string,
+    schema: { parse: (value: unknown) => T },
+  ): Promise<T> {
+    const projectId = projectIdSchema.parse(id);
+    const content = await readFile(
+      join(this.projectDirectory(projectId), filename),
+      "utf8",
+    );
+    return schema.parse(JSON.parse(content));
+  }
+
   private projectDirectory(id: string): string {
     const root = resolve(this.projectRoot);
     const directory = resolve(root, id);

@@ -39,21 +39,81 @@ data; Playwright covers create-and-reload using an isolated project directory.
 | STO-01 | Implement a file-backed project repository at `data/projects/<project-id>/`.                                                       | **in progress** | Current slice creates and loads `project.json`.                                                          |
 | STO-02 | Implement atomic JSON/artifact writes and validated reads.                                                                         | **in progress** | Current slice atomically writes and validates `project.json`.                                            |
 | STO-03 | Implement project creation, loading, and restart-resume behavior.                                                                  | **in progress** | Current slice supports create and reload; jobs remain deferred.                                          |
-| JOB-01 | Implement a file-backed local job runner with persisted progress and safe recovery.                                                | **not started** |                                                                                                          |
+| JOB-01 | Implement a file-backed local job runner with persisted progress and safe recovery.                                                | **in progress** | Text generation persists in-progress/completed/failed jobs; per-unit resume and stop controls remain.    |
 | TST-01 | Test schema validation, lifecycle/staleness, persistence, and restart-resume behavior.                                             | **in progress** | Creation, atomic JSON, malformed-data rejection, and browser reload are covered in the current slice.    |
 
 ## Phase 3 — Idea, directions, and story approval
 
-| ID      | Task                                                                                                      | Status          | Evidence / notes                                           |
-| ------- | --------------------------------------------------------------------------------------------------------- | --------------- | ---------------------------------------------------------- |
-| UI-01   | Build the wizard shell and progress/checkpoint presentation.                                              | **not started** |                                                            |
-| IDEA-01 | Build the intake form with five narrative templates, Help me choose, and Start from scratch.              | **not started** | Excludes nonfiction and almost-wordless templates.         |
-| IDEA-02 | Capture, display, and edit the parent’s original must-keep details at every checkpoint.                   | **not started** |                                                            |
-| PRV-01  | Define the `TextProvider` boundary and OpenAI Responses adapter.                                          | **not started** | No provider imports outside the adapter.                   |
-| DIR-01  | Generate exactly three structurally distinct story directions.                                            | **not started** |                                                            |
-| STR-01  | Generate and approve a structured story package: characters, promise, arc, 13-spread map, and manuscript. | **not started** |                                                            |
-| STR-02  | Add one hidden story-quality evaluation and at most one automatic revision.                               | **not started** | Check fidelity, structure, age fit, oral flow, and safety. |
-| TST-02  | Test must-keep persistence, direction distinction, approval, and upstream staleness.                      | **not started** |                                                            |
+### Completed vertical slice — Approve a text-only story
+
+**Use case.** As a parent, I can capture an idea, iterate on three distinct
+directions with freeform steering, select one, revise its generated manuscript,
+and approve the story so that I can safely resume at the visual stage later.
+
+**Acceptance scenarios.**
+
+1. Optional intake fields may be left blank; the original idea remains required.
+2. Every direction generation returns exactly three distinct titles and story
+   engines, and each revision is preserved alongside the current directions.
+3. Selecting a direction persists the choice and steering before generating a
+   versioned story with characters, an arc, and exactly 13 non-empty spreads.
+4. A parent can request a story revision with feedback or approve the current
+   revision, close the app, and reopen the saved story and approval state.
+5. Missing/provider failures preserve the last valid brief, selection,
+   directions, and story while presenting a safe recovery message.
+
+**Evidence required.** Vitest exercises the fixture provider, versioned
+workflow, revision history, story approval, and schemas. Playwright exercises
+the complete parent-visible journey on an isolated fixture-only server, making
+zero paid model requests.
+
+### UX hardening slice — Visible, resumable generation
+
+**Use case.** As a parent, I can see where I am in the story workflow and get
+immediate, accessible feedback while a draft is being generated so that I do
+not submit twice, assume the app froze, or worry that my saved work was lost.
+
+**Acceptance scenarios.**
+
+1. Every idea, directions, and story page shows the project title, the ordered
+   checkpoints with text statuses, and a **Save and exit** route to the project
+   overview.
+2. When a parent starts or revises generated work, the local form immediately
+   becomes busy, prevents duplicate submission, keeps the action context in its
+   label, and shows an indeterminate spinner plus polite text describing what is
+   being created and what was already saved.
+3. When generation succeeds, the resulting artifact and exact next review
+   action are visible; when it fails, the page names the preserved artifact and
+   offers the same safe action as a retry.
+4. Reopening the project reconstructs checkpoint statuses from validated local
+   artifacts and offers the exact next action without calling a provider.
+5. Playwright observes the pending state through a deterministic delayed
+   fixture provider. Browser and unit tests make zero paid model requests.
+
+**Applicable screen states.** First use/empty, drafting, submitting,
+generating, ready for review, provider failure, and interrupted/reopened. True
+per-unit progress, stop/resume controls, cost confirmation, and timestamped job
+history belong to the Phase 5 persisted job-runner slice.
+
+**Accessibility behavior.** Native labels and validation remain in use. Each
+pending form has `aria-busy`, an always-present polite status region, visible
+text in addition to motion, reduced-motion handling, and a disabled submit
+control while submitted. Routine pending and success updates do not move focus.
+
+**Architecture impact: Updated.** This adds a shared parent workflow shell and
+a reusable client-side form feedback boundary; generation and persistence stay
+behind `StoryWorkflowService` and `TextProvider`.
+
+| ID      | Task                                                                                                      | Status          | Evidence / notes                                                                                            |
+| ------- | --------------------------------------------------------------------------------------------------------- | --------------- | ----------------------------------------------------------------------------------------------------------- |
+| UI-01   | Build the wizard shell and progress/checkpoint presentation.                                              | **done**        | Shared ordered checkpoints show persisted statuses, the project title, save-and-exit, and pending state.    |
+| IDEA-01 | Build the intake form with five narrative templates, Help me choose, and Start from scratch.              | **done**        | Optional shared intake excludes nonfiction and almost-wordless templates.                                   |
+| IDEA-02 | Capture, display, and edit the parent’s original must-keep details at every checkpoint.                   | **done**        | `brief.json` is saved before generation and shown at directions/story checkpoints.                          |
+| PRV-01  | Define the `TextProvider` boundary and OpenAI Responses adapter.                                          | **done**        | OpenAI is isolated behind `TextProvider`; tests use `FixtureTextProvider`.                                  |
+| DIR-01  | Generate exactly three structurally distinct story directions.                                            | **done**        | Schema enforces three distinct titles/engines; numbered revisions are preserved.                            |
+| STR-01  | Generate and approve a structured story package: characters, promise, arc, 13-spread map, and manuscript. | **done**        | Versioned story generation, feedback revision, approval, and reopen flow are implemented.                   |
+| STR-02  | Add one hidden story-quality evaluation and at most one automatic revision.                               | **not started** | Check fidelity, structure, age fit, oral flow, and safety.                                                  |
+| TST-02  | Test must-keep persistence, direction distinction, approval, and upstream staleness.                      | **in progress** | Persistence, distinction, revision, approval, and reopen are covered; general dependency staleness remains. |
 
 ## Phase 4 — Visual identity and sample-spread gate
 

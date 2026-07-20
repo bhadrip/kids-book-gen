@@ -15,11 +15,18 @@ The living system map is in [ARCHITECTURE.md](ARCHITECTURE.md).
 
 ## Current runnable slice
 
-The current local slice lets a parent create a titled project, see it in the
-**Your projects** library, and reopen it after leaving the project page.
-Project metadata is stored locally under `data/projects/<project-id>/project.json`.
-The idea, approval, and generation stages are not implemented yet; their
-sequenced status and acceptance evidence remain in [tasks/mlp-v0.md](tasks/mlp-v0.md).
+The current local flow lets a parent create and reopen a project, capture an
+idea, iterate on three generated story directions, select one with steering,
+review and revise a 13-spread manuscript, and approve the result. Each accepted
+input and revision is persisted under `data/projects/<project-id>/`; automated
+generation tests use deterministic fixtures and never call a paid provider.
+The ordered project journey reconstructs its statuses from those artifacts and
+every generation action shows an accessible pending state, prevents duplicate
+submission, and names what has already been saved. A local job record preserves
+the active stage and terminal result across refreshes. Provider failures retain
+the last valid input or artifact and offer a safe retry.
+Visual creation and later book-production stages remain sequenced in
+[tasks/mlp-v0.md](tasks/mlp-v0.md).
 
 ## How to contribute or run the project
 
