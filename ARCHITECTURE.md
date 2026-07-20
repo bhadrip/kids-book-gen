@@ -75,10 +75,26 @@ of the code boundaries defined in [development.md](development.md).
 
 ## Current implementation status
 
-Foundation and local quality tooling are complete. The domain model, project
-storage, parent workflow, provider adapters, full-book production, reader, and
-PDF export are planned V0 slices. The authoritative task status and evidence
-remain in [tasks/mlp-v0.md](tasks/mlp-v0.md), rather than being duplicated here.
+Foundation and local quality tooling are complete. The first project-storage
+slice is also runnable: a parent can create a titled local project, find it in
+the project library, and reopen it. The current data flow is:
+
+```mermaid
+flowchart LR
+  Home[Home page / project library] --> Create[POST /api/projects]
+  Create --> Repo[FileProjectRepository]
+  Home --> Repo
+  Project[Project page] --> Repo
+  Repo --> Schema[Versioned Project Zod schema]
+  Repo --> File[(data/projects/<project-id>/project.json)]
+```
+
+`FileProjectRepository` performs validated reads and atomic writes. Its clock
+and ID generator are injected for deterministic tests. The persisted `Project`
+schema is the only implemented artifact schema so far; lifecycle, provenance,
+staleness, jobs, provider adapters, and the remaining parent workflow are
+planned slices. The authoritative task status and evidence remain in
+[tasks/mlp-v0.md](tasks/mlp-v0.md), rather than being duplicated here.
 
 ## Architectural invariants
 
@@ -93,17 +109,18 @@ remain in [tasks/mlp-v0.md](tasks/mlp-v0.md), rather than being duplicated here.
 
 ## Detail map
 
-| Concern | Canonical detail |
-| --- | --- |
-| Product research, decisions, and terminology | [spec/README.md](spec/README.md) |
-| Quality gates, setup, architecture seams, and testing | [development.md](development.md) |
-| Agent delivery workflow and context model | [agenticsdlc.md](agenticsdlc.md) |
-| Current feature/task status | [tasks/mlp-v0.md](tasks/mlp-v0.md) |
-| Durable non-obvious decisions | `spec/adr/` when introduced |
-| Executable behavior | Source, Zod schemas, and tests |
+| Concern                                               | Canonical detail                   |
+| ----------------------------------------------------- | ---------------------------------- |
+| Product research, decisions, and terminology          | [spec/README.md](spec/README.md)   |
+| Quality gates, setup, architecture seams, and testing | [development.md](development.md)   |
+| Agent delivery workflow and context model             | [agenticsdlc.md](agenticsdlc.md)   |
+| Current feature/task status                           | [tasks/mlp-v0.md](tasks/mlp-v0.md) |
+| Durable non-obvious decisions                         | `spec/adr/` when introduced        |
+| Executable behavior                                   | Source, Zod schemas, and tests     |
 
 ## Architecture change log
 
-| Date | Change | Evidence |
-| --- | --- | --- |
-| 2026-07-20 | Established the living V0 architecture map and architecture-impact policy. | `AGENTS.md`, `agenticsdlc.md` |
+| Date       | Change                                                                                                 | Evidence                                                   |
+| ---------- | ------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------- |
+| 2026-07-20 | Established the living V0 architecture map and architecture-impact policy.                             | `AGENTS.md`, `agenticsdlc.md`                              |
+| 2026-07-20 | Added the local project-library boundary: create, list, and reopen versioned `project.json` artifacts. | `src/lib/projects/`, `e2e/home.spec.ts`, `tasks/mlp-v0.md` |

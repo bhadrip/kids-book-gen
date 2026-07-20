@@ -38,6 +38,12 @@ verify, and document small changes.
    `development.md`: create successor artifacts and mark dependents stale rather
    than silently overwriting parent-approved work.
 
+A vertical slice is not complete merely because it persists data or exposes an
+internal endpoint. The user must be able to discover the outcome again through
+the normal product entry point and continue the intended journey. For example,
+a local project creation slice includes creating a project, finding it in the
+project library, and reopening it—not just writing `project.json`.
+
 ## Context architecture
 
 `AGENTS.md`, if introduced, is the entry point rather than an encyclopedia. It
@@ -55,13 +61,13 @@ AGENTS.md (map, commands, invariants, escalation)
 
 Maintain this distinction:
 
-| Artifact | Source of truth for | Keep it useful by |
-| --- | --- | --- |
-| `spec/` | Product rules, research, domain vocabulary, and configurable decisions | Index documents; link rules to relevant schemas/tests; update when a product decision changes. |
-| `development.md` | Tooling, architecture, local data/secrets, and test contract | Keep commands executable and constraints concrete. |
-| `tasks/` | The currently requested, bounded feature or change | State outcome, scope, acceptance scenarios, dependencies, and evidence. |
-| Source, schemas, and tests | Actual executable behavior | Use clear domain names and tests that demonstrate business rules. |
-| Decision records (add under `spec/adr/` when needed) | Durable, non-obvious technical or product tradeoffs | Record context, decision, alternatives, consequences, and review date. |
+| Artifact                                             | Source of truth for                                                    | Keep it useful by                                                                              |
+| ---------------------------------------------------- | ---------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
+| `spec/`                                              | Product rules, research, domain vocabulary, and configurable decisions | Index documents; link rules to relevant schemas/tests; update when a product decision changes. |
+| `development.md`                                     | Tooling, architecture, local data/secrets, and test contract           | Keep commands executable and constraints concrete.                                             |
+| `tasks/`                                             | The currently requested, bounded feature or change                     | State outcome, scope, acceptance scenarios, dependencies, and evidence.                        |
+| Source, schemas, and tests                           | Actual executable behavior                                             | Use clear domain names and tests that demonstrate business rules.                              |
+| Decision records (add under `spec/adr/` when needed) | Durable, non-obvious technical or product tradeoffs                    | Record context, decision, alternatives, consequences, and review date.                         |
 
 Do not copy the same rule into every file. Keep one canonical source and link to
 it. Remove or mark superseded guidance promptly. Stale documentation is worse
@@ -103,29 +109,37 @@ folder when the work is substantial:
 # Feature: <short outcome-oriented name>
 
 ## Outcome and user
+
 As a <user>, I can <do something> so that <benefit>.
 
 ## In scope
+
 - Observable behavior included in this delivery.
 
 ## Out of scope
+
 - Explicitly deferred behavior and adjacent requests.
 
 ## Rules and constraints
+
 - Business rules, permissions, limits, privacy/safety requirements, and
   existing product decisions the implementation must preserve.
 
 ## Acceptance scenarios
+
 1. Given <starting state>, when <action>, then <observable result>.
 2. Include unhappy paths, empty states, boundaries, and migration behavior.
 
 ## References
+
 - Relevant `spec/` documents, existing flows, screenshots/designs, and task IDs.
 
 ## Open questions / escalation
+
 - Decisions that require a PM or engineer; agents must stop rather than guess.
 
 ## Evidence required for handoff
+
 - Tests to add or update, commands to run, and how a reviewer can verify the UI.
 ```
 
@@ -177,11 +191,11 @@ Agents are reliable when important constraints are machine-checkable.
 
 ## Review and acceptance responsibilities
 
-| Role | Accountable for | Does not need to own |
-| --- | --- | --- |
-| PM | Outcome, prioritization, scope, acceptance scenarios, and product review | File layout, library selection, or implementation tactics. |
-| Coding agent | Code, tests, focused plan, verification evidence, and truthful escalation | Making unresolved product-policy decisions. |
-| Engineer / code owner | Architecture, security, migrations, quality gates, and exceptions | Re-explaining documented rules or manually repeating routine checks. |
+| Role                  | Accountable for                                                           | Does not need to own                                                 |
+| --------------------- | ------------------------------------------------------------------------- | -------------------------------------------------------------------- |
+| PM                    | Outcome, prioritization, scope, acceptance scenarios, and product review  | File layout, library selection, or implementation tactics.           |
+| Coding agent          | Code, tests, focused plan, verification evidence, and truthful escalation | Making unresolved product-policy decisions.                          |
+| Engineer / code owner | Architecture, security, migrations, quality gates, and exceptions         | Re-explaining documented rules or manually repeating routine checks. |
 
 For this V0 repository, the PM acceptance surface is the local runnable app and
 the requested verification evidence; there is intentionally no staging or
@@ -192,16 +206,16 @@ remain protected by required checks and human approval appropriate to risk.
 
 ## Managing recurring difficulties
 
-| Difficulty | Response |
-| --- | --- |
-| Ambiguous feature request | Improve scenarios, non-goals, and rules; put genuine unresolved choices in escalation rather than allowing guesses. |
-| Too much context | Shorten maps, index canonical docs, link by domain, and retrieve progressively. |
-| Spec/code drift | Require task/spec updates when decisions change; cross-link tests and docs; schedule small documentation cleanup work. |
-| Agents repeat poor local patterns | Establish a golden example, refactor the pattern, and enforce it with tests or lint where valuable. |
-| Environment or fixture failures | Improve `just` commands, `doctor`, deterministic fixtures, and local setup instead of adding workarounds to feature code. |
-| Tests pass but the experience is wrong | Make acceptance scenarios user-observable and require PM review of the runnable flow. |
-| Feature is too large | Split it into independently testable vertical slices; decide shared contracts before parallel work. |
-| Review throughput becomes the bottleneck | Automate routine checks and focus human attention on product judgment, security, migrations, and boundary changes. |
+| Difficulty                               | Response                                                                                                                  |
+| ---------------------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
+| Ambiguous feature request                | Improve scenarios, non-goals, and rules; put genuine unresolved choices in escalation rather than allowing guesses.       |
+| Too much context                         | Shorten maps, index canonical docs, link by domain, and retrieve progressively.                                           |
+| Spec/code drift                          | Require task/spec updates when decisions change; cross-link tests and docs; schedule small documentation cleanup work.    |
+| Agents repeat poor local patterns        | Establish a golden example, refactor the pattern, and enforce it with tests or lint where valuable.                       |
+| Environment or fixture failures          | Improve `just` commands, `doctor`, deterministic fixtures, and local setup instead of adding workarounds to feature code. |
+| Tests pass but the experience is wrong   | Make acceptance scenarios user-observable and require PM review of the runnable flow.                                     |
+| Feature is too large                     | Split it into independently testable vertical slices; decide shared contracts before parallel work.                       |
+| Review throughput becomes the bottleneck | Automate routine checks and focus human attention on product judgment, security, migrations, and boundary changes.        |
 
 ## Maintenance cadence
 

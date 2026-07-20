@@ -13,6 +13,14 @@ The current product decisions, research, and implementation roadmap live in
 [`spec/`](spec/README.md) and [`tasks/mlp-v0.md`](tasks/mlp-v0.md).
 The living system map is in [ARCHITECTURE.md](ARCHITECTURE.md).
 
+## Current runnable slice
+
+The current local slice lets a parent create a titled project, see it in the
+**Your projects** library, and reopen it after leaving the project page.
+Project metadata is stored locally under `data/projects/<project-id>/project.json`.
+The idea, approval, and generation stages are not implemented yet; their
+sequenced status and acceptance evidence remain in [tasks/mlp-v0.md](tasks/mlp-v0.md).
+
 ## How to contribute or run the project
 
 Start with [local development guidance](development.md). It is the authoritative
