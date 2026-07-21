@@ -8,8 +8,24 @@ import { getProjectProgress } from "@/lib/projects/project-progress";
 import {
   projectBriefSchema,
   storyDecisionSchema,
+  storyEvaluationSchema,
   storyPackageSchema,
 } from "@/lib/projects/project";
+
+const evaluationLabels = {
+  ideaFidelity: "Idea fidelity",
+  causalStructure: "Causal structure",
+  ageFit: "Age fit",
+  oralFlow: "Read-aloud flow",
+  safety: "Safety",
+} as const;
+
+const outcomeLabels = {
+  pass: "Passed",
+  revision_required: "Revision requested",
+  escalation_required: "Needs human review",
+} as const;
+
 export const runtime = "nodejs";
 async function loadStory(projectId: string) {
   const config = readAppConfig(process.env);
@@ -18,16 +34,32 @@ async function loadStory(projectId: string) {
     createId: () => crypto.randomUUID(),
   });
   try {
-    const [project, story, brief, decision, progress] = await Promise.all([
-      repository.load(projectId),
-      repository.readArtifact(projectId, "story.json", storyPackageSchema),
-      repository.readArtifact(projectId, "brief.json", projectBriefSchema),
-      repository
-        .readArtifact(projectId, "story-decision.json", storyDecisionSchema)
-        .catch(() => null),
-      getProjectProgress(repository, projectId),
-    ]);
-    return { project, story, brief, decision, progress };
+    const [project, story, brief, decision, evaluation, progress] =
+      await Promise.all([
+        repository.load(projectId),
+        repository.readArtifact(projectId, "story.json", storyPackageSchema),
+        repository.readArtifact(projectId, "brief.json", projectBriefSchema),
+        repository
+          .readArtifact(projectId, "story-decision.json", storyDecisionSchema)
+          .catch(() => null),
+        repository
+          .readArtifact(
+            projectId,
+            "story-evaluation.json",
+            storyEvaluationSchema,
+          )
+          .catch(() => null),
+        getProjectProgress(repository, projectId),
+      ]);
+    return {
+      project,
+      story,
+      brief,
+      decision,
+      evaluation:
+        evaluation?.storyRevision === story.revision ? evaluation : null,
+      progress,
+    };
   } catch {
     notFound();
   }
@@ -41,7 +73,7 @@ export default async function StoryPage({
 }) {
   const { projectId } = await params;
   const { decision: decisionQuery } = await searchParams;
-  const { project, story, brief, decision, progress } =
+  const { project, story, brief, decision, evaluation, progress } =
     await loadStory(projectId);
   return (
     <main className="mx-auto max-w-3xl px-6 py-16">
@@ -102,6 +134,69 @@ export default async function StoryPage({
           </li>
         ))}
       </ol>
+      {evaluation ? (
+        <details className="mt-8 rounded-3xl border border-sky-200 bg-sky-50 p-6">
+          <summary className="cursor-pointer font-semibold text-sky-950">
+            How AI reviewed this story
+          </summary>
+          <section aria-label="AI story evaluation" className="mt-5">
+            <p className="text-sm text-sky-950">
+              This is an AI quality prediction, not a fact about how a child
+              will respond. Evaluation for story revision{" "}
+              {evaluation.storyRevision} was created{" "}
+              {new Date(evaluation.evaluatedAt).toLocaleString()} using{" "}
+              <code>{evaluation.model}</code>.
+            </p>
+            <p className="mt-3 font-semibold text-sky-950">
+              Overall result: {outcomeLabels[evaluation.outcome]}
+            </p>
+            <dl className="mt-4 space-y-4">
+              {Object.entries(evaluation.dimensions).map(([key, dimension]) => (
+                <div className="rounded-xl bg-white p-4" key={key}>
+                  <dt className="font-semibold">
+                    {evaluationLabels[key as keyof typeof evaluationLabels]}:{" "}
+                    {outcomeLabels[dimension.outcome]}
+                  </dt>
+                  <dd className="mt-2 text-sm text-stone-700">
+                    <ul className="list-disc space-y-1 pl-5">
+                      {dimension.evidence.map((evidence) => (
+                        <li key={evidence}>{evidence}</li>
+                      ))}
+                    </ul>
+                    {dimension.revisionInstruction ? (
+                      <p className="mt-2">
+                        Suggested change: {dimension.revisionInstruction}
+                      </p>
+                    ) : null}
+                  </dd>
+                </div>
+              ))}
+            </dl>
+            {evaluation.preserve.length > 0 ? (
+              <div className="mt-4">
+                <h3 className="font-semibold">
+                  What the AI was told to preserve
+                </h3>
+                <ul className="mt-2 list-disc space-y-1 pl-5 text-sm">
+                  {evaluation.preserve.map((item) => (
+                    <li key={item}>{item}</li>
+                  ))}
+                </ul>
+              </div>
+            ) : null}
+            {evaluation.revisionInstructions.length > 0 ? (
+              <div className="mt-4">
+                <h3 className="font-semibold">Requested revisions</h3>
+                <ul className="mt-2 list-disc space-y-1 pl-5 text-sm">
+                  {evaluation.revisionInstructions.map((instruction) => (
+                    <li key={instruction}>{instruction}</li>
+                  ))}
+                </ul>
+              </div>
+            ) : null}
+          </section>
+        </details>
+      ) : null}
       <section
         className="mt-8 rounded-3xl border border-stone-200 bg-white p-6"
         aria-label="Story approval"

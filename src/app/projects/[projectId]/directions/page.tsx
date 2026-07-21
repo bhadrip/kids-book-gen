@@ -7,6 +7,7 @@ import { getProjectProgress } from "@/lib/projects/project-progress";
 import {
   projectBriefSchema,
   storyDirectionsSchema,
+  textGenerationJobSchema,
 } from "@/lib/projects/project";
 export const runtime = "nodejs";
 
@@ -17,7 +18,7 @@ async function loadDirections(projectId: string) {
     createId: () => crypto.randomUUID(),
   });
   try {
-    const [project, directions, brief, progress] = await Promise.all([
+    const [project, directions, brief, job, progress] = await Promise.all([
       repository.load(projectId),
       repository.readArtifact(
         projectId,
@@ -25,9 +26,16 @@ async function loadDirections(projectId: string) {
         storyDirectionsSchema,
       ),
       repository.readArtifact(projectId, "brief.json", projectBriefSchema),
+      repository
+        .readArtifact(
+          projectId,
+          "text-generation-job.json",
+          textGenerationJobSchema,
+        )
+        .catch(() => null),
       getProjectProgress(repository, projectId),
     ]);
-    return { project, directions, brief, progress };
+    return { project, directions, brief, job, progress };
   } catch {
     notFound();
   }
@@ -42,7 +50,7 @@ export default async function DirectionsPage({
 }) {
   const { projectId } = await params;
   const { revision, story } = await searchParams;
-  const { project, directions, brief, progress } =
+  const { project, directions, brief, job, progress } =
     await loadDirections(projectId);
   return (
     <main className="mx-auto max-w-3xl px-6 py-16">
@@ -74,10 +82,25 @@ export default async function DirectionsPage({
         </p>
       ) : null}
       {story === "failed" ? (
-        <p className="mt-4 rounded-xl bg-red-50 p-4 text-red-800" role="alert">
-          Your direction choice and feedback were saved, but the story could not
-          be generated yet.
-        </p>
+        <section
+          className="mt-4 rounded-xl bg-red-50 p-4 text-red-900"
+          role="alert"
+          aria-labelledby="story-failure-heading"
+        >
+          <h2 className="font-semibold" id="story-failure-heading">
+            Story generation stopped
+          </h2>
+          <p className="mt-2">
+            {job?.failureMessage ??
+              "The AI provider could not complete this step."}
+          </p>
+          <p className="mt-2 text-sm">
+            Your direction choice and feedback are saved.
+            {job?.lastSavedArtifact === "story.json"
+              ? " The manuscript is also saved, so retry will continue with its quality review."
+              : " Retry the same direction to continue."}
+          </p>
+        </section>
       ) : null}
       <div className="mt-8 space-y-5">
         {directions.directions.map((direction) => (

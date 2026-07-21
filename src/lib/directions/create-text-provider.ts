@@ -16,6 +16,9 @@ export async function createTextProvider(
       generateStory: async () => {
         throw new Error("OPENAI_API_KEY is required for text generation.");
       },
+      evaluateStory: async () => {
+        throw new Error("OPENAI_API_KEY is required for text generation.");
+      },
     };
   const { OpenAITextProvider } =
     await import("@/lib/directions/openai-text-provider");

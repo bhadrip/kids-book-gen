@@ -113,6 +113,10 @@ pipeline jargon.
 - Never silently alter an approved parent decision, replace a result after the
   parent leaves the page, or represent an evaluator prediction as a fact about a
   child’s likely response.
+- Keep evaluation details secondary to the parent’s review, but do not conceal
+  them. Provide an accessible disclosure that names the model and timestamp and
+  shows outcomes, evidence, preserved strengths, and requested revisions. Label
+  the result as an AI quality prediction rather than observed child response.
 - Collect lightweight feedback at useful moments (for example, “Keep this
   spread” / “Change this”). Acknowledge receipt and say whether it changes this
   book, future generation prompts, or only the local evaluation record. Do not

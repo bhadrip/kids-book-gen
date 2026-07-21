@@ -1,18 +1,67 @@
 import type { TextProvider } from "@/lib/directions/text-provider";
 import type { FileProjectRepository } from "@/lib/projects/file-project-repository";
+import { ZodError } from "zod";
 import {
   projectBriefSchema,
   selectedDirectionSchema,
   storyDecisionSchema,
   storyDirectionsSchema,
+  storyEvaluationSchema,
   storyPackageSchema,
   textGenerationJobSchema,
   type ProjectBrief,
   type StoryDecision,
   type StoryDirections,
+  type StoryEvaluation,
   type StoryPackage,
   type TextGenerationJob,
 } from "@/lib/projects/project";
+
+export class StoryQualityError extends Error {
+  public constructor() {
+    super(
+      "Story quality needs review after the bounded automatic revision. The latest story remains saved.",
+    );
+    this.name = "StoryQualityError";
+  }
+}
+
+export class StoryEvaluationError extends Error {
+  public constructor(public override readonly cause: unknown) {
+    super(
+      cause instanceof Error
+        ? cause.message
+        : "The AI story evaluation could not be completed.",
+    );
+    this.name = "StoryEvaluationError";
+  }
+}
+
+export function describeGenerationFailure(error: unknown): string {
+  if (error instanceof StoryQualityError) return error.message;
+  if (error instanceof StoryEvaluationError)
+    return `The story was generated and saved, but its AI quality review failed. ${describeGenerationFailure(error.cause)}`;
+  if (error instanceof ZodError)
+    return "The AI returned a response that did not match the required story format. Your last saved work is safe; retry this step.";
+  if (error instanceof Error && error.message.includes("OPENAI_API_KEY"))
+    return "OpenAI is not configured. Add a valid OPENAI_API_KEY to .env.local, restart the app, and retry.";
+
+  const status =
+    typeof error === "object" && error !== null && "status" in error
+      ? Number(error.status)
+      : undefined;
+  if (status === 401)
+    return "OpenAI rejected the API key. Check OPENAI_API_KEY in .env.local, restart the app, and retry.";
+  if (status === 403)
+    return "This OpenAI account does not have access to the requested model. Check the configured model or account permissions, then retry.";
+  if (status === 404)
+    return "The configured OpenAI model was not found. Check KIDS_BOOK_TEXT_MODEL in .env.local, restart the app, and retry.";
+  if (status === 429)
+    return "OpenAI rejected the request because of a usage limit, rate limit, or billing balance. Check API usage and billing, then retry.";
+  if (status !== undefined && status >= 500)
+    return "OpenAI is temporarily unavailable. Your last saved work is safe; wait briefly and retry this step.";
+  return "The AI provider could not complete this step. Your last saved work is safe; retry the step. If it fails again, check the development-server log for the provider error.";
+}
 
 export class StoryWorkflowService {
   public constructor(
@@ -91,6 +140,24 @@ export class StoryWorkflowService {
       "selected-direction.json",
       selected,
     );
+    const savedStory = await this.repository
+      .readArtifact(projectId, "story.json", storyPackageSchema)
+      .catch(() => null);
+    const savedEvaluation = await this.repository
+      .readArtifact(projectId, "story-evaluation.json", storyEvaluationSchema)
+      .catch(() => null);
+    if (
+      savedStory?.sourceDirectionTitle === direction.title &&
+      savedEvaluation?.storyRevision !== savedStory.revision
+    )
+      return this.runGenerationJob(
+        projectId,
+        `story-${String(savedStory.revision).padStart(2, "0")}`,
+        "story",
+        "Reviewing the saved story quality",
+        "story.json",
+        () => this.evaluateAndMaybeRevise(brief, direction, savedStory),
+      );
     return this.runGenerationJob(
       projectId,
       "story-01",
@@ -103,7 +170,7 @@ export class StoryWorkflowService {
           parentSteering: parentFeedback,
         });
         await this.saveStory(projectId, story);
-        return story;
+        return this.evaluateAndMaybeRevise(brief, direction, story);
       },
     );
   }
@@ -165,9 +232,10 @@ export class StoryWorkflowService {
         const generated = await this.provider.generateStory(brief, direction, {
           revision,
           parentSteering: feedback,
+          sourceStory: story,
         });
         await this.saveStory(projectId, generated);
-        return generated;
+        return this.evaluateAndMaybeRevise(brief, direction, generated);
       },
     );
     return { decision, story: revised };
@@ -204,6 +272,59 @@ export class StoryWorkflowService {
     await this.repository.writeArtifact(projectId, "story.json", story);
   }
 
+  private async evaluateAndMaybeRevise(
+    brief: ProjectBrief,
+    direction: StoryDirections["directions"][number],
+    story: StoryPackage,
+  ): Promise<StoryPackage> {
+    const evaluation = await this.evaluateAndSaveStory(brief, story);
+    if (evaluation.outcome === "pass") return story;
+    if (evaluation.outcome === "escalation_required")
+      throw new StoryQualityError();
+
+    const revisedStory = await this.provider.generateStory(brief, direction, {
+      revision: story.revision + 1,
+      parentSteering: story.parentSteering,
+      sourceStory: story,
+      qualityRevision: {
+        instructions: evaluation.revisionInstructions,
+        preserve: evaluation.preserve,
+      },
+    });
+    await this.saveStory(brief.projectId, revisedStory);
+    const revisedEvaluation = await this.evaluateAndSaveStory(
+      brief,
+      revisedStory,
+    );
+    if (revisedEvaluation.outcome !== "pass") throw new StoryQualityError();
+    return revisedStory;
+  }
+
+  private async evaluateAndSaveStory(
+    brief: ProjectBrief,
+    story: StoryPackage,
+  ): Promise<StoryEvaluation> {
+    let evaluation: StoryEvaluation;
+    try {
+      evaluation = storyEvaluationSchema.parse(
+        await this.provider.evaluateStory(brief, story),
+      );
+    } catch (error) {
+      throw new StoryEvaluationError(error);
+    }
+    await this.repository.writeArtifact(
+      brief.projectId,
+      `story-evaluation-${String(story.revision).padStart(2, "0")}.json`,
+      evaluation,
+    );
+    await this.repository.writeArtifact(
+      brief.projectId,
+      "story-evaluation.json",
+      evaluation,
+    );
+    return evaluation;
+  }
+
   private async runGenerationJob<T>(
     projectId: string,
     jobKey: string,
@@ -237,12 +358,17 @@ export class StoryWorkflowService {
       });
       return result;
     } catch (error) {
+      const safeArtifact =
+        error instanceof StoryQualityError ||
+        error instanceof StoryEvaluationError
+          ? "story.json"
+          : lastSavedArtifact;
       await this.saveGenerationJob(projectId, {
         ...job,
         status: "failed",
         updatedAt: this.now().toISOString(),
-        failureMessage:
-          "Generation did not finish. The last saved artifact is still available.",
+        lastSavedArtifact: safeArtifact,
+        failureMessage: describeGenerationFailure(error),
       });
       throw error;
     }
