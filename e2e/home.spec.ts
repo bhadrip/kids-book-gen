@@ -164,14 +164,22 @@ test("revises directions, generates a story, approves it, and reopens it without
       name: "The Moon Kite Mission — Make them funnier",
     }),
   ).toBeVisible();
-  await expect(page.getByText("Story revision 1")).toBeVisible();
+  await expect(page.getByText("Story revision 1", { exact: true })).toBeVisible(
+    {
+      timeout: 15_000,
+    },
+  );
   await expect(page.getByText("Spread 13:")).toBeVisible();
   await page.getByLabel("What should change?").fill("Add one silly obstacle");
   await page.getByRole("button", { name: "Revise this story" }).click();
   await expect(
     page.getByRole("button", { name: "Revising this story…" }),
   ).toBeDisabled();
-  await expect(page.getByText("Story revision 2")).toBeVisible();
+  await expect(page.getByText("Story revision 2", { exact: true })).toBeVisible(
+    {
+      timeout: 15_000,
+    },
+  );
   await expect(page.getByText("Your revised story is ready.")).toBeVisible();
   await page.getByRole("button", { name: "Approve this story" }).click();
   await expect(page.getByText("Story approved and saved.")).toBeVisible();
@@ -228,6 +236,99 @@ test("shows a saved-work recovery state when text generation fails", async ({
   await expect(page.getByText("Needs attention")).toBeVisible();
   await expect(
     page.getByRole("link", { name: "Retry story directions" }),
+  ).toBeVisible();
+
+  await rm(join(testProjectRoot, projectId ?? ""), {
+    recursive: true,
+    force: true,
+  });
+});
+
+test("automatically revises a quality issue once and discloses its AI evaluation on request", async ({
+  page,
+}) => {
+  await page.goto("/");
+  await page.getByLabel("Project title").fill("Bounded quality revision");
+  await page.getByRole("button", { name: "Create local project" }).click();
+  const projectId = (
+    await page.getByText("Project ID:").textContent()
+  )?.replace("Project ID: ", "");
+
+  await page.getByRole("link", { name: "Shape the story idea" }).click();
+  await page.getByLabel("Original idea").fill("Fixture story quality revision");
+  await page.getByLabel("Must keep").fill("Keep the moon kite.");
+  await page.getByRole("button", { name: "Generate three directions" }).click();
+  await expect(
+    page.getByRole("heading", { name: "Three ways this story could go" }),
+  ).toBeVisible();
+
+  const firstDirection = page.getByRole("region", {
+    name: "The Moon Kite Mission",
+  });
+  await firstDirection
+    .getByRole("button", { name: "Choose this direction" })
+    .click();
+
+  await expect(page.getByText("Story revision 2", { exact: true })).toBeVisible(
+    {
+      timeout: 15_000,
+    },
+  );
+  await expect(page.getByText("Spread 13:")).toBeVisible();
+  const evaluation = page.getByRole("region", {
+    name: "AI story evaluation",
+  });
+  await expect(evaluation).toBeHidden();
+  await page.getByText("How AI reviewed this story").click();
+  await expect(evaluation).toBeVisible();
+  await expect(evaluation).toContainText("AI quality prediction");
+  await expect(evaluation).toContainText("fixture-text-provider");
+  await expect(evaluation).toContainText("Idea fidelity: Passed");
+  await expect(evaluation).toContainText("Causal structure: Passed");
+  await expect(evaluation).toContainText("Read-aloud flow: Passed");
+  await expect(evaluation).toContainText("Safety: Passed");
+
+  await rm(join(testProjectRoot, projectId ?? ""), {
+    recursive: true,
+    force: true,
+  });
+});
+
+test("explains an evaluation failure and names the saved recovery point", async ({
+  page,
+}) => {
+  await page.goto("/");
+  await page.getByLabel("Project title").fill("Evaluation recovery copy");
+  await page.getByRole("button", { name: "Create local project" }).click();
+  const projectId = (
+    await page.getByText("Project ID:").textContent()
+  )?.replace("Project ID: ", "");
+
+  await page.getByRole("link", { name: "Shape the story idea" }).click();
+  await page
+    .getByLabel("Original idea")
+    .fill("Fixture story evaluation failure");
+  await page.getByRole("button", { name: "Generate three directions" }).click();
+  await expect(
+    page.getByRole("heading", { name: "Three ways this story could go" }),
+  ).toBeVisible();
+  await page
+    .getByRole("region", { name: "The Moon Kite Mission" })
+    .getByRole("button", { name: "Choose this direction" })
+    .click();
+
+  const alert = page.getByRole("alert", { name: "Story generation stopped" });
+  await expect(alert).toContainText("Story generation stopped", {
+    timeout: 15_000,
+  });
+  await expect(alert).toContainText(
+    "The story was generated and saved, but its AI quality review failed.",
+  );
+  await expect(alert).toContainText(
+    "The manuscript is also saved, so retry will continue with its quality review.",
+  );
+  await expect(
+    page.getByRole("button", { name: "Retry this direction" }).first(),
   ).toBeVisible();
 
   await rm(join(testProjectRoot, projectId ?? ""), {

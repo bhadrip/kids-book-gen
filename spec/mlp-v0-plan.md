@@ -106,9 +106,14 @@ Each JSON artifact includes a schema version, status, source artifact IDs, promp
 - Extract the parent’s intent into a brief and show editable “must keep” details.
 - Generate exactly three distinct directions with different story engines, not cosmetic variations.
 - Generate a structured story package: character records, promise, beginning/middle/end, 13-spread map, and manuscript draft.
-- Run one hidden evaluation pass for idea fidelity, causal structure, age fit, oral flow, and safety. Permit one automatic revision at most.
+- Run one evaluation pass for idea fidelity, causal structure, age fit, oral
+  flow, and safety. Keep it collapsed by default, but let an interested parent
+  inspect the model, timestamp, outcomes, evidence, preserved strengths, and
+  revision instructions. Permit one automatic revision at most.
 
-**Done when:** a parent can approve a complete text-only story without writing prompts or seeing evaluator scores.
+**Done when:** a parent can approve a complete text-only story without writing
+prompts, while optionally inspecting the AI quality review without treating it
+as a fact about child response.
 
 ### 4. Visual identity and sample-spread gate
 

@@ -1,10 +1,15 @@
-import type { TextProvider } from "@/lib/directions/text-provider";
+import type {
+  StoryGenerationOptions,
+  TextProvider,
+} from "@/lib/directions/text-provider";
 import {
   storyDirectionsSchema,
+  storyEvaluationSchema,
   storyPackageSchema,
   type ProjectBrief,
   type StoryDirection,
   type StoryDirections,
+  type StoryEvaluation,
   type StoryPackage,
 } from "@/lib/projects/project";
 
@@ -60,7 +65,7 @@ export class FixtureTextProvider implements TextProvider {
   public async generateStory(
     brief: ProjectBrief,
     direction: StoryDirection,
-    options: { revision: number; parentSteering?: string },
+    options: StoryGenerationOptions,
   ): Promise<StoryPackage> {
     await this.waitForFixtureDelay();
     return storyPackageSchema.parse({
@@ -88,8 +93,52 @@ export class FixtureTextProvider implements TextProvider {
       spreads: Array.from({ length: 13 }, (_, index) => ({
         number: index + 1,
         beat: `Story beat ${index + 1}`,
-        text: `Spread ${index + 1} moves the adventure forward while preserving the family's idea.`,
+        text: `Spread ${index + 1} moves the adventure forward while preserving the family's idea${options.qualityRevision ? " after a bounded quality revision" : ""}.`,
       })),
+    });
+  }
+
+  public async evaluateStory(
+    brief: ProjectBrief,
+    story: StoryPackage,
+  ): Promise<StoryEvaluation> {
+    await this.waitForFixtureDelay();
+    if (brief.originalIdea === "Fixture story evaluation failure")
+      throw new Error("Deterministic fixture evaluation failure.");
+    const needsRevision =
+      brief.originalIdea === "Fixture story quality revision" &&
+      story.revision === 1;
+    const passingDimension = (evidence: string) => ({
+      outcome: "pass" as const,
+      evidence: [evidence],
+    });
+    return storyEvaluationSchema.parse({
+      schemaVersion: 1,
+      projectId: brief.projectId,
+      storyRevision: story.revision,
+      evaluatedAt: this.now().toISOString(),
+      model: "fixture-text-provider",
+      outcome: needsRevision ? "revision_required" : "pass",
+      dimensions: {
+        ideaFidelity: passingDimension(
+          "The fixture preserves the family idea.",
+        ),
+        causalStructure: needsRevision
+          ? {
+              outcome: "revision_required",
+              evidence: ["The fixture requests one deterministic repair."],
+              revisionInstruction:
+                "Make the protagonist's final choice cause the resolution.",
+            }
+          : passingDimension("The protagonist's choices move the story."),
+        ageFit: passingDimension("The language fits ages 7–10."),
+        oralFlow: passingDimension("The spreads are concise for read-aloud."),
+        safety: passingDimension("No safety concern is present."),
+      },
+      preserve: ["The family idea and must-keep details"],
+      revisionInstructions: needsRevision
+        ? ["Make the protagonist's final choice cause the resolution."]
+        : [],
     });
   }
 

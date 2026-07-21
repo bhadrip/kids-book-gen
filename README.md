@@ -20,6 +20,11 @@ idea, iterate on three generated story directions, select one with steering,
 review and revise a 13-spread manuscript, and approve the result. Each accepted
 input and revision is persisted under `data/projects/<project-id>/`; automated
 generation tests use deterministic fixtures and never call a paid provider.
+Before parent review, a quality pass checks idea fidelity, causal
+structure, age fit, oral flow, and safety. A repairable failure creates at most
+one numbered successor story; both evaluations and both story versions remain
+saved. Evaluation details are collapsed by default but available to interested
+parents with the model, timestamp, outcomes, evidence, and revision guidance.
 The ordered project journey reconstructs its statuses from those artifacts and
 every generation action shows an accessible pending state, prevents duplicate
 submission, and names what has already been saved. A local job record preserves

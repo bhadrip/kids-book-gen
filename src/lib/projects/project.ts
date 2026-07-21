@@ -138,6 +138,73 @@ export const storyPackageSchema = z.object({
 });
 export type StoryPackage = z.infer<typeof storyPackageSchema>;
 
+const storyQualityOutcomeSchema = z.enum([
+  "pass",
+  "revision_required",
+  "escalation_required",
+]);
+
+const storyQualityDimensionSchema = z.object({
+  outcome: storyQualityOutcomeSchema,
+  evidence: z.array(z.string().trim().min(1).max(500)).min(1).max(3),
+  revisionInstruction: optionalText(500),
+});
+
+export const storyEvaluationSchema = z
+  .object({
+    schemaVersion: z.literal(1),
+    projectId: projectIdSchema,
+    storyRevision: z.number().int().positive(),
+    evaluatedAt: z.string().datetime(),
+    model: z.string().trim().min(1),
+    outcome: storyQualityOutcomeSchema,
+    dimensions: z.object({
+      ideaFidelity: storyQualityDimensionSchema,
+      causalStructure: storyQualityDimensionSchema,
+      ageFit: storyQualityDimensionSchema,
+      oralFlow: storyQualityDimensionSchema,
+      safety: storyQualityDimensionSchema,
+    }),
+    preserve: z.array(z.string().trim().min(1).max(500)).max(10),
+    revisionInstructions: z.array(z.string().trim().min(1).max(500)).max(5),
+  })
+  .superRefine((evaluation, context) => {
+    const outcomes = Object.values(evaluation.dimensions).map(
+      (dimension) => dimension.outcome,
+    );
+    const expectedOutcome = outcomes.includes("escalation_required")
+      ? "escalation_required"
+      : outcomes.includes("revision_required")
+        ? "revision_required"
+        : "pass";
+    if (evaluation.outcome !== expectedOutcome)
+      context.addIssue({
+        code: "custom",
+        message: "Evaluation outcome must reflect its dimension outcomes.",
+        path: ["outcome"],
+      });
+    if (
+      evaluation.outcome === "revision_required" &&
+      evaluation.revisionInstructions.length === 0
+    )
+      context.addIssue({
+        code: "custom",
+        message: "A requested revision needs bounded instructions.",
+        path: ["revisionInstructions"],
+      });
+    if (
+      evaluation.outcome === "pass" &&
+      evaluation.revisionInstructions.length > 0
+    )
+      context.addIssue({
+        code: "custom",
+        message: "A passing evaluation cannot request a revision.",
+        path: ["revisionInstructions"],
+      });
+  });
+
+export type StoryEvaluation = z.infer<typeof storyEvaluationSchema>;
+
 export const storyDecisionSchema = z.object({
   schemaVersion: z.literal(1),
   projectId: projectIdSchema,

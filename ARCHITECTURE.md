@@ -94,6 +94,8 @@ flowchart LR
   Forms --> Directions
   Forms --> Story
   Workflow --> Provider[TextProvider]
+  Workflow --> Evaluation[Story quality gate]
+  Evaluation --> Provider
   Provider --> OpenAI[OpenAI adapter]
   Provider --> Fixture[Deterministic fixture adapter]
   Workflow --> Repo
@@ -102,9 +104,21 @@ flowchart LR
 ```
 
 `FileProjectRepository` performs validated reads and atomic writes. Briefs,
-direction revisions, selected direction, story revisions, and approval
-decisions are schema-versioned JSON artifacts. `StoryWorkflowService` owns the
-text workflow; routes do not import the OpenAI SDK. A shared project journey
+direction revisions, selected direction, story revisions, story evaluations,
+and approval decisions are schema-versioned JSON artifacts.
+`StoryWorkflowService` owns the text workflow; routes do not import the OpenAI
+SDK. Before a generated story reaches parent review, the service asks the
+`TextProvider` to evaluate idea fidelity, causal structure, age fit, oral flow,
+and safety. A repairable result may generate exactly one numbered successor and
+one regression evaluation. An unresolved or safety-escalated result stops the
+loop, marks the job failed, and preserves the latest `story.json`. The current
+evaluation is available on the story page through a collapsed disclosure; it
+shows provider provenance and evidence while labeling the result as an AI
+prediction. If evaluation fails after the manuscript is saved, retry resumes
+from `story.json` rather than paying to regenerate the story. Failed job records
+store a safe, classified explanation for configuration, access, rate/billing,
+provider, schema, and quality-review failures; parent recovery pages render that
+reason and name the saved checkpoint. A shared project journey
 derives ordered checkpoint statuses and the next recovery action from validated
 artifacts. `StoryWorkflowService` persists a versioned text-generation job
 before provider work and records its completed or failed terminal state while
@@ -151,3 +165,5 @@ authoritative task status and evidence remain in
 | 2026-07-20 | Added the parent-facing interaction contract for durable state, generation recovery, approvals, and accessibility. | `spec/08-ux-guidelines.md`, `AGENTS.md`                                       |
 | 2026-07-20 | Added the versioned text workflow and an isolated zero-token fixture path for automated browser tests.             | `src/lib/directions/`, `e2e/home.spec.ts`, `playwright.config.ts`             |
 | 2026-07-20 | Added the ordered project journey, artifact-derived recovery statuses, and accessible progressive form feedback.   | `src/components/`, `src/lib/projects/project-progress.ts`, `e2e/home.spec.ts` |
+| 2026-07-20 | Added the hidden story-quality gate, versioned evaluation artifacts, and one-revision ceiling.                     | `src/lib/directions/`, `src/lib/projects/project.ts`, `e2e/home.spec.ts`      |
+| 2026-07-20 | Exposed the current AI evaluation through an optional, accessible parent disclosure.                               | `src/app/projects/[projectId]/story/page.tsx`, `spec/08-ux-guidelines.md`     |
