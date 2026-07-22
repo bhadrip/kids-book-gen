@@ -912,6 +912,14 @@ export default async function BookPage({
               ? "This one decision covers the exact current revisions of all 16 pages. You do not need to approve pages one by one."
               : "Review and edit individual pages above as needed, then approve the book once as a whole. A later text edit or image regeneration preserves the prior decision but requires one fresh complete-book approval."}
           </p>
+          {data.bookApproval?.approved ? (
+            <Link
+              className="mt-5 inline-block rounded-xl bg-stone-950 px-5 py-3 font-semibold text-white"
+              href={`/projects/${projectId}/book/read`}
+            >
+              Read the approved book and download PDF
+            </Link>
+          ) : null}
           {!data.bookApproval?.approved ? (
             <PendingForm
               action={`/api/projects/${projectId}/book/decision`}

@@ -121,6 +121,14 @@ test("offers a parent-safe idea intake without making a model request", async ({
   await expect(
     page.getByRole("button", { name: "Generate three directions" }),
   ).toBeVisible();
+  await page.goto(`/projects/${projectId}/book/read`);
+  await expect(
+    page.getByRole("heading", { name: "The family reader is not ready yet." }),
+  ).toBeVisible();
+  await expect(page.getByText("Finish all 16 pages")).toBeVisible();
+  await expect(
+    page.getByRole("link", { name: "Return to book review" }),
+  ).toBeVisible();
 
   await rm(join(testProjectRoot, projectId ?? ""), {
     recursive: true,
@@ -431,7 +439,7 @@ test("chooses a curated look, preserves character options, and approves a sample
 test("shows resumable per-page production, revises one page, and preserves its siblings without model tokens", async ({
   page,
 }) => {
-  test.setTimeout(120_000);
+  test.setTimeout(180_000);
   const projectId = await createApprovedFixtureStory(
     page,
     "Fixture full-book journey",
@@ -642,6 +650,94 @@ test("shows resumable per-page production, revises one page, and preserves its s
   await page.screenshot({
     path: "test-results/full-book-review-narrow.png",
     fullPage: true,
+  });
+
+  await page.setViewportSize({ width: 1280, height: 900 });
+  await page
+    .getByRole("link", {
+      name: "Read the approved book and download PDF",
+    })
+    .click();
+  await expect(
+    page.getByRole("heading", { name: "Fixture full-book journey" }),
+  ).toBeVisible();
+  await expect(page.getByText("Page 1 of 16:")).toBeVisible();
+  await page.setViewportSize({ width: 390, height: 844 });
+  expect(
+    await page.evaluate(
+      () => document.documentElement.scrollWidth <= window.innerWidth,
+    ),
+  ).toBe(true);
+  await page.screenshot({
+    path: "test-results/fullscreen-reader-narrow.png",
+    fullPage: true,
+  });
+  await page.setViewportSize({ width: 1280, height: 900 });
+  await expect(
+    page.getByRole("button", { name: "Previous page" }),
+  ).toBeDisabled();
+  await page.getByRole("button", { name: "Next page" }).click();
+  await expect(page.getByText("Page 2 of 16:")).toBeVisible();
+  await page.keyboard.press("End");
+  await expect(page.getByText("Page 16 of 16:")).toBeVisible();
+  await expect(
+    page.getByRole("button", { name: "Finish and share feedback" }),
+  ).toBeVisible();
+  await page.screenshot({
+    path: "test-results/fullscreen-reader.png",
+    fullPage: true,
+  });
+
+  const downloadPromise = page.waitForEvent("download");
+  await page.getByRole("button", { name: "Download landscape PDF" }).click();
+  await expect(
+    page.getByRole("button", { name: "Rendering your PDF…" }),
+  ).toBeDisabled();
+  const download = await downloadPromise;
+  expect(download.suggestedFilename()).toBe("storybook-proof.pdf");
+  const downloadedPath = await download.path();
+  expect(downloadedPath).not.toBeNull();
+  expect((await readFile(downloadedPath ?? "")).subarray(0, 4).toString()).toBe(
+    "%PDF",
+  );
+  await expect(page.locator("#pdf-download-status")).toContainText(
+    "PDF downloaded",
+  );
+  expect(
+    (await readFile(join(testProjectRoot, projectId ?? "", "proof.pdf")))
+      .subarray(0, 4)
+      .toString(),
+  ).toBe("%PDF");
+
+  await page.getByLabel("Favorite part").fill("The moon kite came home.");
+  await page
+    .getByLabel("Was anything confusing? (optional)")
+    .fill("We wondered who opened the window.");
+  await page
+    .getByLabel("How much did the book feel like your original idea? (1–5)")
+    .selectOption("5");
+  await page.getByLabel("Reread interest").selectOption("yes");
+  await page
+    .getByLabel("Interest in another story or sequel")
+    .selectOption("maybe");
+  await page.getByRole("button", { name: "Save reading feedback" }).click();
+  await expect(page.getByText("Reading feedback saved locally.")).toBeVisible();
+  await expect(
+    page.getByRole("heading", {
+      name: "One clear record for this family session",
+    }),
+  ).toBeVisible();
+  await expect(page.getByText("$3.06")).toBeVisible();
+  await expect(page.getByText("5/5")).toBeVisible();
+  const feedback = JSON.parse(
+    await readFile(
+      join(testProjectRoot, projectId ?? "", "feedback.json"),
+      "utf8",
+    ),
+  ) as { completion?: unknown; rereadInterest?: unknown };
+  expect(feedback).toMatchObject({
+    completion: "finished",
+    rereadInterest: "yes",
   });
 
   await rm(join(testProjectRoot, projectId ?? ""), {

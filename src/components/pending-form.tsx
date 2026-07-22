@@ -1,6 +1,13 @@
 "use client";
 
-import { useId, useState, type FormEvent, type ReactNode } from "react";
+import {
+  useEffect,
+  useId,
+  useRef,
+  useState,
+  type FormEvent,
+  type ReactNode,
+} from "react";
 
 type PendingFormProps = {
   action: string;
@@ -24,6 +31,11 @@ export function PendingForm({
   const [pending, setPending] = useState(false);
   const [submissionError, setSubmissionError] = useState<string | null>(null);
   const statusId = useId();
+  const errorRef = useRef<HTMLParagraphElement>(null);
+
+  useEffect(() => {
+    if (submissionError) errorRef.current?.focus();
+  }, [submissionError]);
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -95,7 +107,12 @@ export function PendingForm({
         {pending ? pendingMessage : ""}
       </p>
       {submissionError ? (
-        <p className="mt-3 rounded-xl bg-red-50 p-4 text-red-800" role="alert">
+        <p
+          className="mt-3 rounded-xl bg-red-50 p-4 text-red-800 outline-none focus:ring-2 focus:ring-red-700"
+          ref={errorRef}
+          role="alert"
+          tabIndex={-1}
+        >
           {submissionError}
         </p>
       ) : null}
