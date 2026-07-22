@@ -18,12 +18,91 @@ export const bookPageIdSchema = z.union([
 ]);
 export type BookPageId = z.infer<typeof bookPageIdSchema>;
 
+const bookPageKindSchema = z.enum([
+  "cover",
+  "front_matter",
+  "story",
+  "end_matter",
+]);
+const bookTextSourceSchema = z.enum([
+  "approved_story",
+  "book_matter",
+  "parent_edited",
+]);
+const textSafeAreaSchema = z.enum([
+  "upper_left",
+  "upper_right",
+  "lower_left",
+  "lower_right",
+]);
+
+export const bookPlanPageSchema = z.object({
+  pageId: bookPageIdSchema,
+  sequence: z.number().int().min(1).max(16),
+  kind: bookPageKindSchema,
+  storySpreadNumber: z.number().int().min(1).max(13).optional(),
+  title: z.string().trim().min(1).max(160),
+  beat: z.string().trim().min(1).max(1_000),
+  text: z.string().trim().min(1).max(3_000),
+  textSource: bookTextSourceSchema,
+  illustrationDescription: z.string().trim().min(1).max(2_000),
+  continuityFacts: z.array(z.string().trim().min(1).max(500)).min(1).max(16),
+  requiredReferenceDetails: z
+    .array(z.string().trim().min(1).max(500))
+    .min(1)
+    .max(16),
+  textSafeArea: textSafeAreaSchema,
+  previousPageId: bookPageIdSchema.optional(),
+});
+export type BookPlanPage = z.infer<typeof bookPlanPageSchema>;
+
+export const bookPlanSchema = z.object({
+  schemaVersion: z.literal(1),
+  projectId: projectIdSchema,
+  revision: z.number().int().positive(),
+  sourceStoryRevision: z.number().int().positive(),
+  sourceSampleRevision: z.number().int().positive(),
+  pages: z.array(bookPlanPageSchema).length(16),
+  createdAt: z.string().datetime(),
+  updatedAt: z.string().datetime(),
+});
+export type BookPlan = z.infer<typeof bookPlanSchema>;
+
+export const bookPlanDecisionSchema = z.object({
+  schemaVersion: z.literal(1),
+  projectId: projectIdSchema,
+  planRevision: z.number().int().positive(),
+  status: z.literal("approved"),
+  decidedAt: z.string().datetime(),
+});
+export type BookPlanDecision = z.infer<typeof bookPlanDecisionSchema>;
+
+export const bookDecisionSchema = z.object({
+  schemaVersion: z.literal(1),
+  projectId: projectIdSchema,
+  decisionRevision: z.number().int().positive(),
+  status: z.literal("approved"),
+  sourceStoryRevision: z.number().int().positive(),
+  sourceSampleRevision: z.number().int().positive(),
+  sourcePlanRevision: z.number().int().positive(),
+  pageRevisions: z
+    .array(
+      z.object({
+        pageId: bookPageIdSchema,
+        revision: z.number().int().positive(),
+      }),
+    )
+    .length(16),
+  decidedAt: z.string().datetime(),
+});
+export type BookDecision = z.infer<typeof bookDecisionSchema>;
+
 export const bookPageSchema = z.object({
   schemaVersion: z.literal(1),
   projectId: projectIdSchema,
   pageId: bookPageIdSchema,
   sequence: z.number().int().min(1).max(16),
-  kind: z.enum(["cover", "front_matter", "story", "end_matter"]),
+  kind: bookPageKindSchema,
   storySpreadNumber: z.number().int().min(1).max(13).optional(),
   revision: z.number().int().positive(),
   sourceStoryRevision: z.number().int().positive(),
@@ -32,7 +111,8 @@ export const bookPageSchema = z.object({
   title: z.string().trim().min(1).max(160),
   beat: z.string().trim().min(1).max(1_000),
   text: z.string().trim().min(1).max(3_000),
-  textSource: z.enum(["approved_story", "book_matter", "parent_edited"]),
+  textSource: bookTextSourceSchema,
+  illustrationDescription: optionalText(2_000),
   assetFilename: imageAssetFilenameSchema,
   altText: z.string().trim().min(1).max(500),
   continuityFacts: z.array(z.string().trim().min(1).max(500)).min(1).max(16),
@@ -62,6 +142,7 @@ export const bookActivityEventSchema = z.object({
     "kept",
     "text_edited",
     "regenerated",
+    "book_approved",
     "preflight_completed",
   ]),
   at: z.string().datetime(),

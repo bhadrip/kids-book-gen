@@ -118,6 +118,7 @@ export class OpenAIImageProvider implements ImageProvider {
     const prompt = [
       `Create the polished landscape children's-book ${input.kind.replace("_", " ")} illustration for ${input.title}.`,
       `Page purpose: ${input.beat}`,
+      `Approved illustration plan: ${input.illustrationDescription}`,
       `Separate text-layer context (do not render it): ${input.text}`,
       `Continuity facts for this beat: ${input.continuityFacts.join("; ")}`,
       `Required approved-reference details: ${input.requiredReferenceDetails.join("; ")}`,

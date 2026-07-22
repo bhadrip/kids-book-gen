@@ -407,7 +407,7 @@ test("chooses a curated look, preserves character options, and approves a sample
   await page.getByRole("link", { name: "Save and exit" }).click();
   await expect(page.getByText("Approved", { exact: true })).toHaveCount(4);
   await expect(
-    page.getByRole("link", { name: "Start full-book production" }),
+    page.getByRole("link", { name: "Preview the book plan" }),
   ).toBeVisible();
 
   const decision = JSON.parse(
@@ -446,6 +446,49 @@ test("shows resumable per-page production, revises one page, and preserves its s
   ).toBeVisible();
   await expect(page.getByText("$2.88")).toBeVisible();
   await expect(page.getByText("$3.00")).toBeVisible();
+  await expect(
+    page.getByRole("heading", {
+      name: "Preview all 16 pages before image generation",
+    }),
+  ).toBeVisible();
+  await expect(page.locator('[data-testid^="plan-card-"]')).toHaveCount(16);
+  await expect(
+    page.getByRole("button", { name: "Start full-book production" }),
+  ).toHaveCount(0);
+  await page
+    .getByText("Open the one-spread-at-a-time wireframe reader")
+    .click();
+  await expect(page.getByTestId("plan-reader-page")).toHaveCount(16);
+
+  const plannedSpread = page.getByTestId("plan-card-story-07");
+  await plannedSpread.getByText("Adjust this page plan").click();
+  await plannedSpread
+    .getByLabel("Planned illustration")
+    .fill(
+      "A wide bedtime scene with Milo reaching toward the silver moon kite above the rooftops.",
+    );
+  await plannedSpread.getByRole("button", { name: "Save page plan" }).click();
+  await expect(
+    page.getByText("The page plan is saved as a new revision.", {
+      exact: false,
+    }),
+  ).toBeVisible();
+  await page.getByRole("button", { name: "Approve this book plan" }).click();
+  await expect(
+    page.getByText("The zero-cost book plan is approved.", { exact: false }),
+  ).toBeVisible();
+  await expect(
+    page
+      .getByTestId("plan-card-story-07")
+      .getByText(
+        "A wide bedtime scene with Milo reaching toward the silver moon kite above the rooftops.",
+      )
+      .first(),
+  ).toBeVisible();
+  await page.screenshot({
+    path: "test-results/book-plan-preview.png",
+    fullPage: true,
+  });
 
   const generationFinished = page.waitForURL("**/book?result=saved");
   await page
@@ -454,9 +497,11 @@ test("shows resumable per-page production, revises one page, and preserves its s
   await expect(
     page.getByRole("button", { name: "Making the book…" }),
   ).toBeDisabled();
-  await expect(page.getByRole("status")).toContainText(
-    "New pages are saved one at a time",
-  );
+  await expect(
+    page
+      .getByRole("status")
+      .filter({ hasText: "New pages are saved one at a time" }),
+  ).toBeVisible();
   await expect
     .poll(async () => {
       try {
@@ -478,6 +523,12 @@ test("shows resumable per-page production, revises one page, and preserves its s
   const recoveryPage = await page.context().newPage();
   await recoveryPage.goto(`/projects/${projectId}/book`);
   await expect(recoveryPage.getByText("Persisted job")).toBeVisible();
+  await expect(
+    recoveryPage.getByText("Generation is active in this app."),
+  ).toBeVisible();
+  await expect(
+    recoveryPage.getByRole("button", { name: "Resume after interruption" }),
+  ).toHaveCount(0);
   await expect(recoveryPage.getByText(/of 16 pages saved/)).toBeVisible();
   await recoveryPage
     .getByRole("button", { name: "Stop after the current page" })
@@ -512,7 +563,7 @@ test("shows resumable per-page production, revises one page, and preserves its s
   await expect(
     page.getByRole("heading", { name: "Production preflight passed" }),
   ).toBeVisible();
-  await expect(page.getByRole("article")).toHaveCount(16);
+  await expect(page.getByTestId("saved-book-page")).toHaveCount(16);
   await expect(
     page.getByText("Story spread 13", { exact: true }).first(),
   ).toBeVisible();
@@ -554,11 +605,15 @@ test("shows resumable per-page production, revises one page, and preserves its s
       "utf8",
     ),
   ).toBe(siblingBefore);
-  await page
-    .locator("#story-07")
-    .getByRole("button", { name: "Keep this page" })
-    .click();
-  await expect(page.getByText("is marked to keep in this book.")).toBeVisible();
+  await page.getByRole("button", { name: "Approve the complete book" }).click();
+  await expect(
+    page.getByText(
+      "The complete book is approved using the current revisions of all 16 pages.",
+    ),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("heading", { name: "The complete book is approved" }),
+  ).toBeVisible();
 
   const productionJob = JSON.parse(
     await readFile(
@@ -603,6 +658,10 @@ test("preserves completed book pages when one production request fails", async (
   );
   await approveFixtureVisual(page, projectId ?? "");
   await page.getByRole("link", { name: "Review production estimate" }).click();
+  await page.getByRole("button", { name: "Approve this book plan" }).click();
+  await expect(
+    page.getByText("The zero-cost book plan is approved.", { exact: false }),
+  ).toBeVisible();
   const failedResponse = page.waitForResponse(
     (response) =>
       response.url().includes(`/projects/${projectId}/book/production`) &&
@@ -620,7 +679,7 @@ test("preserves completed book pages when one production request fails", async (
   await expect(
     page.getByRole("button", { name: "Retry the failed page" }),
   ).toBeVisible();
-  await expect(page.getByRole("article")).toHaveCount(4);
+  await expect(page.getByTestId("saved-book-page")).toHaveCount(4);
   const failedJob = JSON.parse(
     await readFile(
       join(testProjectRoot, projectId ?? "", "book-production-job.json"),

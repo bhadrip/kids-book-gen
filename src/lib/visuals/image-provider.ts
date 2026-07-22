@@ -31,6 +31,7 @@ export interface ImageProvider {
     title: string;
     beat: string;
     text: string;
+    illustrationDescription: string;
     continuityFacts: string[];
     requiredReferenceDetails: string[];
     story: StoryPackage;

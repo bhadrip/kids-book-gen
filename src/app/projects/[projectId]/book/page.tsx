@@ -3,21 +3,20 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { PendingForm } from "@/components/pending-form";
+import { ProductionLiveStatus } from "@/components/production-live-status";
 import { ProjectJourney } from "@/components/project-journey";
 import { readAppConfig } from "@/lib/config/app-config";
 import { FileProjectRepository } from "@/lib/projects/file-project-repository";
 import { getProjectProgress } from "@/lib/projects/project-progress";
 import { projectBriefSchema } from "@/lib/projects/project";
-import {
-  labelForPage,
-  requiredBookPageIds,
-} from "@/lib/production/book-preflight";
+import { requiredBookPageIds } from "@/lib/production/book-preflight";
+import { getActiveProductionRun } from "@/lib/production/active-production-runs";
 import { createBookProduction } from "@/lib/production/create-book-production";
 import {
-  bookPageIdSchema,
   bookPageSchema,
   bookPreflightSchema,
   bookProductionJobSchema,
+  type BookPlanPage,
 } from "@/lib/production/production-artifacts";
 import {
   sampleSpreadSchema,
@@ -31,12 +30,14 @@ async function optional<T>(operation: Promise<T>): Promise<T | null> {
 }
 
 async function loadBook(projectId: string) {
+  const loadedAt = new Date();
   const config = readAppConfig(process.env);
   const repository = new FileProjectRepository(config.projectRoot, {
     now: () => new Date(),
     createId: () => crypto.randomUUID(),
   });
   try {
+    const production = await createBookProduction(config, () => new Date());
     const [
       project,
       brief,
@@ -47,6 +48,8 @@ async function loadBook(projectId: string) {
       pages,
       progress,
       estimate,
+      planPreview,
+      bookApproval,
     ] = await Promise.all([
       repository.load(projectId),
       optional(
@@ -92,11 +95,9 @@ async function loadBook(projectId: string) {
         ),
       ),
       getProjectProgress(repository, projectId),
-      optional(
-        (await createBookProduction(config, () => new Date())).estimate(
-          projectId,
-        ),
-      ),
+      optional(production.estimate(projectId)),
+      optional(production.previewBookPlan(projectId)),
+      optional(production.reviewBookApproval(projectId)),
     ]);
     return {
       project,
@@ -108,6 +109,13 @@ async function loadBook(projectId: string) {
       pages: pages.filter((page) => page !== null),
       progress,
       estimate,
+      planPreview,
+      bookApproval,
+      activeProductionRun: getActiveProductionRun(projectId),
+      productionRecentlyUpdated: Boolean(
+        job?.status === "in_progress" &&
+        loadedAt.getTime() - new Date(job.updatedAt).getTime() < 4 * 60 * 1_000,
+      ),
       nextRegenerationEstimate:
         (job?.estimatedSpentCostUsd ?? 0) + config.finalImageEstimateUsd,
     };
@@ -119,6 +127,55 @@ async function loadBook(projectId: string) {
 const assetUrl = (projectId: string, filename: string) =>
   `/api/projects/${projectId}/assets/${filename}`;
 
+function textPosition(textSafeArea: BookPlanPage["textSafeArea"]): string {
+  const positions = {
+    upper_left: "top-[7%] left-[5%]",
+    upper_right: "top-[7%] right-[5%]",
+    lower_left: "bottom-[7%] left-[5%]",
+    lower_right: "right-[5%] bottom-[7%]",
+  } as const;
+  return positions[textSafeArea];
+}
+
+function PlanWireframe({
+  page,
+  compact = false,
+}: {
+  page: BookPlanPage;
+  compact?: boolean;
+}) {
+  return (
+    <div
+      className={`relative aspect-[3/2] overflow-hidden bg-stone-100 ${compact ? "min-h-44" : "min-h-[28rem] rounded-3xl"}`}
+    >
+      <div className="absolute inset-4 flex items-center justify-center rounded-2xl border-2 border-dashed border-stone-300 bg-gradient-to-br from-stone-50 to-stone-200 p-5 text-center">
+        <div className="max-w-[72%]">
+          <p className="text-xs font-semibold tracking-[0.14em] text-sky-800 uppercase">
+            Artwork wireframe
+          </p>
+          <p
+            className={`${compact ? "mt-2 line-clamp-4 text-xs leading-5" : "mt-4 text-base leading-7"} text-stone-600`}
+          >
+            {page.illustrationDescription}
+          </p>
+        </div>
+      </div>
+      <div
+        className={`absolute ${textPosition(page.textSafeArea)} max-h-[58%] w-[42%] overflow-auto rounded-xl bg-[#fffdf7]/95 ${compact ? "p-2" : "p-5 shadow-lg"}`}
+      >
+        <p className="text-[0.6rem] font-semibold tracking-wide text-sky-800 uppercase sm:text-xs">
+          {page.title}
+        </p>
+        <p
+          className={`${compact ? "mt-1 line-clamp-4 text-[0.58rem] leading-3 sm:text-xs sm:leading-4" : "mt-3 text-base leading-7 whitespace-pre-line"} text-stone-950`}
+        >
+          {page.text}
+        </p>
+      </div>
+    </div>
+  );
+}
+
 export default async function BookPage({
   params,
   searchParams,
@@ -127,7 +184,7 @@ export default async function BookPage({
   searchParams: Promise<{ result?: string; page?: string }>;
 }) {
   const { projectId } = await params;
-  const { result, page: resultPage } = await searchParams;
+  const { result } = await searchParams;
   const data = await loadBook(projectId);
   const visualApproved =
     data.sample &&
@@ -135,12 +192,18 @@ export default async function BookPage({
     data.visualDecision.sampleRevision === data.sample.revision;
   const completed = data.job?.completedUnitIds.length ?? data.pages.length;
   const generating = data.job?.status === "in_progress";
+  const generationActive = generating && Boolean(data.activeProductionRun);
+  const generationRecentlyUpdated = data.productionRecentlyUpdated;
+  const generationLikelyActive = generationActive || generationRecentlyUpdated;
+  const generationInterrupted = generating && !generationLikelyActive;
+  const planApproved = data.planPreview?.approved ?? false;
+  const planEditable = !data.job && data.pages.length === 0;
   const canResume =
     visualApproved &&
+    planApproved &&
     data.job?.status !== "completed" &&
-    data.job?.status !== "in_progress" &&
+    !generationLikelyActive &&
     data.pages.length < requiredBookPageIds.length;
-  const parsedResultPage = bookPageIdSchema.safeParse(resultPage);
 
   return (
     <main className="mx-auto max-w-7xl px-6 py-12 sm:py-16">
@@ -186,6 +249,31 @@ export default async function BookPage({
           below.
         </p>
       ) : null}
+      {result === "plan_saved" ? (
+        <p
+          className="mt-6 rounded-2xl bg-green-50 p-5 text-green-900"
+          role="status"
+        >
+          The page plan is saved as a new revision. The approved story and
+          visual sample were not changed; review and approve the current plan
+          before production.
+        </p>
+      ) : null}
+      {result === "plan_approved" ? (
+        <p
+          className="mt-6 rounded-2xl bg-green-50 p-5 text-green-900"
+          role="status"
+        >
+          The zero-cost book plan is approved. Review the production estimate
+          and start image generation when ready.
+        </p>
+      ) : null}
+      {result === "plan_failed" ? (
+        <p className="mt-6 rounded-2xl bg-red-50 p-5 text-red-900" role="alert">
+          That plan change was not saved. The approved story and visual sample
+          remain unchanged.
+        </p>
+      ) : null}
       {result === "paused" ? (
         <p
           className="mt-6 rounded-2xl bg-amber-50 p-5 text-amber-950"
@@ -201,15 +289,13 @@ export default async function BookPage({
             "That page did not finish. The current page and every completed sibling are still saved."}
         </p>
       ) : null}
-      {result === "keep" ? (
+      {result === "book_approved" ? (
         <p
           className="mt-6 rounded-2xl bg-green-50 p-5 text-green-900"
           role="status"
         >
-          {parsedResultPage.success
-            ? labelForPage(parsedResultPage.data)
-            : "The page"}{" "}
-          is marked to keep in this book.
+          The complete book is approved using the current revisions of all 16
+          pages.
         </p>
       ) : null}
       {result === "edit_text" ? (
@@ -252,8 +338,215 @@ export default async function BookPage({
         </section>
       ) : null}
 
+      {visualApproved && data.planPreview ? (
+        <section className="mt-10" aria-labelledby="book-plan-heading">
+          <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+            <div>
+              <p className="text-sm font-semibold text-sky-800">
+                Zero-additional-image-cost preview
+              </p>
+              <h2
+                className="mt-2 text-3xl font-semibold text-stone-950"
+                id="book-plan-heading"
+              >
+                Preview all 16 pages before image generation
+              </h2>
+              <p className="mt-3 max-w-3xl leading-7 text-stone-700">
+                This plan is assembled locally from the approved manuscript,
+                character reference, Visual Bible, story beats, and family
+                details. No image-provider request is made to show or revise
+                these wireframes.
+              </p>
+            </div>
+            <p
+              className={`w-fit rounded-full px-4 py-2 text-sm font-semibold ${planApproved ? "bg-green-100 text-green-900" : "bg-amber-100 text-amber-950"}`}
+            >
+              Plan revision {data.planPreview.plan.revision} ·{" "}
+              {planApproved ? "Approved" : "Ready for review"}
+            </p>
+          </div>
+
+          <div className="mt-7 rounded-3xl border border-stone-200 bg-white p-6 shadow-sm">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+              <div>
+                <h3 className="text-2xl font-semibold text-stone-950">
+                  Contact sheet
+                </h3>
+                <p className="mt-2 text-sm leading-6 text-stone-600">
+                  Scan pacing, text density, locations, repeated compositions,
+                  and must-show details across the whole book.
+                </p>
+              </div>
+              <p className="text-sm font-semibold text-stone-500">
+                1 cover · 1 title page · 13 story spreads · 1 closing page
+              </p>
+            </div>
+            <ol className="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+              {data.planPreview.plan.pages.map((planPage) => (
+                <li
+                  className="scroll-mt-6 overflow-hidden rounded-2xl border border-stone-200 bg-stone-50"
+                  data-testid={`plan-card-${planPage.pageId}`}
+                  id={`plan-${planPage.pageId}`}
+                  key={planPage.pageId}
+                >
+                  <PlanWireframe compact page={planPage} />
+                  <div className="p-4">
+                    <p className="text-xs font-semibold tracking-wide text-sky-800 uppercase">
+                      Page {planPage.sequence} of 16
+                    </p>
+                    <h4 className="mt-1 font-semibold text-stone-950">
+                      {planPage.title}
+                    </h4>
+                    <p className="mt-2 text-sm leading-6 text-stone-600">
+                      {planPage.beat}
+                    </p>
+                    <details className="mt-3">
+                      <summary className="cursor-pointer text-sm font-semibold text-stone-800">
+                        What this page will preserve
+                      </summary>
+                      <ul className="mt-2 list-disc space-y-1 pl-5 text-xs leading-5 text-stone-600">
+                        {planPage.requiredReferenceDetails.map((detail) => (
+                          <li key={detail}>{detail}</li>
+                        ))}
+                      </ul>
+                    </details>
+                    {planEditable ? (
+                      <details className="mt-4 border-t border-stone-200 pt-4">
+                        <summary className="cursor-pointer text-sm font-semibold text-stone-950">
+                          Adjust this page plan
+                        </summary>
+                        <PendingForm
+                          action={`/api/projects/${projectId}/book/plan/pages/${planPage.pageId}`}
+                          className="mt-4"
+                          pendingLabel="Saving the page plan…"
+                          pendingMessage="A numbered plan successor is being saved. The approved story and visual sample remain unchanged."
+                          submitClassName="mt-4 w-full justify-center rounded-xl border border-stone-950 px-4 py-3 text-sm font-semibold text-stone-950"
+                          submitLabel="Save page plan"
+                        >
+                          <label
+                            className="block text-sm font-semibold text-stone-950"
+                            htmlFor={`plan-text-${planPage.pageId}`}
+                          >
+                            Separate page text
+                          </label>
+                          <textarea
+                            className="mt-2 block min-h-28 w-full rounded-xl border border-stone-300 p-3 text-sm leading-6"
+                            defaultValue={planPage.text}
+                            id={`plan-text-${planPage.pageId}`}
+                            maxLength={3000}
+                            name="text"
+                            required
+                          />
+                          <label
+                            className="mt-4 block text-sm font-semibold text-stone-950"
+                            htmlFor={`plan-art-${planPage.pageId}`}
+                          >
+                            Planned illustration
+                          </label>
+                          <textarea
+                            className="mt-2 block min-h-32 w-full rounded-xl border border-stone-300 p-3 text-sm leading-6"
+                            defaultValue={planPage.illustrationDescription}
+                            id={`plan-art-${planPage.pageId}`}
+                            maxLength={2000}
+                            name="illustrationDescription"
+                            required
+                          />
+                          <label
+                            className="mt-4 block text-sm font-semibold text-stone-950"
+                            htmlFor={`plan-must-show-${planPage.pageId}`}
+                          >
+                            Must show or preserve
+                          </label>
+                          <p className="mt-1 text-xs leading-5 text-stone-500">
+                            Put one required detail on each line.
+                          </p>
+                          <textarea
+                            className="mt-2 block min-h-32 w-full rounded-xl border border-stone-300 p-3 text-sm leading-6"
+                            defaultValue={planPage.requiredReferenceDetails.join(
+                              "\n",
+                            )}
+                            id={`plan-must-show-${planPage.pageId}`}
+                            maxLength={4000}
+                            name="requiredReferenceDetails"
+                            required
+                          />
+                        </PendingForm>
+                      </details>
+                    ) : null}
+                  </div>
+                </li>
+              ))}
+            </ol>
+          </div>
+
+          <details className="mt-6 rounded-3xl border border-stone-200 bg-white p-6 shadow-sm">
+            <summary className="cursor-pointer text-xl font-semibold text-stone-950">
+              Open the one-spread-at-a-time wireframe reader
+            </summary>
+            <p className="mt-3 max-w-3xl text-sm leading-6 text-stone-600">
+              Scroll sideways to inspect page turns, text placement, and the
+              planned visual sequence at book size. These neutral placeholders
+              do not predict final composition or character fidelity; the
+              approved sample remains the visual-quality reference.
+            </p>
+            <div className="mt-6 flex snap-x snap-mandatory gap-6 overflow-x-auto pb-5">
+              {data.planPreview.plan.pages.map((planPage) => (
+                <article
+                  className="w-full min-w-full snap-center"
+                  data-testid="plan-reader-page"
+                  key={`reader-${planPage.pageId}`}
+                >
+                  <div className="mb-3 flex items-center justify-between gap-4">
+                    <h3 className="font-semibold text-stone-950">
+                      {planPage.title}
+                    </h3>
+                    <p className="text-sm text-stone-500">
+                      {planPage.sequence} of 16
+                    </p>
+                  </div>
+                  <PlanWireframe page={planPage} />
+                </article>
+              ))}
+            </div>
+          </details>
+
+          {planEditable ? (
+            <section
+              className="mt-6 rounded-3xl border border-sky-200 bg-sky-50 p-6"
+              aria-label="Book plan approval"
+            >
+              <h3 className="text-2xl font-semibold text-stone-950">
+                {planApproved
+                  ? "This book plan is approved"
+                  : "Approve the plan before spending on full artwork"}
+              </h3>
+              <p className="mt-3 max-w-3xl leading-7 text-stone-700">
+                {planApproved
+                  ? "Production will use this exact text, illustration description, continuity, and must-show detail set. Editing any page creates a successor plan that needs fresh approval."
+                  : "Approval locks this exact plan revision for production. You can still edit any page above first; those edits never overwrite the approved story or visual sample."}
+              </p>
+              {!planApproved ? (
+                <PendingForm
+                  action={`/api/projects/${projectId}/book/plan/decision`}
+                  className="mt-5"
+                  pendingLabel="Saving plan approval…"
+                  pendingMessage="Approval is being saved for this exact 16-page plan revision. No provider request is made."
+                  submitClassName="rounded-xl bg-stone-950 px-5 py-3 font-semibold text-white"
+                  submitLabel="Approve this book plan"
+                >
+                  <input name="status" type="hidden" value="approved" />
+                </PendingForm>
+              ) : null}
+            </section>
+          ) : null}
+        </section>
+      ) : null}
+
       {visualApproved && data.estimate ? (
-        <section className="mt-10 grid gap-6 rounded-3xl border border-stone-200 bg-white p-6 shadow-sm lg:grid-cols-[1fr_auto] lg:items-center">
+        <section
+          className="mt-10 grid scroll-mt-6 gap-6 rounded-3xl border border-stone-200 bg-white p-6 shadow-sm lg:grid-cols-[1fr_auto] lg:items-center"
+          id="production-estimate"
+        >
           <div>
             <p className="text-sm font-semibold text-sky-800">
               Before generating
@@ -307,18 +600,22 @@ export default async function BookPage({
             <PendingForm
               action={`/api/projects/${projectId}/book/production`}
               pendingLabel={
-                data.pages.length === 0
-                  ? "Making the book…"
-                  : "Resuming the book…"
+                generationInterrupted
+                  ? "Resuming after interruption…"
+                  : data.pages.length === 0
+                    ? "Making the book…"
+                    : "Resuming the book…"
               }
               pendingMessage={`${completed} of 16 pages were safely saved before this request. New pages are saved one at a time; you may save and exit while the local job continues.`}
               submitClassName="rounded-xl bg-stone-950 px-5 py-3 font-semibold text-white"
               submitLabel={
                 data.job?.status === "failed"
                   ? "Retry the failed page"
-                  : data.pages.length > 0
-                    ? "Resume with the next page"
-                    : "Start full-book production"
+                  : generationInterrupted
+                    ? "Resume after interruption"
+                    : data.pages.length > 0
+                      ? "Resume with the next page"
+                      : "Start full-book production"
               }
             >
               <input name="action" type="hidden" value="start" />
@@ -337,8 +634,8 @@ export default async function BookPage({
                 </label>
               ) : null}
             </PendingForm>
-          ) : generating ? (
-            <div className="max-w-sm space-y-5">
+          ) : generationLikelyActive ? (
+            <div className="max-w-sm">
               <PendingForm
                 action={`/api/projects/${projectId}/book/production`}
                 pendingLabel="Requesting a safe pause…"
@@ -348,37 +645,21 @@ export default async function BookPage({
               >
                 <input name="action" type="hidden" value="pause" />
               </PendingForm>
-              <div className="border-t border-stone-200 pt-5">
-                <p className="text-sm leading-6 text-stone-600">
-                  If the app or computer restarted and no browser still shows an
-                  active “Making the book” request, resume from the first
-                  missing page.
-                </p>
-                <PendingForm
-                  action={`/api/projects/${projectId}/book/production`}
-                  className="mt-3"
-                  pendingLabel="Resuming after interruption…"
-                  pendingMessage={`${completed} of 16 pages are already safe. Production is resuming from the first missing page.`}
-                  submitClassName="rounded-xl bg-stone-950 px-5 py-3 font-semibold text-white"
-                  submitLabel="Resume after an app restart"
-                >
-                  <input name="action" type="hidden" value="start" />
-                  {data.estimate.requiresOverFiveConfirmation ? (
-                    <label className="mb-4 flex items-start gap-3 rounded-xl bg-amber-50 p-4 text-sm text-amber-950">
-                      <input
-                        className="mt-1"
-                        name="confirmOverFive"
-                        required
-                        type="checkbox"
-                      />
-                      <span>
-                        I confirm this resumed action may bring the tracked
-                        estimate above $5.00.
-                      </span>
-                    </label>
-                  ) : null}
-                </PendingForm>
-              </div>
+            </div>
+          ) : !planApproved && planEditable ? (
+            <div className="max-w-sm rounded-2xl bg-amber-50 p-5 text-amber-950">
+              <p className="font-semibold">Book plan approval required</p>
+              <p className="mt-2 text-sm leading-6">
+                Review the contact sheet and wireframe reader above, make any
+                changes, then approve the current plan to unlock paid image
+                production.
+              </p>
+              <a
+                className="mt-3 inline-block font-semibold underline underline-offset-4"
+                href="#book-plan-heading"
+              >
+                Return to the book plan
+              </a>
             </div>
           ) : null}
         </section>
@@ -410,6 +691,12 @@ export default async function BookPage({
           >
             {completed} of 16
           </progress>
+          <ProductionLiveStatus
+            active={generationActive}
+            completed={completed}
+            recentlyUpdated={generationRecentlyUpdated}
+            status={data.job.status}
+          />
           <p className="mt-3 text-sm text-stone-300">
             Last safe result: {data.job.lastSavedArtifact}. Updated{" "}
             {new Date(data.job.updatedAt).toLocaleString("en-US")}.
@@ -466,6 +753,7 @@ export default async function BookPage({
             {data.pages.map((bookPage) => (
               <article
                 className="scroll-mt-6 overflow-hidden rounded-3xl border border-stone-200 bg-white shadow-sm"
+                data-testid="saved-book-page"
                 id={bookPage.pageId}
                 key={bookPage.pageId}
               >
@@ -502,25 +790,9 @@ export default async function BookPage({
                       </p>
                     </div>
                     <span className="shrink-0 rounded-full bg-stone-100 px-3 py-1 text-xs font-semibold text-stone-700">
-                      Revision {bookPage.revision} ·{" "}
-                      {bookPage.status === "kept" ? "Keep" : "Draft"}
+                      Revision {bookPage.revision}
                     </span>
                   </div>
-
-                  <PendingForm
-                    action={`/api/projects/${projectId}/book/pages/${bookPage.pageId}`}
-                    className="mt-5"
-                    pendingLabel="Saving keep decision…"
-                    pendingMessage="This exact page revision is being marked to keep. No sibling page changes."
-                    submitClassName="rounded-xl bg-stone-950 px-5 py-3 font-semibold text-white"
-                    submitLabel={
-                      bookPage.status === "kept"
-                        ? "Keep decision saved"
-                        : "Keep this page"
-                    }
-                  >
-                    <input name="action" type="hidden" value="keep" />
-                  </PendingForm>
 
                   <details className="mt-5 border-t border-stone-200 pt-5">
                     <summary className="cursor-pointer font-semibold text-stone-950">
@@ -613,6 +885,45 @@ export default async function BookPage({
               </article>
             ))}
           </div>
+        </section>
+      ) : null}
+
+      {data.pages.length === 16 && data.preflight?.status === "passed" ? (
+        <section
+          className={`mt-12 rounded-3xl border p-7 ${data.bookApproval?.approved ? "border-green-200 bg-green-50" : "border-sky-200 bg-sky-50"}`}
+          id="final-book-approval"
+          aria-labelledby="final-book-approval-heading"
+        >
+          <p className="text-sm font-semibold text-sky-800">
+            One final decision
+          </p>
+          <h2
+            className="mt-2 text-3xl font-semibold text-stone-950"
+            id="final-book-approval-heading"
+          >
+            {data.bookApproval?.approved
+              ? "The complete book is approved"
+              : data.bookApproval?.decision
+                ? "Approve the updated complete book"
+                : "Approve the complete book"}
+          </h2>
+          <p className="mt-3 max-w-3xl leading-7 text-stone-700">
+            {data.bookApproval?.approved
+              ? "This one decision covers the exact current revisions of all 16 pages. You do not need to approve pages one by one."
+              : "Review and edit individual pages above as needed, then approve the book once as a whole. A later text edit or image regeneration preserves the prior decision but requires one fresh complete-book approval."}
+          </p>
+          {!data.bookApproval?.approved ? (
+            <PendingForm
+              action={`/api/projects/${projectId}/book/decision`}
+              className="mt-5"
+              pendingLabel="Approving the complete book…"
+              pendingMessage="The current revisions of all 16 pages are being recorded as one book-level decision."
+              submitClassName="rounded-xl bg-stone-950 px-5 py-3 font-semibold text-white"
+              submitLabel="Approve the complete book"
+            >
+              <input name="status" type="hidden" value="approved" />
+            </PendingForm>
+          ) : null}
         </section>
       ) : null}
 

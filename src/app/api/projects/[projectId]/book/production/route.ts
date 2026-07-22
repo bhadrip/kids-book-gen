@@ -1,6 +1,9 @@
 import { readAppConfig } from "@/lib/config/app-config";
 import { formFailure, formRedirect } from "@/lib/http/form-response";
-import { BudgetConfirmationRequiredError } from "@/lib/production/book-production-service";
+import {
+  ActiveBookProductionError,
+  BudgetConfirmationRequiredError,
+} from "@/lib/production/book-production-service";
 import { createBookProduction } from "@/lib/production/create-book-production";
 
 export const runtime = "nodejs";
@@ -27,7 +30,11 @@ export async function POST(
     const message =
       error instanceof BudgetConfirmationRequiredError
         ? error.message
-        : "Book production did not finish. Every completed page is still saved; resume with the next missing page.";
+        : error instanceof ActiveBookProductionError
+          ? error.message
+          : error instanceof Error && error.message.includes("book plan")
+            ? error.message
+            : "Book production did not finish. Every completed page is still saved; resume with the next missing page.";
     return formFailure(
       request,
       `/projects/${projectId}/book?result=failed`,

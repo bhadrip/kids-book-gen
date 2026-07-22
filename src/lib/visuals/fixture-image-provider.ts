@@ -101,7 +101,7 @@ export class FixtureImageProvider implements ImageProvider {
       extension: "svg",
       mimeType: "image/svg+xml",
       model: "fixture-image-provider",
-      altText: `${input.title}: ${input.beat}, illustrated with the approved recurring character and a clear text-safe area.`,
+      altText: `${input.title}: ${input.illustrationDescription}`,
     };
   }
 

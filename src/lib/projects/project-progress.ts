@@ -8,9 +8,14 @@ import {
   textGenerationJobSchema,
 } from "@/lib/projects/project";
 import {
+  bookDecisionSchema,
   bookManifestSchema,
+  bookPageSchema,
+  bookPlanDecisionSchema,
+  bookPlanSchema,
   bookProductionJobSchema,
 } from "@/lib/production/production-artifacts";
+import { requiredBookPageIds } from "@/lib/production/book-preflight";
 import {
   characterDesignsSchema,
   imageGenerationJobSchema,
@@ -56,8 +61,12 @@ export async function getProjectProgress(
     sample,
     visualDecision,
     imageJob,
+    bookPlan,
+    bookPlanDecision,
     book,
     bookJob,
+    bookDecision,
+    bookPages,
   ] = await Promise.all([
     readOptional(
       repository.readArtifact(projectId, "brief.json", projectBriefSchema),
@@ -129,6 +138,16 @@ export async function getProjectProgress(
       ),
     ),
     readOptional(
+      repository.readArtifact(projectId, "book-plan.json", bookPlanSchema),
+    ),
+    readOptional(
+      repository.readArtifact(
+        projectId,
+        "book-plan-decision.json",
+        bookPlanDecisionSchema,
+      ),
+    ),
+    readOptional(
       repository.readArtifact(projectId, "book.json", bookManifestSchema),
     ),
     readOptional(
@@ -136,6 +155,24 @@ export async function getProjectProgress(
         projectId,
         "book-production-job.json",
         bookProductionJobSchema,
+      ),
+    ),
+    readOptional(
+      repository.readArtifact(
+        projectId,
+        "book-decision.json",
+        bookDecisionSchema,
+      ),
+    ),
+    Promise.all(
+      requiredBookPageIds.map((pageId) =>
+        readOptional(
+          repository.readArtifact(
+            projectId,
+            `book-page-${pageId}.json`,
+            bookPageSchema,
+          ),
+        ),
       ),
     ),
   ]);
@@ -184,15 +221,48 @@ export async function getProjectProgress(
     (book.sourceStoryRevision !== story.revision ||
       book.sourceSampleRevision !== sample.revision),
   );
+  const bookPlanCurrent = Boolean(
+    bookPlan &&
+    story &&
+    sample &&
+    bookPlan.sourceStoryRevision === story.revision &&
+    bookPlan.sourceSampleRevision === sample.revision,
+  );
+  const bookPlanApproved = Boolean(
+    bookPlanCurrent &&
+    bookPlan &&
+    bookPlanDecision?.status === "approved" &&
+    bookPlanDecision.planRevision === bookPlan.revision,
+  );
+  const bookApproved = Boolean(
+    bookDecision &&
+    bookPlan &&
+    bookDecision.sourcePlanRevision === bookPlan.revision &&
+    bookDecision.sourceStoryRevision === bookPlan.sourceStoryRevision &&
+    bookDecision.sourceSampleRevision === bookPlan.sourceSampleRevision &&
+    requiredBookPageIds.every((pageId) => {
+      const page = bookPages.find((candidate) => candidate?.pageId === pageId);
+      const approvedPage = bookDecision.pageRevisions.find(
+        (candidate) => candidate.pageId === pageId,
+      );
+      return page && approvedPage?.revision === page.revision;
+    }),
+  );
   let bookStatus: CheckpointStatus = bookOutOfDate
     ? "Out of date"
-    : book?.status === "ready_for_review"
-      ? "Ready for your review"
-      : book?.status === "needs_attention"
-        ? "Needs attention"
-        : book?.status === "generating" || book?.status === "paused"
-          ? "In progress"
-          : "Not started";
+    : bookApproved
+      ? "Approved"
+      : book?.status === "ready_for_review"
+        ? "Ready for your review"
+        : book?.status === "needs_attention"
+          ? "Needs attention"
+          : book?.status === "generating" || book?.status === "paused"
+            ? "In progress"
+            : bookPlanCurrent && !bookPlanApproved
+              ? "Ready for your review"
+              : bookPlanApproved
+                ? "In progress"
+                : "Not started";
 
   if (job?.status === "in_progress") {
     if (job.kind === "directions") idea = "In progress";
@@ -349,17 +419,29 @@ export async function getProjectProgress(
     nextAction: {
       href: `/projects/${projectId}/book`,
       label:
-        bookStatus === "Ready for your review"
-          ? "Review the saved book"
-          : bookJob?.status === "failed"
-            ? "Retry the failed page"
-            : "Start full-book production",
+        bookStatus === "Approved"
+          ? "Review the approved book"
+          : bookStatus === "Ready for your review"
+            ? book?.status === "ready_for_review"
+              ? "Review the saved book"
+              : "Review the book plan"
+            : bookJob?.status === "failed"
+              ? "Retry the failed page"
+              : bookPlanApproved
+                ? "Start full-book production"
+                : "Preview the book plan",
       reason:
-        bookStatus === "Ready for your review"
-          ? "All 16 required pages passed preflight and are ready for page-by-page review."
-          : bookJob?.status === "failed"
-            ? `${bookJob.completedUnitIds.length} earlier pages are safe. Retry only ${bookJob.failedUnitId ? labelForBookPage(bookJob.failedUnitId) : "the failed page"}.`
-            : "The approved story, character reference, Visual Bible, and sample are ready for sequential book production.",
+        bookStatus === "Approved"
+          ? "The one final decision covers the current revisions of all 16 pages."
+          : book?.status === "ready_for_review"
+            ? "All 16 required pages passed preflight and are ready for page-by-page review."
+            : bookJob?.status === "failed"
+              ? `${bookJob.completedUnitIds.length} earlier pages are safe. Retry only ${bookJob.failedUnitId ? labelForBookPage(bookJob.failedUnitId) : "the failed page"}.`
+              : bookPlanCurrent && !bookPlanApproved
+                ? "Review the saved zero-cost contact sheet and wireframes, then approve the current plan before image generation."
+                : bookPlanApproved
+                  ? "The approved book plan is ready for sequential image production."
+                  : "Preview all 16 pages as a zero-cost contact sheet and wireframe reader before image generation.",
     },
   };
 }

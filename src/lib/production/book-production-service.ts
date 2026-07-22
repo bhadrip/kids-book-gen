@@ -10,13 +10,24 @@ import {
   runBookPreflight,
 } from "@/lib/production/book-preflight";
 import {
+  claimActiveProductionRun,
+  releaseActiveProductionRun,
+} from "@/lib/production/active-production-runs";
+import { deriveBookPlan } from "@/lib/production/book-plan";
+import {
+  bookDecisionSchema,
   bookManifestSchema,
   bookPageSchema,
+  bookPlanDecisionSchema,
+  bookPlanSchema,
   bookProductionJobSchema,
   type BookActivityEvent,
+  type BookDecision,
   type BookManifest,
   type BookPage,
   type BookPageId,
+  type BookPlan,
+  type BookPlanPage,
   type BookProductionJob,
 } from "@/lib/production/production-artifacts";
 import { getArtPreset } from "@/lib/visuals/art-presets";
@@ -60,26 +71,26 @@ export class BudgetConfirmationRequiredError extends Error {
   }
 }
 
-type ProductionPrerequisites = {
+export class ActiveBookProductionError extends Error {
+  public constructor() {
+    super(
+      "Book production is already active. Keep this request open or review the live saved-page count.",
+    );
+  }
+}
+
+type VisualPrerequisites = {
   story: StoryPackage;
   selectedCharacter: SelectedCharacter;
   visualBible: VisualBible;
   sampleRevision: number;
 };
 
-type PagePlan = {
-  pageId: BookPageId;
-  sequence: number;
-  kind: BookPage["kind"];
-  storySpreadNumber?: number;
-  title: string;
-  beat: string;
-  text: string;
-  textSource: BookPage["textSource"];
-  continuityFacts: string[];
-  requiredReferenceDetails: string[];
-  previousPageId?: BookPageId;
+type ProductionPrerequisites = VisualPrerequisites & {
+  bookPlan: BookPlan;
 };
+
+type PagePlan = BookPlanPage;
 
 export class BookProductionService {
   public constructor(
@@ -92,6 +103,203 @@ export class BookProductionService {
     },
   ) {}
 
+  public async previewBookPlan(projectId: string): Promise<{
+    plan: BookPlan;
+    approved: boolean;
+  }> {
+    const prerequisites = await this.loadVisualPrerequisites(projectId);
+    const current = await this.loadCurrentPlan(projectId);
+    const plan =
+      current && this.planMatches(current, prerequisites)
+        ? current
+        : this.derivePlan(
+            projectId,
+            prerequisites,
+            (current?.revision ?? 0) + 1,
+          );
+    const decision = await readOptional(
+      this.repository.readArtifact(
+        projectId,
+        "book-plan-decision.json",
+        bookPlanDecisionSchema,
+      ),
+    );
+    return {
+      plan,
+      approved:
+        decision?.status === "approved" &&
+        decision.planRevision === plan.revision,
+    };
+  }
+
+  public async editBookPlanPage(
+    projectId: string,
+    pageId: BookPageId,
+    input: {
+      text: string;
+      illustrationDescription: string;
+      requiredReferenceDetails: string[];
+    },
+  ): Promise<BookPlan> {
+    await this.assertProductionNotStarted(projectId);
+    const prerequisites = await this.loadVisualPrerequisites(projectId);
+    const current = await this.loadCurrentPlan(projectId);
+    const base =
+      current && this.planMatches(current, prerequisites)
+        ? current
+        : this.derivePlan(
+            projectId,
+            prerequisites,
+            (current?.revision ?? 0) + 1,
+          );
+    const target = base.pages.find((page) => page.pageId === pageId);
+    if (!target) throw new Error("Choose a page from the book plan.");
+    const timestamp = this.now().toISOString();
+    const revision = current === base ? base.revision + 1 : base.revision;
+    const edited = bookPlanSchema.parse({
+      ...base,
+      revision,
+      pages: base.pages.map((page) =>
+        page.pageId === pageId
+          ? {
+              ...page,
+              text: input.text,
+              textSource:
+                input.text === target.text
+                  ? target.textSource
+                  : "parent_edited",
+              illustrationDescription: input.illustrationDescription,
+              requiredReferenceDetails: input.requiredReferenceDetails,
+            }
+          : page,
+      ),
+      createdAt: current === base ? base.createdAt : timestamp,
+      updatedAt: timestamp,
+    });
+    await this.persistBookPlan(projectId, edited);
+    return edited;
+  }
+
+  public async approveBookPlan(projectId: string): Promise<BookPlan> {
+    await this.assertProductionNotStarted(projectId);
+    const prerequisites = await this.loadVisualPrerequisites(projectId);
+    const current = await this.loadCurrentPlan(projectId);
+    const plan =
+      current && this.planMatches(current, prerequisites)
+        ? current
+        : this.derivePlan(
+            projectId,
+            prerequisites,
+            (current?.revision ?? 0) + 1,
+          );
+    if (!current || current !== plan)
+      await this.persistBookPlan(projectId, plan);
+    const decision = bookPlanDecisionSchema.parse({
+      schemaVersion: 1,
+      projectId,
+      planRevision: plan.revision,
+      status: "approved",
+      decidedAt: this.now().toISOString(),
+    });
+    await this.repository.writeArtifact(
+      projectId,
+      `book-plan-decision-r${String(plan.revision).padStart(2, "0")}.json`,
+      decision,
+    );
+    await this.repository.writeArtifact(
+      projectId,
+      "book-plan-decision.json",
+      decision,
+    );
+    return plan;
+  }
+
+  public async reviewBookApproval(projectId: string): Promise<{
+    approved: boolean;
+    decision: BookDecision | null;
+  }> {
+    const [decision, pages, plan] = await Promise.all([
+      readOptional(
+        this.repository.readArtifact(
+          projectId,
+          "book-decision.json",
+          bookDecisionSchema,
+        ),
+      ),
+      this.loadCurrentPages(projectId),
+      this.loadCurrentPlan(projectId),
+    ]);
+    return {
+      decision,
+      approved: Boolean(
+        decision &&
+        plan &&
+        decision.sourcePlanRevision === plan.revision &&
+        decision.sourceStoryRevision === plan.sourceStoryRevision &&
+        decision.sourceSampleRevision === plan.sourceSampleRevision &&
+        requiredBookPageIds.every((pageId) => {
+          const page = pages.find((candidate) => candidate.pageId === pageId);
+          const approvedPage = decision.pageRevisions.find(
+            (candidate) => candidate.pageId === pageId,
+          );
+          return page && approvedPage?.revision === page.revision;
+        }),
+      ),
+    };
+  }
+
+  public async approveBook(projectId: string): Promise<BookDecision> {
+    const existing = await this.reviewBookApproval(projectId);
+    if (existing.approved && existing.decision) return existing.decision;
+    const prerequisites = await this.loadApprovedPrerequisites(projectId);
+    const [job, pages] = await Promise.all([
+      this.requireJob(projectId),
+      this.loadCurrentPages(projectId),
+    ]);
+    if (job.status !== "completed")
+      throw new Error(
+        "Finish all 16 pages and pass preflight before approving the complete book.",
+      );
+    const preflight = runBookPreflight({
+      projectId,
+      checkedAt: this.now().toISOString(),
+      pages,
+    });
+    if (preflight.status !== "passed")
+      throw new Error(
+        "Resolve the production preflight issues before approving the complete book.",
+      );
+    const decision = bookDecisionSchema.parse({
+      schemaVersion: 1,
+      projectId,
+      decisionRevision: (existing.decision?.decisionRevision ?? 0) + 1,
+      status: "approved",
+      sourceStoryRevision: prerequisites.story.revision,
+      sourceSampleRevision: prerequisites.sampleRevision,
+      sourcePlanRevision: prerequisites.bookPlan.revision,
+      pageRevisions: requiredBookPageIds.map((pageId) => ({
+        pageId,
+        revision: pages.find((page) => page.pageId === pageId)?.revision,
+      })),
+      decidedAt: this.now().toISOString(),
+    });
+    await this.repository.writeArtifact(
+      projectId,
+      `book-decision-r${String(decision.decisionRevision).padStart(2, "0")}.json`,
+      decision,
+    );
+    await this.repository.writeArtifact(
+      projectId,
+      "book-decision.json",
+      decision,
+    );
+    await this.recordPageEvent(projectId, {
+      type: "book_approved",
+      message: `The complete book was approved with all 16 current page revisions.`,
+    });
+    return decision;
+  }
+
   public async estimate(projectId: string): Promise<{
     completedUnits: number;
     remainingUnits: number;
@@ -100,7 +308,7 @@ export class BookProductionService {
     softBudgetUsd: number;
     requiresOverFiveConfirmation: boolean;
   }> {
-    await this.loadApprovedPrerequisites(projectId);
+    await this.loadVisualPrerequisites(projectId);
     const pages = await this.loadCurrentPages(projectId);
     const existingJob = await this.loadJob(projectId);
     const estimatedSpentCostUsd = roundUsd(
@@ -126,11 +334,21 @@ export class BookProductionService {
     projectId: string,
     confirmOverFive = false,
   ): Promise<BookProductionJob> {
+    if (!claimActiveProductionRun(projectId, this.now().toISOString()))
+      throw new ActiveBookProductionError();
+    try {
+      return await this.runProduction(projectId, confirmOverFive);
+    } finally {
+      releaseActiveProductionRun(projectId);
+    }
+  }
+
+  private async runProduction(
+    projectId: string,
+    confirmOverFive: boolean,
+  ): Promise<BookProductionJob> {
     const prerequisites = await this.loadApprovedPrerequisites(projectId);
-    const plans = this.createPlans(
-      prerequisites.story,
-      prerequisites.visualBible,
-    );
+    const plans = prerequisites.bookPlan.pages;
     const existingPages = await this.loadCurrentPages(projectId);
     this.assertCurrentSources(existingPages, prerequisites);
     const existingJob = await this.loadJob(projectId);
@@ -172,7 +390,7 @@ export class BookProductionService {
       type: existingJob ? "resumed" : "started",
       message: existingJob
         ? `Production resumed with ${existingPages.length} of 16 pages safely saved.`
-        : "Full-book production started after the approved visual sample.",
+        : `Full-book production started after book plan revision ${prerequisites.bookPlan.revision} was approved.`,
     });
     await this.saveJob(projectId, job);
     await this.saveManifest(projectId, prerequisites, job, "generating");
@@ -318,26 +536,6 @@ export class BookProductionService {
     return paused;
   }
 
-  public async keepPage(
-    projectId: string,
-    pageId: BookPageId,
-  ): Promise<BookPage> {
-    const current = await this.requirePage(projectId, pageId);
-    const kept = bookPageSchema.parse({
-      ...current,
-      revision: current.revision + 1,
-      status: "kept",
-    });
-    await this.persistPageArtifacts(projectId, kept);
-    await this.recordPageEvent(projectId, {
-      type: "kept",
-      pageId,
-      message: `${labelForPage(pageId)} was marked to keep in this local book.`,
-    });
-    await this.refreshPreflight(projectId);
-    return kept;
-  }
-
   public async editPageText(
     projectId: string,
     pageId: BookPageId,
@@ -376,10 +574,9 @@ export class BookProductionService {
       job.estimatedSpentCostUsd + this.cost.finalImageEstimateUsd,
     );
     this.requireBudgetConfirmation(projected, confirmOverFive);
-    const plan = this.createPlans(
-      prerequisites.story,
-      prerequisites.visualBible,
-    ).find((candidate) => candidate.pageId === pageId);
+    const plan = prerequisites.bookPlan.pages.find(
+      (candidate) => candidate.pageId === pageId,
+    );
     if (!plan) throw new Error("Choose a page from the saved book.");
     const previous = plan.previousPageId
       ? await this.readPage(projectId, plan.previousPageId)
@@ -439,97 +636,9 @@ export class BookProductionService {
     return regenerated;
   }
 
-  private createPlans(
-    story: StoryPackage,
-    visualBible: VisualBible,
-  ): PagePlan[] {
-    const requiredReferenceDetails = [
-      ...visualBible.mainCharacter.identityInvariants,
-      ...visualBible.signatureProps,
-    ];
-    const plans: PagePlan[] = [
-      {
-        pageId: "cover",
-        sequence: 1,
-        kind: "cover",
-        title: "Cover",
-        beat: `Promise the story of ${story.title} without revealing its ending.`,
-        text: story.title,
-        textSource: "book_matter",
-        continuityFacts: [
-          `Feature ${visualBible.mainCharacter.name} as the same recognizable protagonist from the approved reference.`,
-          `Promise: ${story.promise}`,
-        ],
-        requiredReferenceDetails,
-      },
-      {
-        pageId: "title-page",
-        sequence: 2,
-        kind: "front_matter",
-        title: "Title and copyright page",
-        beat: "Create a calm visual welcome before the story begins.",
-        text: `${story.title}\nA family story made in Storytime Studio.`,
-        textSource: "book_matter",
-        continuityFacts: [
-          `Use the approved palette: ${visualBible.palette.join(", ")}.`,
-          "Keep this quieter than the cover and first story spread.",
-        ],
-        requiredReferenceDetails,
-        previousPageId: "cover",
-      },
-    ];
-    for (const spread of story.spreads) {
-      const pageId =
-        `story-${String(spread.number).padStart(2, "0")}` as BookPageId;
-      const previousPageId =
-        spread.number === 1
-          ? "title-page"
-          : (`story-${String(spread.number - 1).padStart(2, "0")}` as BookPageId);
-      const previousBeat = story.spreads[spread.number - 2]?.beat;
-      plans.push({
-        pageId,
-        sequence: spread.number + 2,
-        kind: "story",
-        storySpreadNumber: spread.number,
-        title: `Story spread ${spread.number}`,
-        beat: spread.beat,
-        text: spread.text,
-        textSource: "approved_story",
-        continuityFacts: [
-          `Current beat: ${spread.beat}`,
-          previousBeat
-            ? `Continue visibly from the prior beat: ${previousBeat}`
-            : `Establish the beginning: ${story.arc.beginning}`,
-          `Relevant setting fact: ${visualBible.locations[(spread.number - 1) % visualBible.locations.length]}`,
-          ...visualBible.signatureProps.map(
-            (detail) => `Preserve family detail: ${detail}`,
-          ),
-        ],
-        requiredReferenceDetails,
-        previousPageId,
-      });
-    }
-    plans.push({
-      pageId: "end-matter",
-      sequence: 16,
-      kind: "end_matter",
-      title: "Closing page",
-      beat: `Let the feeling of this ending settle: ${story.arc.ending}`,
-      text: "The End",
-      textSource: "book_matter",
-      continuityFacts: [
-        `Preserve the resolved ending: ${story.arc.ending}`,
-        "Echo the approved palette and one familiar story motif without adding a new event.",
-      ],
-      requiredReferenceDetails,
-      previousPageId: "story-13",
-    });
-    return plans;
-  }
-
-  private async loadApprovedPrerequisites(
+  private async loadVisualPrerequisites(
     projectId: string,
-  ): Promise<ProductionPrerequisites> {
+  ): Promise<VisualPrerequisites> {
     const [
       story,
       storyDecision,
@@ -595,6 +704,94 @@ export class BookProductionService {
       visualBible,
       sampleRevision: sample.revision,
     };
+  }
+
+  private async loadApprovedPrerequisites(
+    projectId: string,
+  ): Promise<ProductionPrerequisites> {
+    const prerequisites = await this.loadVisualPrerequisites(projectId);
+    const [bookPlan, decision] = await Promise.all([
+      this.loadCurrentPlan(projectId),
+      readOptional(
+        this.repository.readArtifact(
+          projectId,
+          "book-plan-decision.json",
+          bookPlanDecisionSchema,
+        ),
+      ),
+    ]);
+    if (!bookPlan || !decision)
+      throw new Error(
+        "Approve the current zero-cost book plan before starting image production.",
+      );
+    if (!this.planMatches(bookPlan, prerequisites))
+      throw new Error(
+        "The book plan is out of date. Review a plan for the current story and visual sample.",
+      );
+    if (
+      decision.status !== "approved" ||
+      decision.planRevision !== bookPlan.revision
+    )
+      throw new Error(
+        "Approve the current zero-cost book plan before starting image production.",
+      );
+    return { ...prerequisites, bookPlan };
+  }
+
+  private derivePlan(
+    projectId: string,
+    prerequisites: VisualPrerequisites,
+    revision: number,
+  ): BookPlan {
+    const timestamp = this.now().toISOString();
+    return deriveBookPlan({
+      projectId,
+      story: prerequisites.story,
+      visualBible: prerequisites.visualBible,
+      sampleRevision: prerequisites.sampleRevision,
+      revision,
+      createdAt: timestamp,
+      updatedAt: timestamp,
+    });
+  }
+
+  private planMatches(
+    plan: BookPlan,
+    prerequisites: VisualPrerequisites,
+  ): boolean {
+    return (
+      plan.sourceStoryRevision === prerequisites.story.revision &&
+      plan.sourceSampleRevision === prerequisites.sampleRevision
+    );
+  }
+
+  private loadCurrentPlan(projectId: string): Promise<BookPlan | null> {
+    return readOptional(
+      this.repository.readArtifact(projectId, "book-plan.json", bookPlanSchema),
+    );
+  }
+
+  private async persistBookPlan(
+    projectId: string,
+    plan: BookPlan,
+  ): Promise<void> {
+    await this.repository.writeArtifact(
+      projectId,
+      `book-plan-r${String(plan.revision).padStart(2, "0")}.json`,
+      plan,
+    );
+    await this.repository.writeArtifact(projectId, "book-plan.json", plan);
+  }
+
+  private async assertProductionNotStarted(projectId: string): Promise<void> {
+    const [job, pages] = await Promise.all([
+      this.loadJob(projectId),
+      this.loadCurrentPages(projectId),
+    ]);
+    if (job || pages.length > 0)
+      throw new Error(
+        "Book production has already started. Revise the saved production pages instead of changing its approved plan.",
+      );
   }
 
   private assertCurrentSources(

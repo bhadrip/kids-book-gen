@@ -26,8 +26,7 @@ export async function POST(
       readAppConfig(process.env),
       () => new Date(),
     );
-    if (action === "keep") await service.keepPage(projectId, pageId);
-    else if (action === "edit_text")
+    if (action === "edit_text")
       await service.editPageText(
         projectId,
         pageId,

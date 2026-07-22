@@ -7,8 +7,9 @@ import { afterEach, describe, expect, it } from "vitest";
 import { FixtureTextProvider } from "@/lib/directions/fixture-text-provider";
 import { StoryWorkflowService } from "@/lib/directions/story-workflow-service";
 import { FileProjectRepository } from "@/lib/projects/file-project-repository";
-import { projectBriefSchema } from "@/lib/projects/project";
+import { projectBriefSchema, storyPackageSchema } from "@/lib/projects/project";
 import {
+  ActiveBookProductionError,
   BudgetConfirmationRequiredError,
   BookProductionService,
 } from "@/lib/production/book-production-service";
@@ -17,7 +18,9 @@ import {
   runBookPreflight,
 } from "@/lib/production/book-preflight";
 import {
+  bookDecisionSchema,
   bookPageSchema,
+  bookPlanSchema,
   bookPreflightSchema,
   bookProductionJobSchema,
 } from "@/lib/production/production-artifacts";
@@ -52,6 +55,32 @@ class RecordingImageProvider extends FixtureImageProvider {
     this.productionInputs.push(input);
     if (input.pageId === this.failAt)
       throw new Error("A controlled production interruption.");
+    return super.generateBookPage(input);
+  }
+}
+
+class HoldingImageProvider extends RecordingImageProvider {
+  private releaseFirstRequest!: () => void;
+  private markFirstRequestStarted!: () => void;
+  public readonly firstRequestStarted = new Promise<void>((resolve) => {
+    this.markFirstRequestStarted = resolve;
+  });
+  private firstRequest = true;
+
+  public release(): void {
+    this.releaseFirstRequest();
+  }
+
+  public override async generateBookPage(
+    input: Parameters<ImageProvider["generateBookPage"]>[0],
+  ) {
+    if (this.firstRequest) {
+      this.firstRequest = false;
+      this.markFirstRequestStarted();
+      await new Promise<void>((resolve) => {
+        this.releaseFirstRequest = resolve;
+      });
+    }
     return super.generateBookPage(input);
   }
 }
@@ -106,6 +135,14 @@ describe("BookProductionService", () => {
     const provider = new RecordingImageProvider();
     const { repository, service } = await setup(provider);
 
+    const preview = await service.previewBookPlan(projectId);
+    expect(preview).toMatchObject({ approved: false });
+    expect(preview.plan.pages).toHaveLength(16);
+    expect(provider.productionInputs).toHaveLength(0);
+    await expect(service.startOrResume(projectId)).rejects.toThrow(
+      "Approve the current zero-cost book plan",
+    );
+    await service.approveBookPlan(projectId);
     const job = await service.startOrResume(projectId);
 
     expect(job).toMatchObject({
@@ -146,6 +183,7 @@ describe("BookProductionService", () => {
     const failingProvider = new RecordingImageProvider("story-04");
     const { repository, service } = await setup(failingProvider);
 
+    await service.approveBookPlan(projectId);
     await expect(service.startOrResume(projectId)).rejects.toThrow(
       "controlled production interruption",
     );
@@ -215,6 +253,7 @@ describe("BookProductionService", () => {
       { softBudgetUsd: 3, finalImageEstimateUsd: 0.4 },
     );
 
+    await expensive.approveBookPlan(projectId);
     await expect(expensive.startOrResume(projectId)).rejects.toBeInstanceOf(
       BudgetConfirmationRequiredError,
     );
@@ -227,9 +266,29 @@ describe("BookProductionService", () => {
     });
   });
 
+  it("prevents a second production request while the first run is active", async () => {
+    const provider = new HoldingImageProvider();
+    const { service } = await setup(provider);
+    await service.approveBookPlan(projectId);
+
+    const activeRun = service.startOrResume(projectId);
+    await provider.firstRequestStarted;
+    await expect(service.startOrResume(projectId)).rejects.toBeInstanceOf(
+      ActiveBookProductionError,
+    );
+    provider.release();
+    await expect(activeRun).resolves.toMatchObject({ status: "completed" });
+  });
+
   it("regenerates only one page and preserves approved siblings and prior revisions", async () => {
     const { repository, service } = await setup();
+    await service.approveBookPlan(projectId);
     await service.startOrResume(projectId);
+    const firstDecision = await service.approveBook(projectId);
+    expect(firstDecision.decisionRevision).toBe(1);
+    await expect(service.reviewBookApproval(projectId)).resolves.toMatchObject({
+      approved: true,
+    });
     const siblingBefore = await repository.readArtifact(
       projectId,
       "book-page-story-06.json",
@@ -253,6 +312,18 @@ describe("BookProductionService", () => {
       text: selectedBefore.text,
       parentFeedback: "Make the kite larger in the sky.",
     });
+    await expect(service.reviewBookApproval(projectId)).resolves.toMatchObject({
+      approved: false,
+    });
+    const successorDecision = await service.approveBook(projectId);
+    expect(successorDecision.decisionRevision).toBe(2);
+    await expect(
+      repository.readArtifact(
+        projectId,
+        "book-decision-r01.json",
+        bookDecisionSchema,
+      ),
+    ).resolves.toEqual(firstDecision);
     await expect(
       repository.readArtifact(
         projectId,
@@ -267,6 +338,59 @@ describe("BookProductionService", () => {
         bookPageSchema,
       ),
     ).resolves.toEqual(siblingBefore);
+  });
+
+  it("edits and approves a versioned zero-cost plan without generating images or changing the story", async () => {
+    const provider = new RecordingImageProvider();
+    const { repository, service } = await setup(provider);
+    const storyBefore = await repository.readArtifact(
+      projectId,
+      "story.json",
+      storyPackageSchema,
+    );
+
+    const preview = await service.previewBookPlan(projectId);
+    expect(preview.plan.pages).toHaveLength(16);
+    expect(provider.productionInputs).toHaveLength(0);
+    const edited = await service.editBookPlanPage(projectId, "story-07", {
+      text: "Milo follows the moon kite into the silver clouds.",
+      illustrationDescription:
+        "A wide wireframe composition with Milo below the moon kite.",
+      requiredReferenceDetails: [
+        "Milo's round glasses",
+        "the silver moon kite",
+      ],
+    });
+    expect(edited).toMatchObject({ revision: 1 });
+    expect(
+      edited.pages.find((page) => page.pageId === "story-07"),
+    ).toMatchObject({
+      textSource: "parent_edited",
+      illustrationDescription:
+        "A wide wireframe composition with Milo below the moon kite.",
+    });
+
+    await service.approveBookPlan(projectId);
+    await expect(service.previewBookPlan(projectId)).resolves.toMatchObject({
+      approved: true,
+    });
+    const successor = await service.editBookPlanPage(projectId, "story-07", {
+      text: "Milo follows the moon kite into the silver clouds.",
+      illustrationDescription:
+        "A closer wireframe composition with Milo reaching upward.",
+      requiredReferenceDetails: ["Milo's round glasses"],
+    });
+    expect(successor.revision).toBe(2);
+    await expect(service.previewBookPlan(projectId)).resolves.toMatchObject({
+      approved: false,
+    });
+    await expect(
+      repository.readArtifact(projectId, "book-plan-r01.json", bookPlanSchema),
+    ).resolves.toEqual(edited);
+    await expect(
+      repository.readArtifact(projectId, "story.json", storyPackageSchema),
+    ).resolves.toEqual(storyBefore);
+    expect(provider.productionInputs).toHaveLength(0);
   });
 
   it("reports missing, empty-text, reference, and continuity preflight failures", () => {
