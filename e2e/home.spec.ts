@@ -225,10 +225,14 @@ test("revises directions, generates a story, approves it, and reopens it without
   await expect(page.getByText("Story revision 1")).toBeVisible();
   await expect(page.getByText("Spread 13:")).toBeVisible();
   await page.getByLabel("What should change?").fill("Add one silly obstacle");
+  const revisionNavigation = page.waitForURL(
+    `**/projects/${projectId}/story?decision=revision_requested`,
+  );
   await page.getByRole("button", { name: "Revise this story" }).click();
   await expect(
     page.getByRole("button", { name: "Revising this story…" }),
   ).toBeDisabled();
+  await revisionNavigation;
   await expect(page.getByText("Story revision 2")).toBeVisible();
   await expect(page.getByText("Your revised story is ready.")).toBeVisible();
   await page.getByRole("button", { name: "Approve this story" }).click();
