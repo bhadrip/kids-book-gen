@@ -109,9 +109,17 @@ export default async function StoryPage({
         <h2 className="text-2xl font-semibold">Approve or revise</h2>
         {decision?.status === "approved" &&
         decision.storyRevision === story.revision ? (
-          <p className="mt-2 font-semibold text-green-800">
-            This story revision is approved.
-          </p>
+          <div className="mt-2">
+            <p className="font-semibold text-green-800">
+              This story revision is approved.
+            </p>
+            <Link
+              className="mt-4 inline-block rounded-xl bg-stone-950 px-4 py-2 font-semibold text-white"
+              href={`/projects/${projectId}/look`}
+            >
+              Choose the visual identity
+            </Link>
+          </div>
         ) : null}
         <PendingForm
           action={`/api/projects/${projectId}/story-decision`}

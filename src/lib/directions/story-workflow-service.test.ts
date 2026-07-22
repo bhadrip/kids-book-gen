@@ -14,6 +14,7 @@ import {
   storyDecisionSchema,
   storyDirectionsSchema,
   storyPackageSchema,
+  storyQualityEvaluationSchema,
   textGenerationJobSchema,
 } from "@/lib/projects/project";
 
@@ -127,6 +128,9 @@ describe("StoryWorkflowService", () => {
       generateStory: async () => {
         throw new Error("provider unavailable");
       },
+      evaluateStory: async () => {
+        throw new Error("provider unavailable");
+      },
     };
     const unavailableService = new StoryWorkflowService(
       repository,
@@ -163,5 +167,38 @@ describe("StoryWorkflowService", () => {
       status: "failed",
       lastSavedArtifact: "selected-direction.json",
     });
+  });
+
+  it("runs one hidden evaluation and at most one automatic revision", async () => {
+    const { repository, service } = await setup();
+    const brief = projectBriefSchema.parse({
+      schemaVersion: 1,
+      projectId,
+      template: "start_from_scratch",
+      originalIdea: "Fixture story needs one quality revision",
+      createdAt: now().toISOString(),
+    });
+    const directions = await service.createDirections(brief);
+    const story = await service.selectDirection(
+      projectId,
+      directions.directions[0].title,
+    );
+
+    expect(story.revision).toBe(1);
+    expect(story.arc.middle).toContain("clear");
+    await expect(
+      repository.readArtifact(
+        projectId,
+        "story-quality-evaluation-01.json",
+        storyQualityEvaluationSchema,
+      ),
+    ).resolves.toMatchObject({ verdict: "revise" });
+    await expect(
+      repository.readArtifact(
+        projectId,
+        "story-quality-input-01.json",
+        storyPackageSchema,
+      ),
+    ).resolves.not.toMatchObject({ arc: { middle: story.arc.middle } });
   });
 });

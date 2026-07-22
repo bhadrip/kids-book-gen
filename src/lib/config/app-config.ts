@@ -9,6 +9,7 @@ export const appConfigSchema = z.object({
   projectRoot: z.string().trim().min(1).default("data/projects"),
   bookBudgetUsd: z.coerce.number().positive().default(3),
   textProvider: z.enum(["openai", "fixture"]).default("openai"),
+  imageProvider: z.enum(["openai", "fixture"]).default("openai"),
   fixtureDelayMs: z.coerce.number().int().min(0).max(5_000).default(0),
 });
 
@@ -24,6 +25,7 @@ export function readAppConfig(
     projectRoot: environment.KIDS_BOOK_PROJECT_ROOT,
     bookBudgetUsd: environment.KIDS_BOOK_BOOK_BUDGET_USD,
     textProvider: environment.KIDS_BOOK_TEXT_PROVIDER,
+    imageProvider: environment.KIDS_BOOK_IMAGE_PROVIDER,
     fixtureDelayMs: environment.KIDS_BOOK_FIXTURE_DELAY_MS,
   });
 }

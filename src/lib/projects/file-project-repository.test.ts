@@ -66,4 +66,19 @@ describe("FileProjectRepository", () => {
 
     await expect(repository.load(project.id)).rejects.toThrow();
   });
+
+  it("writes and reads a binary asset atomically inside the project folder", async () => {
+    const repository = await createRepository();
+    const project = await repository.create({ title: "A Picture Test" });
+    const image = new Uint8Array([137, 80, 78, 71]);
+
+    await repository.writeAsset(project.id, "character-reference.png", image);
+
+    await expect(
+      repository.readAsset(project.id, "character-reference.png"),
+    ).resolves.toEqual(Buffer.from(image));
+    await expect(
+      repository.writeAsset(project.id, "../outside.png", image),
+    ).rejects.toThrow("inside the project folder");
+  });
 });

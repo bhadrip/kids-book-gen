@@ -46,6 +46,7 @@ describe("getProjectProgress", () => {
       idea: "Not started",
       directions: "Not started",
       story: "Not started",
+      look: "Not started",
       nextAction: {
         href: `/projects/${projectId}/idea`,
         label: "Shape the story idea",

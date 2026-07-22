@@ -1,5 +1,5 @@
 import { mkdir, readdir, readFile, rename, writeFile } from "node:fs/promises";
-import { join, resolve } from "node:path";
+import { basename, join, resolve } from "node:path";
 
 import {
   createProject,
@@ -11,6 +11,7 @@ import {
 } from "@/lib/projects/project";
 
 const projectFilename = "project.json";
+const safeArtifactFilename = /^[a-z0-9][a-z0-9._-]{0,159}$/;
 
 export class FileProjectRepository {
   public constructor(
@@ -64,6 +65,7 @@ export class FileProjectRepository {
     value: unknown,
   ): Promise<void> {
     const projectId = projectIdSchema.parse(id);
+    this.validateFilename(filename);
     await this.writeJsonAtomically(
       join(this.projectDirectory(projectId), filename),
       value,
@@ -76,11 +78,31 @@ export class FileProjectRepository {
     schema: { parse: (value: unknown) => T },
   ): Promise<T> {
     const projectId = projectIdSchema.parse(id);
+    this.validateFilename(filename);
     const content = await readFile(
       join(this.projectDirectory(projectId), filename),
       "utf8",
     );
     return schema.parse(JSON.parse(content));
+  }
+
+  public async writeAsset(
+    id: string,
+    filename: string,
+    value: Uint8Array,
+  ): Promise<void> {
+    const projectId = projectIdSchema.parse(id);
+    this.validateFilename(filename);
+    const path = join(this.projectDirectory(projectId), filename);
+    const temporaryPath = `${path}.tmp`;
+    await writeFile(temporaryPath, value);
+    await rename(temporaryPath, path);
+  }
+
+  public async readAsset(id: string, filename: string): Promise<Buffer> {
+    const projectId = projectIdSchema.parse(id);
+    this.validateFilename(filename);
+    return readFile(join(this.projectDirectory(projectId), filename));
   }
 
   private projectDirectory(id: string): string {
@@ -105,5 +127,14 @@ export class FileProjectRepository {
       "utf8",
     );
     await rename(temporaryPath, path);
+  }
+
+  private validateFilename(filename: string): void {
+    if (
+      basename(filename) !== filename ||
+      !safeArtifactFilename.test(filename)
+    ) {
+      throw new Error("Artifact filename must stay inside the project folder.");
+    }
   }
 }

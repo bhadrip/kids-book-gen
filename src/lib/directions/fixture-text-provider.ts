@@ -2,10 +2,12 @@ import type { TextProvider } from "@/lib/directions/text-provider";
 import {
   storyDirectionsSchema,
   storyPackageSchema,
+  storyQualityEvaluationSchema,
   type ProjectBrief,
   type StoryDirection,
   type StoryDirections,
   type StoryPackage,
+  type StoryQualityEvaluation,
 } from "@/lib/projects/project";
 
 export class FixtureTextProvider implements TextProvider {
@@ -60,7 +62,11 @@ export class FixtureTextProvider implements TextProvider {
   public async generateStory(
     brief: ProjectBrief,
     direction: StoryDirection,
-    options: { revision: number; parentSteering?: string },
+    options: {
+      revision: number;
+      parentSteering?: string;
+      qualityFeedback?: string;
+    },
   ): Promise<StoryPackage> {
     await this.waitForFixtureDelay();
     return storyPackageSchema.parse({
@@ -82,7 +88,9 @@ export class FixtureTextProvider implements TextProvider {
       promise: direction.promise,
       arc: {
         beginning: direction.opening,
-        middle: "Three escalating choices reveal what matters most.",
+        middle: options.qualityFeedback
+          ? "Three clear, escalating choices reveal what matters most."
+          : "Three escalating choices reveal what matters most.",
         ending: direction.ending,
       },
       spreads: Array.from({ length: 13 }, (_, index) => ({
@@ -90,6 +98,35 @@ export class FixtureTextProvider implements TextProvider {
         beat: `Story beat ${index + 1}`,
         text: `Spread ${index + 1} moves the adventure forward while preserving the family's idea.`,
       })),
+    });
+  }
+
+  public async evaluateStory(
+    brief: ProjectBrief,
+    _direction: StoryDirection,
+    story: StoryPackage,
+  ): Promise<StoryQualityEvaluation> {
+    await this.waitForFixtureDelay();
+    const needsRevision =
+      brief.originalIdea === "Fixture story needs one quality revision" &&
+      !story.arc.middle.includes("clear");
+    return storyQualityEvaluationSchema.parse({
+      schemaVersion: 1,
+      projectId: brief.projectId,
+      storyRevision: story.revision,
+      evaluatedAt: this.now().toISOString(),
+      model: "fixture-text-provider",
+      verdict: needsRevision ? "revise" : "pass",
+      checks: {
+        fidelity: "pass",
+        structure: needsRevision ? "revise" : "pass",
+        ageFit: "pass",
+        oralFlow: "pass",
+        safety: "pass",
+      },
+      revisionBrief: needsRevision
+        ? "Make the middle escalation clearer while preserving the story."
+        : undefined,
     });
   }
 

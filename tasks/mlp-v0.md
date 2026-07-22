@@ -4,18 +4,19 @@ This is the local task tracker for `mlp-v0`. Statuses: **done**, **in progress**
 
 ## Delivery snapshot
 
-- **Last verified:** 2026-07-20 at commit `0d6b5ea`.
+- **Last verified:** 2026-07-21 on the working tree based at commit `8f49976`.
 - **Current runnable outcome:** a parent can create and reopen a project, shape
   an idea, generate and revise directions, select one with steering, generate
-  and revise a 13-spread text story, approve it, and resume from persisted
-  checkpoint and generation-job state.
+  and revise a quality-checked 13-spread text story, approve it, choose one of
+  six art presets, compare or regenerate three character designs, save a
+  character reference, edit and approve one illustrated sample spread, and
+  resume from persisted checkpoint and generation-job state.
 - **Quality evidence:** `just ci` passes with formatting, lint, strict
-  TypeScript, 14 Vitest tests, 5 fixture-only Playwright scenarios, and the
+  TypeScript, 20 Vitest tests, 7 fixture-only Playwright scenarios, and the
   production build. Automated tests use no paid model calls and write projects
   only below `test-results/`.
-- **Next incomplete product task:** `STR-02`, the hidden story-quality
-  evaluation and bounded automatic revision, before beginning Phase 4 visual
-  identity work.
+- **Next incomplete product task:** `GEN-01`, cost estimation and confirmation,
+  before beginning full-book illustration production.
 
 ## Phase 1 — Foundation and local setup
 
@@ -46,16 +47,16 @@ from my project list so that my family's book has a durable place to continue.
 **Evidence required.** Vitest covers creation, validated loading, and malformed
 data; Playwright covers create-and-reload using an isolated project directory.
 
-| ID     | Task                                                                                                                               | Status          | Evidence / notes                                                                                                                                                 |
-| ------ | ---------------------------------------------------------------------------------------------------------------------------------- | --------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| DOM-01 | Define versioned Zod schemas for projects, briefs, directions, story packages, visual bibles, spreads, proofs, jobs, and feedback. | **in progress** | Projects, briefs, directions, selected directions, story packages/decisions, and text-generation jobs are versioned; visual, proof, and feedback schemas remain. |
-| DOM-02 | Define artifact lifecycle states, approval rules, provenance metadata, and dependent-artifact staleness rules.                     | **not started** |                                                                                                                                                                  |
-| DOM-03 | Implement injectable clocks and ID generation for deterministic tests.                                                             | **done**        | Project creation, workflow services, providers, repositories, and tests use injected clocks/IDs where nondeterminism exists.                                     |
-| STO-01 | Implement a file-backed project repository at `data/projects/<project-id>/`.                                                       | **done**        | The repository creates, lists, loads, and stores all current JSON artifacts below the project directory.                                                         |
-| STO-02 | Implement atomic JSON/artifact writes and validated reads.                                                                         | **done**        | Project and workflow artifacts use atomic replacement and schema-validated reads.                                                                                |
-| STO-03 | Implement project creation, loading, and restart-resume behavior.                                                                  | **in progress** | Create/reopen and truthful interrupted-job recovery are implemented; automatic per-unit resume remains with `JOB-01`/`GEN-04`.                                   |
-| JOB-01 | Implement a file-backed local job runner with persisted progress and safe recovery.                                                | **in progress** | Text generation persists in-progress/completed/failed jobs; per-unit resume and stop controls remain.                                                            |
-| TST-01 | Test schema validation, lifecycle/staleness, persistence, and restart-resume behavior.                                             | **in progress** | Creation, atomic JSON, malformed-data rejection, persisted job status, failure recovery, and browser reopen are covered; general lifecycle/staleness remains.    |
+| ID     | Task                                                                                                                               | Status          | Evidence / notes                                                                                                                                              |
+| ------ | ---------------------------------------------------------------------------------------------------------------------------------- | --------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| DOM-01 | Define versioned Zod schemas for projects, briefs, directions, story packages, visual bibles, spreads, proofs, jobs, and feedback. | **in progress** | Text and visual workflow artifacts, decisions, and jobs are versioned; full-production spreads, proof, and feedback schemas remain.                           |
+| DOM-02 | Define artifact lifecycle states, approval rules, provenance metadata, and dependent-artifact staleness rules.                     | **not started** |                                                                                                                                                               |
+| DOM-03 | Implement injectable clocks and ID generation for deterministic tests.                                                             | **done**        | Project creation, workflow services, providers, repositories, and tests use injected clocks/IDs where nondeterminism exists.                                  |
+| STO-01 | Implement a file-backed project repository at `data/projects/<project-id>/`.                                                       | **done**        | The repository creates, lists, loads, and stores all current JSON artifacts below the project directory.                                                      |
+| STO-02 | Implement atomic JSON/artifact writes and validated reads.                                                                         | **done**        | JSON and binary image artifacts use project-scoped atomic replacement; persisted JSON uses schema-validated reads.                                            |
+| STO-03 | Implement project creation, loading, and restart-resume behavior.                                                                  | **in progress** | Create/reopen and truthful interrupted-job recovery are implemented; automatic per-unit resume remains with `JOB-01`/`GEN-04`.                                |
+| JOB-01 | Implement a file-backed local job runner with persisted progress and safe recovery.                                                | **in progress** | Text and visual generation persist in-progress/completed/failed jobs; per-unit resume and stop controls remain.                                               |
+| TST-01 | Test schema validation, lifecycle/staleness, persistence, and restart-resume behavior.                                             | **in progress** | Creation, atomic JSON, malformed-data rejection, persisted job status, failure recovery, and browser reopen are covered; general lifecycle/staleness remains. |
 
 ## Phase 3 — Idea, directions, and story approval
 
@@ -119,27 +120,59 @@ control while submitted. Routine pending and success updates do not move focus.
 a reusable client-side form feedback boundary; generation and persistence stay
 behind `StoryWorkflowService` and `TextProvider`.
 
-| ID      | Task                                                                                                      | Status          | Evidence / notes                                                                                            |
-| ------- | --------------------------------------------------------------------------------------------------------- | --------------- | ----------------------------------------------------------------------------------------------------------- |
-| UI-01   | Build the wizard shell and progress/checkpoint presentation.                                              | **done**        | Shared ordered checkpoints show persisted statuses, the project title, save-and-exit, and pending state.    |
-| IDEA-01 | Build the intake form with five narrative templates, Help me choose, and Start from scratch.              | **done**        | Optional shared intake excludes nonfiction and almost-wordless templates.                                   |
-| IDEA-02 | Capture, display, and edit the parent’s original must-keep details at every checkpoint.                   | **done**        | `brief.json` is saved before generation and shown at directions/story checkpoints.                          |
-| PRV-01  | Define the `TextProvider` boundary and OpenAI Responses adapter.                                          | **done**        | OpenAI is isolated behind `TextProvider`; tests use `FixtureTextProvider`.                                  |
-| DIR-01  | Generate exactly three structurally distinct story directions.                                            | **done**        | Schema enforces three distinct titles/engines; numbered revisions are preserved.                            |
-| STR-01  | Generate and approve a structured story package: characters, promise, arc, 13-spread map, and manuscript. | **done**        | Versioned story generation, feedback revision, approval, and reopen flow are implemented.                   |
-| STR-02  | Add one hidden story-quality evaluation and at most one automatic revision.                               | **not started** | Check fidelity, structure, age fit, oral flow, and safety.                                                  |
-| TST-02  | Test must-keep persistence, direction distinction, approval, and upstream staleness.                      | **in progress** | Persistence, distinction, revision, approval, and reopen are covered; general dependency staleness remains. |
+| ID      | Task                                                                                                      | Status          | Evidence / notes                                                                                                                  |
+| ------- | --------------------------------------------------------------------------------------------------------- | --------------- | --------------------------------------------------------------------------------------------------------------------------------- |
+| UI-01   | Build the wizard shell and progress/checkpoint presentation.                                              | **done**        | Four shared ordered checkpoints show persisted statuses, the project title, save-and-exit, and pending state.                     |
+| IDEA-01 | Build the intake form with five narrative templates, Help me choose, and Start from scratch.              | **done**        | Optional shared intake excludes nonfiction and almost-wordless templates.                                                         |
+| IDEA-02 | Capture, display, and edit the parent’s original must-keep details at every checkpoint.                   | **done**        | `brief.json` is saved before generation and shown at directions, story, and visual checkpoints.                                   |
+| PRV-01  | Define the `TextProvider` boundary and OpenAI Responses adapter.                                          | **done**        | OpenAI is isolated behind `TextProvider`; tests use `FixtureTextProvider`.                                                        |
+| DIR-01  | Generate exactly three structurally distinct story directions.                                            | **done**        | Schema enforces three distinct titles/engines; numbered revisions are preserved.                                                  |
+| STR-01  | Generate and approve a structured story package: characters, promise, arc, 13-spread map, and manuscript. | **done**        | Versioned story generation, feedback revision, approval, and reopen flow are implemented.                                         |
+| STR-02  | Add one hidden story-quality evaluation and at most one automatic revision.                               | **done**        | The first draft is preserved, five checks are stored privately, and no more than one bounded rewrite occurs before parent review. |
+| TST-02  | Test must-keep persistence, direction distinction, approval, and upstream staleness.                      | **in progress** | Persistence, distinction, revision, approval, and reopen are covered; general dependency staleness remains.                       |
 
 ## Phase 4 — Visual identity and sample-spread gate
 
-| ID     | Task                                                                                                         | Status          | Evidence / notes                                   |
-| ------ | ------------------------------------------------------------------------------------------------------------ | --------------- | -------------------------------------------------- |
-| VIS-01 | Define six structured, curated art presets.                                                                  | **not started** | No free-form art-direction input in V0.            |
-| PRV-02 | Define the `ImageProvider` boundary and OpenAI image adapter.                                                | **not started** |                                                    |
-| VIS-02 | Generate two or three character-design options and persist the chosen reference asset.                       | **not started** |                                                    |
-| VIS-03 | Create and persist a Visual Bible with character invariants, props, locations, palette, and text-safe areas. | **not started** |                                                    |
-| VIS-04 | Generate one editable-text sample spread and require explicit visual approval.                               | **not started** | Full production must remain locked until approval. |
-| TST-03 | Test visual approval gating, reference preservation, and provider-error recovery.                            | **not started** |                                                    |
+### Completed vertical slice — Approve a character and sample spread
+
+**Use case.** As a parent, I can choose a bounded visual language, compare three
+character designs, and approve one real book-like sample so that expensive
+full-book production starts from a visual identity I recognize and control.
+
+**Acceptance scenarios.**
+
+1. Only six structured presets are available; there is no free-form style or
+   named-artist imitation field.
+2. Three generated character options are saved; a parent can regenerate a
+   numbered successor set while preserving the prior set, and choosing one
+   creates a stable reference without deleting its siblings. The Visual Bible
+   records identity, palette, locations, props, exclusions, and a text-safe
+   area.
+3. Spread 7 is illustrated with the chosen reference while its manuscript text
+   remains a separately editable HTML layer.
+4. Editing text or requesting an image change creates a numbered successor and
+   preserves the prior sample and selected character.
+5. Explicit approval applies only to the current sample revision; full-book
+   production remains locked without it, and provider failure preserves the
+   approved story and last safe visual artifact.
+
+**Evidence required.** Vitest covers approval gating, reference and revision
+preservation, binary storage, and provider failure. Playwright covers the
+fixture-only visual journey, separate text editing, visual approval, reopen
+status, and failure recovery with zero paid model requests.
+
+**Architecture impact: Updated.** This adds the `VisualWorkflowService`,
+`ImageProvider`, atomic binary asset storage and serving, a persisted image-job
+record, and the fourth parent checkpoint.
+
+| ID     | Task                                                                                                         | Status   | Evidence / notes                                                                                                                                           |
+| ------ | ------------------------------------------------------------------------------------------------------------ | -------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| VIS-01 | Define six structured, curated art presets.                                                                  | **done** | Presets define medium, line, palette, lighting, shape, texture, detail, exclusions, and swatches; there is no free-form style input.                       |
+| PRV-02 | Define the `ImageProvider` boundary and OpenAI image adapter.                                                | **done** | OpenAI generation/edit calls stay behind the adapter; deterministic SVG fixtures keep tests zero-token.                                                    |
+| VIS-02 | Generate two or three character-design options and persist the chosen reference asset.                       | **done** | Three options, a visible regeneration action, and numbered revisions are preserved; the chosen asset is copied atomically to a stable versioned reference. |
+| VIS-03 | Create and persist a Visual Bible with character invariants, props, locations, palette, and text-safe areas. | **done** | The Visual Bible is schema-validated and tied to the current story revision, preset, and character reference.                                              |
+| VIS-04 | Generate one editable-text sample spread and require explicit visual approval.                               | **done** | Spread 7 uses a reference-conditioned image, separate editable text, numbered revisions, and current-revision approval.                                    |
+| TST-03 | Test visual approval gating, reference preservation, and provider-error recovery.                            | **done** | Four visual-service tests and two parent-visible Playwright scenarios cover regeneration, revision preservation, the gate, and recovery behavior.          |
 
 ## Phase 5 — Full-book production and revision
 

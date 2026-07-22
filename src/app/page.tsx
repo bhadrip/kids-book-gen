@@ -8,7 +8,8 @@ export const runtime = "nodejs";
 export default async function HomePage() {
   const config = readAppConfig(process.env);
   const generationReady =
-    config.textProvider === "fixture" || Boolean(config.openAiApiKey);
+    (config.textProvider === "fixture" || Boolean(config.openAiApiKey)) &&
+    (config.imageProvider === "fixture" || Boolean(config.openAiApiKey));
   const { FileProjectRepository } =
     await import("@/lib/projects/file-project-repository");
   const repository = new FileProjectRepository(config.projectRoot, {
@@ -93,7 +94,8 @@ export default async function HomePage() {
         </h2>
         <p className="mt-2 text-stone-700">
           {generationReady
-            ? config.textProvider === "fixture"
+            ? config.textProvider === "fixture" &&
+              config.imageProvider === "fixture"
               ? "Ready to use local fixture generation."
               : `Ready to use ${config.textModel} and ${config.imageModel}.`
             : "Add OPENAI_API_KEY to .env.local before generating a story."}

@@ -3,6 +3,7 @@ import type {
   StoryDirection,
   StoryDirections,
   StoryPackage,
+  StoryQualityEvaluation,
 } from "@/lib/projects/project";
 
 export interface TextProvider {
@@ -13,6 +14,15 @@ export interface TextProvider {
   generateStory(
     brief: ProjectBrief,
     direction: StoryDirection,
-    options: { revision: number; parentSteering?: string },
+    options: {
+      revision: number;
+      parentSteering?: string;
+      qualityFeedback?: string;
+    },
   ): Promise<StoryPackage>;
+  evaluateStory(
+    brief: ProjectBrief,
+    direction: StoryDirection,
+    story: StoryPackage,
+  ): Promise<StoryQualityEvaluation>;
 }
