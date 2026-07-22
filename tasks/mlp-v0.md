@@ -4,7 +4,7 @@ This is the local task tracker for `mlp-v0`. Statuses: **done**, **in progress**
 
 ## Delivery snapshot
 
-- **Last verified:** 2026-07-22 on the Phase 5 feature branch.
+- **Last verified:** 2026-07-22 on the Phase 6 feature branch.
 - **Current runnable outcome:** a parent can create and reopen a project, shape
   an idea, generate and revise directions, select one with steering, generate
   and revise a quality-checked 13-spread text story, approve it, choose one of
@@ -13,14 +13,15 @@ This is the local task tracker for `mlp-v0`. Statuses: **done**, **in progress**
   or edit a zero-additional-image-cost 16-page contact sheet and wireframe
   reader, approve its exact revision, resume sequential full-book production,
   review 16 saved landscape pages, edit a page, regenerate one image without
-  replacing siblings, approve the current complete book once, and inspect
-  preflight and activity history.
+  replacing siblings, approve the current complete book once, read it one
+  spread at a time, export the exact approved revisions as a landscape PDF,
+  save a family reading reflection, and inspect a local pilot summary.
 - **Quality evidence:** `just ci` passes with formatting, lint, strict
-  TypeScript, 27 Vitest tests, 9 fixture-only Playwright scenarios, and the
-  production build. Automated tests use no paid model calls and write projects
-  only below `test-results/`.
-- **Next incomplete product task:** `PDF-01`, the shared reader/PDF rendering
-  boundary for the saved book.
+  TypeScript, 29 Vitest tests, 9 fixture-only Playwright scenarios, real local
+  PDF rendering, and the production build. Automated tests use no paid model
+  calls and write projects only below `test-results/`.
+- **Next incomplete product task:** `PIL-01`, creating three internal books with
+  distinct narrative templates before facilitated family sessions.
 
 ## Phase 1 — Foundation and local setup
 
@@ -53,7 +54,7 @@ data; Playwright covers create-and-reload using an isolated project directory.
 
 | ID     | Task                                                                                                                               | Status          | Evidence / notes                                                                                                                                              |
 | ------ | ---------------------------------------------------------------------------------------------------------------------------------- | --------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| DOM-01 | Define versioned Zod schemas for projects, briefs, directions, story packages, visual bibles, spreads, proofs, jobs, and feedback. | **in progress** | Text, visual, and full-production page/job/preflight artifacts are versioned; proof and feedback schemas remain.                                              |
+| DOM-01 | Define versioned Zod schemas for projects, briefs, directions, story packages, visual bibles, spreads, proofs, jobs, and feedback. | **done**        | Text, visual, production, exact-revision proof, reading-feedback, and pilot-summary artifacts are schema-versioned and validated.                             |
 | DOM-02 | Define artifact lifecycle states, approval rules, provenance metadata, and dependent-artifact staleness rules.                     | **not started** |                                                                                                                                                               |
 | DOM-03 | Implement injectable clocks and ID generation for deterministic tests.                                                             | **done**        | Project creation, workflow services, providers, repositories, and tests use injected clocks/IDs where nondeterminism exists.                                  |
 | STO-01 | Implement a file-backed project repository at `data/projects/<project-id>/`.                                                       | **done**        | The repository creates, lists, loads, and stores all current JSON artifacts below the project directory.                                                      |
@@ -249,14 +250,62 @@ production activity log.
 
 ## Phase 6 — Reader, PDF, and pilot feedback
 
-| ID     | Task                                                                                                           | Status          | Evidence / notes |
-| ------ | -------------------------------------------------------------------------------------------------------------- | --------------- | ---------------- |
-| PDF-01 | Define the `PdfRenderer` boundary and shared HTML/CSS spread layout.                                           | **not started** |                  |
-| PDF-02 | Build the fullscreen, one-spread-at-a-time reader with previous/next controls.                                 | **not started** |                  |
-| PDF-03 | Render the complete layout as a screen-quality landscape PDF with Playwright.                                  | **not started** |                  |
-| FBK-01 | Add post-reading feedback: favorite part, confusion, completion, reread interest, and sequel interest.         | **not started** |                  |
-| FBK-02 | Produce a local pilot summary: time, regenerations, cost estimate, fidelity rating, and reread/sequel signals. | **not started** |                  |
-| TST-05 | Test proof page completeness, text/layout preflight, reader navigation, PDF export, and feedback persistence.  | **not started** |                  |
+### Completed vertical slice — Read, export, and reflect on the approved book
+
+**Use case.** As a parent, I can read the exact approved book in a focused
+spread reader, download the same layout as a local PDF, and record a lightweight
+family reflection so that the finished book and pilot signal are usable in one
+resumable flow.
+
+**Acceptance scenarios.**
+
+1. The reader and export remain locked until production preflight passes and
+   the exact current revisions of all 16 pages have one complete-book approval.
+   A later page edit preserves the prior proof but requires fresh approval.
+2. The fullscreen reader shows one landscape spread at a time with obvious
+   previous/next controls, a page count, Arrow/Home/End keyboard navigation,
+   a persistent project title and return route, and a narrow layout without
+   horizontal overflow.
+3. Reader and PDF consume the same page model, text-safe-area mapping, and
+   HTML/CSS layout. Opening the reader creates a versioned HTML proof; export
+   uses Playwright to inspect all 16 text layers and only saves a versioned,
+   screen-quality 12-by-8-inch PDF when page count and overflow checks pass.
+4. Export pending, success, and failure remain visible and accessible without
+   leaving the app. A failed completeness, renderer, or overflow check names
+   the safe recovery action and does not save an invalid PDF.
+5. The optional reading reflection records favorite part, confusion,
+   completion, 1–5 idea fidelity, reread interest, and sequel/another-story
+   interest as numbered successors. It states that the record stays local,
+   does not change the book, and does not train a model.
+6. Each saved reflection produces a validated local pilot summary with time
+   from project start to feedback, final-page regeneration count, tracked image
+   estimate, fidelity, completion, reread, and sequel signals.
+
+**Applicable screen states.** Approved/ready to read, direct-route locked,
+first/last/intermediate reader page, narrow reader, PDF rendering, PDF saved,
+layout/export failure, first feedback, updated feedback, and saved pilot
+summary. Reader page turns use a polite status without moving focus; form
+errors receive focus; motion is reduced when requested.
+
+**Evidence required.** Vitest covers exact-revision gating, 16-page shared
+layout output, valid export persistence, overflow rejection, successor feedback,
+and pilot-summary derivation. Playwright covers the parent-visible reader,
+keyboard and button navigation, narrow layout, a real valid PDF download, and
+feedback persistence using fixture images and zero paid model requests.
+
+**Architecture impact: Updated.** This adds `BookProofService`, the
+`PdfRenderer` boundary and local Playwright adapter, versioned HTML/PDF proof,
+reading-feedback and pilot-summary artifacts, a fullscreen reader route, and
+project-scoped PDF export.
+
+| ID     | Task                                                                                                           | Status   | Evidence / notes                                                                                                                                                 |
+| ------ | -------------------------------------------------------------------------------------------------------------- | -------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| PDF-01 | Define the `PdfRenderer` boundary and shared HTML/CSS spread layout.                                           | **done** | Reader and serialized proof share `BookLayoutPage`, text-safe-area classes, and CSS; renderer results report page count and overflowing page IDs.                |
+| PDF-02 | Build the fullscreen, one-spread-at-a-time reader with previous/next controls.                                 | **done** | Focused reader provides button and Arrow/Home/End navigation, visible page position, project exit, responsive layout, and an end-of-reading feedback action.     |
+| PDF-03 | Render the complete layout as a screen-quality landscape PDF with Playwright.                                  | **done** | Local Chromium renders a 12-by-8-inch PDF only after all 16 pages and text layers pass; HTML, PDF, metadata, and export activity are versioned and persisted.    |
+| FBK-01 | Add post-reading feedback: favorite part, confusion, completion, reread interest, and sequel interest.         | **done** | The optional local-only form saves all agreed signals as validated numbered feedback successors without changing the approved proof.                             |
+| FBK-02 | Produce a local pilot summary: time, regenerations, cost estimate, fidelity rating, and reread/sequel signals. | **done** | `pilot-summary.json` derives the session time, final-page regenerations, tracked estimate, fidelity, completion, reread, and sequel signals from saved records.  |
+| TST-05 | Test proof page completeness, text/layout preflight, reader navigation, PDF export, and feedback persistence.  | **done** | Two service tests plus the fixture-only full-book browser journey cover completeness, staleness, overflow, real PDF bytes, navigation, and feedback persistence. |
 
 ## Pilot readiness
 

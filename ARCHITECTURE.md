@@ -77,15 +77,18 @@ of the code boundaries defined in [development.md](development.md).
 
 ## Current implementation status
 
-Foundation, local project storage, text approval, the visual sample gate, and
-full-book production are runnable. A parent can create and reopen a project,
+Foundation, local project storage, text approval, the visual sample gate,
+full-book production, and the finished proof flow are runnable. A parent can
+create and reopen a project,
 save an idea, iterate on directions, select one, revise and approve a 13-spread
 story, choose a curated art direction, regenerate versioned character-design
 sets, choose a character reference, edit the separate sample text layer,
 persist visual approval, inspect and edit a zero-additional-image-cost contact
 sheet and wireframe reader, approve the exact book-plan revision, run or resume
-sequential production, and revise one saved book page without replacing its
-siblings. The current data flow is:
+sequential production, revise one saved book page without replacing its
+siblings, read the exact approved revisions one spread at a time, export a
+screen-quality PDF, and save a local family reflection and pilot summary. The
+current data flow is:
 
 ```mermaid
 flowchart LR
@@ -98,6 +101,7 @@ flowchart LR
   Story[Story checkpoint] --> Workflow
   Look[Look checkpoint] --> VisualWorkflow[VisualWorkflowService]
   Book[Book checkpoint] --> ProductionWorkflow[BookProductionService]
+  Reader[Fullscreen reader and feedback] --> ProofWorkflow[BookProofService]
   Shell[Project journey and persisted statuses] --> Repo
   Forms[Progressive forms and accessible pending state] --> Idea
   Forms --> Directions
@@ -114,6 +118,9 @@ flowchart LR
   VisualWorkflow --> Repo
   ProductionWorkflow --> ImageProvider
   ProductionWorkflow --> Repo
+  ProofWorkflow --> PdfRenderer[PdfRenderer]
+  PdfRenderer --> LocalChromium[Local Playwright Chromium]
+  ProofWorkflow --> Repo
   Repo --> Schema[Versioned Project Zod schema]
   Repo --> File[(data/projects/<project-id>/project.json)]
   Repo --> Assets[(Versioned local JSON and image assets)]
@@ -157,8 +164,13 @@ or write into the parent's project library. Pull-request UI review runs that
 same fixture-only suite with a read-only checkout token, uploads authenticated
 Playwright reports, screenshots, traces, and videos for 14 days, then links the
 artifact from a separate comment job that never checks out or executes pull
-request code. General dependency staleness, the fullscreen reader, PDF
-proof/export, and pilot feedback remain planned slices.
+request code. `BookProofService` gates the reader and export on the current
+exact-revision complete-book approval, serializes the shared reader layout into
+a versioned HTML proof, and delegates PDF creation to `PdfRenderer`. The local
+Playwright adapter verifies 16 rendered pages and rejects overflowing text
+before a landscape PDF is saved. Versioned reading feedback remains local and
+produces a validated pilot summary from persisted project, job, proof, and
+family-session signals. General dependency staleness remains a planned slice.
 The authoritative task status and evidence remain in
 [tasks/mlp-v0.md](tasks/mlp-v0.md), rather than being duplicated here.
 
@@ -198,3 +210,4 @@ The authoritative task status and evidence remain in
 | 2026-07-22 | Added resumable sequential full-book production with cost gates, per-page reference and continuity inputs, atomic progress, local page revision, activity history, and production preflight.                                       | `src/lib/production/`, `src/app/projects/[projectId]/book/`, `e2e/home.spec.ts`, `tasks/mlp-v0.md`     |
 | 2026-07-22 | Added a locally derived 16-page contact sheet and wireframe reader, versioned page-plan edits, and exact-plan approval before provider-backed production.                                                                          | `src/lib/production/`, `src/app/projects/[projectId]/book/`, `spec/mlp-v0-plan.md`, `e2e/home.spec.ts` |
 | 2026-07-22 | Added authenticated, 14-day Playwright PR review artifacts and an idempotent same-repository PR comment from a token-isolated job.                                                                                                 | `.github/workflows/pr-ui-review.yml`, `playwright.config.ts`                                           |
+| 2026-07-22 | Added exact-revision HTML/PDF proofs, a shared fullscreen reader layout, local Playwright export with overflow rejection, versioned reading feedback, and derived pilot summaries.                                                 | `src/lib/proof/`, `src/app/projects/[projectId]/book/read/`, `e2e/home.spec.ts`, `tasks/mlp-v0.md`     |

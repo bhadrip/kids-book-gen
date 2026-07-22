@@ -144,6 +144,8 @@ export const bookActivityEventSchema = z.object({
     "regenerated",
     "book_approved",
     "preflight_completed",
+    "proof_exported",
+    "feedback_saved",
   ]),
   at: z.string().datetime(),
   message: z.string().trim().min(1).max(500),
