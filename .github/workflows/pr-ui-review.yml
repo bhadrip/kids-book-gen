@@ -1,0 +1,167 @@
+name: PR UI review
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+    paths:
+      - "src/**"
+      - "public/**"
+      - "e2e/**"
+      - "playwright.config.*"
+      - "package.json"
+      - "pnpm-lock.yaml"
+      - "postcss.config.*"
+      - ".github/workflows/pr-ui-review.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pr-ui-review-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  playwright:
+    name: Record Playwright review
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    outputs:
+      artifact_url: ${{ steps.evidence.outputs.artifact-url }}
+      e2e_outcome: ${{ steps.e2e.outcome }}
+
+    steps:
+      - name: Check out pull request
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+
+      - name: Set up Node.js
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
+        with:
+          node-version-file: package.json
+
+      - name: Enable Corepack
+        run: |
+          npm install --global corepack@0.35.0
+          corepack enable
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Install Chromium
+        run: pnpm exec playwright install --with-deps chromium
+
+      - name: Run Playwright with review recording
+        id: e2e
+        continue-on-error: true
+        env:
+          CI: "true"
+          PLAYWRIGHT_PR_REVIEW: "1"
+        run: pnpm e2e
+
+      - name: Upload Playwright review evidence
+        id: evidence
+        if: always() && steps.e2e.outcome != 'skipped'
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: pr-ui-review-${{ github.event.pull_request.number || github.run_id }}-${{ github.run_attempt }}
+          path: |
+            playwright-report/
+            test-results/**/*.png
+            test-results/**/*.webm
+            test-results/**/*.zip
+          if-no-files-found: error
+          retention-days: 14
+
+      - name: Add evidence to the job summary
+        if: always() && steps.evidence.outcome == 'success'
+        env:
+          ARTIFACT_URL: ${{ steps.evidence.outputs.artifact-url }}
+          E2E_OUTCOME: ${{ steps.e2e.outcome }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          {
+            echo "## PR UI review"
+            echo
+            echo "Playwright outcome: **${E2E_OUTCOME}**"
+            echo
+            echo "[Download the Playwright report, videos, screenshots, and traces](${ARTIFACT_URL})"
+            echo
+            echo "Open \`playwright-report/index.html\` after extracting the artifact. Evidence is retained for 14 days."
+            echo
+            echo "[Open workflow run](${RUN_URL})"
+          } >> "${GITHUB_STEP_SUMMARY}"
+
+      - name: Enforce the Playwright result
+        if: always() && steps.e2e.outcome != 'success'
+        env:
+          E2E_OUTCOME: ${{ steps.e2e.outcome }}
+        run: |
+          echo "Playwright did not pass: ${E2E_OUTCOME}" >&2
+          exit 1
+
+  comment:
+    name: Link review evidence
+    needs: playwright
+    if: >-
+      always() &&
+      needs.playwright.outputs.artifact_url != '' &&
+      github.event_name == 'pull_request' &&
+      github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+
+    steps:
+      - name: Link evidence from the pull request
+        continue-on-error: true
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
+        env:
+          ARTIFACT_URL: ${{ needs.playwright.outputs.artifact_url }}
+          E2E_OUTCOME: ${{ needs.playwright.outputs.e2e_outcome }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        with:
+          script: |
+            const marker = "<!-- pr-ui-review-evidence -->";
+            const body = [
+              marker,
+              "## Playwright UI review",
+              "",
+              `Outcome: **${process.env.E2E_OUTCOME}**`,
+              "",
+              `[Download the recorded UI review](${process.env.ARTIFACT_URL}) and open \`playwright-report/index.html\`, or play a \`.webm\` directly.`,
+              "",
+              `[Workflow run](${process.env.RUN_URL}) · Evidence retained for 14 days.`,
+            ].join("\n");
+
+            const comments = await github.paginate(
+              github.rest.issues.listComments,
+              {
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                per_page: 100,
+              },
+            );
+            const existing = comments.find(
+              (comment) =>
+                comment.user?.login === "github-actions[bot]" &&
+                comment.body?.includes(marker),
+            );
+
+            if (existing) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: existing.id,
+                body,
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body,
+              });
+            }

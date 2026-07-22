@@ -8,6 +8,15 @@ import {
   textGenerationJobSchema,
 } from "@/lib/projects/project";
 import {
+  bookDecisionSchema,
+  bookManifestSchema,
+  bookPageSchema,
+  bookPlanDecisionSchema,
+  bookPlanSchema,
+  bookProductionJobSchema,
+} from "@/lib/production/production-artifacts";
+import { requiredBookPageIds } from "@/lib/production/book-preflight";
+import {
   characterDesignsSchema,
   imageGenerationJobSchema,
   sampleSpreadSchema,
@@ -28,6 +37,7 @@ type ProjectProgress = {
   directions: CheckpointStatus;
   story: CheckpointStatus;
   look: CheckpointStatus;
+  book: CheckpointStatus;
   nextAction: { href: string; label: string; reason: string };
 };
 
@@ -51,6 +61,12 @@ export async function getProjectProgress(
     sample,
     visualDecision,
     imageJob,
+    bookPlan,
+    bookPlanDecision,
+    book,
+    bookJob,
+    bookDecision,
+    bookPages,
   ] = await Promise.all([
     readOptional(
       repository.readArtifact(projectId, "brief.json", projectBriefSchema),
@@ -121,6 +137,44 @@ export async function getProjectProgress(
         imageGenerationJobSchema,
       ),
     ),
+    readOptional(
+      repository.readArtifact(projectId, "book-plan.json", bookPlanSchema),
+    ),
+    readOptional(
+      repository.readArtifact(
+        projectId,
+        "book-plan-decision.json",
+        bookPlanDecisionSchema,
+      ),
+    ),
+    readOptional(
+      repository.readArtifact(projectId, "book.json", bookManifestSchema),
+    ),
+    readOptional(
+      repository.readArtifact(
+        projectId,
+        "book-production-job.json",
+        bookProductionJobSchema,
+      ),
+    ),
+    readOptional(
+      repository.readArtifact(
+        projectId,
+        "book-decision.json",
+        bookDecisionSchema,
+      ),
+    ),
+    Promise.all(
+      requiredBookPageIds.map((pageId) =>
+        readOptional(
+          repository.readArtifact(
+            projectId,
+            `book-page-${pageId}.json`,
+            bookPageSchema,
+          ),
+        ),
+      ),
+    ),
   ]);
 
   let idea: CheckpointStatus = directions
@@ -160,6 +214,55 @@ export async function getProjectProgress(
         : selectedCharacter || characterDesigns
           ? "Needs attention"
           : "Not started";
+  const bookOutOfDate = Boolean(
+    book &&
+    story &&
+    sample &&
+    (book.sourceStoryRevision !== story.revision ||
+      book.sourceSampleRevision !== sample.revision),
+  );
+  const bookPlanCurrent = Boolean(
+    bookPlan &&
+    story &&
+    sample &&
+    bookPlan.sourceStoryRevision === story.revision &&
+    bookPlan.sourceSampleRevision === sample.revision,
+  );
+  const bookPlanApproved = Boolean(
+    bookPlanCurrent &&
+    bookPlan &&
+    bookPlanDecision?.status === "approved" &&
+    bookPlanDecision.planRevision === bookPlan.revision,
+  );
+  const bookApproved = Boolean(
+    bookDecision &&
+    bookPlan &&
+    bookDecision.sourcePlanRevision === bookPlan.revision &&
+    bookDecision.sourceStoryRevision === bookPlan.sourceStoryRevision &&
+    bookDecision.sourceSampleRevision === bookPlan.sourceSampleRevision &&
+    requiredBookPageIds.every((pageId) => {
+      const page = bookPages.find((candidate) => candidate?.pageId === pageId);
+      const approvedPage = bookDecision.pageRevisions.find(
+        (candidate) => candidate.pageId === pageId,
+      );
+      return page && approvedPage?.revision === page.revision;
+    }),
+  );
+  let bookStatus: CheckpointStatus = bookOutOfDate
+    ? "Out of date"
+    : bookApproved
+      ? "Approved"
+      : book?.status === "ready_for_review"
+        ? "Ready for your review"
+        : book?.status === "needs_attention"
+          ? "Needs attention"
+          : book?.status === "generating" || book?.status === "paused"
+            ? "In progress"
+            : bookPlanCurrent && !bookPlanApproved
+              ? "Ready for your review"
+              : bookPlanApproved
+                ? "In progress"
+                : "Not started";
 
   if (job?.status === "in_progress") {
     if (job.kind === "directions") idea = "In progress";
@@ -171,6 +274,7 @@ export async function getProjectProgress(
       directions: directionsStatus,
       story: storyStatus,
       look,
+      book: bookStatus,
       nextAction: {
         href: `/projects/${projectId}`,
         label: "Check generation status",
@@ -186,6 +290,7 @@ export async function getProjectProgress(
       directions: directionsStatus,
       story: storyStatus,
       look,
+      book: bookStatus,
       nextAction: {
         href: `/projects/${projectId}`,
         label: "Check visual generation status",
@@ -195,6 +300,30 @@ export async function getProjectProgress(
   }
 
   if (imageJob?.status === "failed") look = "Needs attention";
+
+  if (bookJob?.status === "in_progress" || bookJob?.status === "paused") {
+    bookStatus = "In progress";
+    return {
+      idea,
+      directions: directionsStatus,
+      story: storyStatus,
+      look,
+      book: bookStatus,
+      nextAction: {
+        href: `/projects/${projectId}/book`,
+        label:
+          bookJob.status === "paused"
+            ? "Resume saved book production"
+            : "Check or resume book production",
+        reason:
+          bookJob.status === "paused"
+            ? `${bookJob.completedUnitIds.length} of 16 pages are safely saved. Resume with the next missing page.`
+            : `${bookJob.stage}. ${bookJob.completedUnitIds.length} of 16 pages are safely saved. If the app restarted, open the book to resume from the first missing page.`,
+      },
+    };
+  }
+
+  if (bookJob?.status === "failed") bookStatus = "Needs attention";
 
   if (job?.status === "failed") {
     if (job.kind === "directions") idea = "Needs attention";
@@ -210,6 +339,7 @@ export async function getProjectProgress(
       directions: directionsStatus,
       story: storyStatus,
       look,
+      book: bookStatus,
       nextAction: {
         href: `/projects/${projectId}/idea`,
         label: brief ? "Retry story directions" : "Shape the story idea",
@@ -225,6 +355,7 @@ export async function getProjectProgress(
       directions: directionsStatus,
       story: storyStatus,
       look,
+      book: bookStatus,
       nextAction: {
         href: `/projects/${projectId}/directions`,
         label: selected ? "Retry story draft" : "Choose a story direction",
@@ -240,6 +371,7 @@ export async function getProjectProgress(
       directions: directionsStatus,
       story: storyStatus,
       look,
+      book: bookStatus,
       nextAction: {
         href: `/projects/${projectId}/story`,
         label: "Review story",
@@ -251,33 +383,72 @@ export async function getProjectProgress(
     };
   }
 
+  if (look !== "Approved") {
+    return {
+      idea,
+      directions: directionsStatus,
+      story: storyStatus,
+      look,
+      book: bookStatus,
+      nextAction: {
+        href: `/projects/${projectId}/look`,
+        label: sample
+          ? "Review the sample spread"
+          : characterDesigns
+            ? "Choose a character design"
+            : imageJob?.status === "failed"
+              ? "Retry character designs"
+              : "Choose the visual identity",
+        reason: sample
+          ? "Review the illustration with its separate, editable text layer."
+          : characterDesigns
+            ? "Three saved character directions are ready for your choice."
+            : imageJob?.status === "failed"
+              ? "Your approved story is safe. Retry only the visual draft when ready."
+              : "Choose a curated art look, then compare three character designs.",
+      },
+    };
+  }
+
   return {
     idea,
     directions: directionsStatus,
     story: storyStatus,
     look,
+    book: bookStatus,
     nextAction: {
-      href: `/projects/${projectId}/look`,
+      href: `/projects/${projectId}/book`,
       label:
-        look === "Approved"
-          ? "View approved visual sample"
-          : sample
-            ? "Review the sample spread"
-            : characterDesigns
-              ? "Choose a character design"
-              : imageJob?.status === "failed"
-                ? "Retry character designs"
-                : "Choose the visual identity",
+        bookStatus === "Approved"
+          ? "Review the approved book"
+          : bookStatus === "Ready for your review"
+            ? book?.status === "ready_for_review"
+              ? "Review the saved book"
+              : "Review the book plan"
+            : bookJob?.status === "failed"
+              ? "Retry the failed page"
+              : bookPlanApproved
+                ? "Start full-book production"
+                : "Preview the book plan",
       reason:
-        look === "Approved"
-          ? "The character reference, visual bible, and sample spread are approved and saved."
-          : sample
-            ? "Review the illustration with its separate, editable text layer."
-            : characterDesigns
-              ? "Three saved character directions are ready for your choice."
-              : imageJob?.status === "failed"
-                ? "Your approved story is safe. Retry only the visual draft when ready."
-                : "Choose a curated art look, then compare three character designs.",
+        bookStatus === "Approved"
+          ? "The one final decision covers the current revisions of all 16 pages."
+          : book?.status === "ready_for_review"
+            ? "All 16 required pages passed preflight and are ready for page-by-page review."
+            : bookJob?.status === "failed"
+              ? `${bookJob.completedUnitIds.length} earlier pages are safe. Retry only ${bookJob.failedUnitId ? labelForBookPage(bookJob.failedUnitId) : "the failed page"}.`
+              : bookPlanCurrent && !bookPlanApproved
+                ? "Review the saved zero-cost contact sheet and wireframes, then approve the current plan before image generation."
+                : bookPlanApproved
+                  ? "The approved book plan is ready for sequential image production."
+                  : "Preview all 16 pages as a zero-cost contact sheet and wireframe reader before image generation.",
     },
   };
+}
+
+function labelForBookPage(pageId: string): string {
+  if (pageId === "cover") return "the cover";
+  if (pageId === "title-page") return "the title page";
+  if (pageId === "end-matter") return "the closing page";
+  return `story spread ${Number(pageId.slice(-2))}`;
 }

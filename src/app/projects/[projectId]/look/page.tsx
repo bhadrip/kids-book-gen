@@ -538,9 +538,15 @@ export default async function LookPage({
               <div className="mt-4 rounded-2xl bg-green-50 p-5 text-green-900">
                 <p className="font-semibold">This visual sample is approved.</p>
                 <p className="mt-2">
-                  Full-book production is now unlocked by the saved approval;
-                  building that production stage is the next milestone.
+                  Full-book production is unlocked. Review its page count and
+                  cost estimate before starting the sequential job.
                 </p>
+                <Link
+                  className="mt-4 inline-block rounded-xl bg-stone-950 px-5 py-3 font-semibold text-white"
+                  href={`/projects/${projectId}/book`}
+                >
+                  Review production estimate
+                </Link>
               </div>
             ) : (
               <PendingForm

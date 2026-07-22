@@ -4,19 +4,23 @@ This is the local task tracker for `mlp-v0`. Statuses: **done**, **in progress**
 
 ## Delivery snapshot
 
-- **Last verified:** 2026-07-21 on the working tree based at commit `8f49976`.
+- **Last verified:** 2026-07-22 on the Phase 5 feature branch.
 - **Current runnable outcome:** a parent can create and reopen a project, shape
   an idea, generate and revise directions, select one with steering, generate
   and revise a quality-checked 13-spread text story, approve it, choose one of
   six art presets, compare or regenerate three character designs, save a
-  character reference, edit and approve one illustrated sample spread, and
-  resume from persisted checkpoint and generation-job state.
+  character reference, edit and approve one illustrated sample spread, confirm
+  or edit a zero-additional-image-cost 16-page contact sheet and wireframe
+  reader, approve its exact revision, resume sequential full-book production,
+  review 16 saved landscape pages, edit a page, regenerate one image without
+  replacing siblings, approve the current complete book once, and inspect
+  preflight and activity history.
 - **Quality evidence:** `just ci` passes with formatting, lint, strict
-  TypeScript, 20 Vitest tests, 7 fixture-only Playwright scenarios, and the
+  TypeScript, 27 Vitest tests, 9 fixture-only Playwright scenarios, and the
   production build. Automated tests use no paid model calls and write projects
   only below `test-results/`.
-- **Next incomplete product task:** `GEN-01`, cost estimation and confirmation,
-  before beginning full-book illustration production.
+- **Next incomplete product task:** `PDF-01`, the shared reader/PDF rendering
+  boundary for the saved book.
 
 ## Phase 1 — Foundation and local setup
 
@@ -49,13 +53,13 @@ data; Playwright covers create-and-reload using an isolated project directory.
 
 | ID     | Task                                                                                                                               | Status          | Evidence / notes                                                                                                                                              |
 | ------ | ---------------------------------------------------------------------------------------------------------------------------------- | --------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| DOM-01 | Define versioned Zod schemas for projects, briefs, directions, story packages, visual bibles, spreads, proofs, jobs, and feedback. | **in progress** | Text and visual workflow artifacts, decisions, and jobs are versioned; full-production spreads, proof, and feedback schemas remain.                           |
+| DOM-01 | Define versioned Zod schemas for projects, briefs, directions, story packages, visual bibles, spreads, proofs, jobs, and feedback. | **in progress** | Text, visual, and full-production page/job/preflight artifacts are versioned; proof and feedback schemas remain.                                              |
 | DOM-02 | Define artifact lifecycle states, approval rules, provenance metadata, and dependent-artifact staleness rules.                     | **not started** |                                                                                                                                                               |
 | DOM-03 | Implement injectable clocks and ID generation for deterministic tests.                                                             | **done**        | Project creation, workflow services, providers, repositories, and tests use injected clocks/IDs where nondeterminism exists.                                  |
 | STO-01 | Implement a file-backed project repository at `data/projects/<project-id>/`.                                                       | **done**        | The repository creates, lists, loads, and stores all current JSON artifacts below the project directory.                                                      |
 | STO-02 | Implement atomic JSON/artifact writes and validated reads.                                                                         | **done**        | JSON and binary image artifacts use project-scoped atomic replacement; persisted JSON uses schema-validated reads.                                            |
-| STO-03 | Implement project creation, loading, and restart-resume behavior.                                                                  | **in progress** | Create/reopen and truthful interrupted-job recovery are implemented; automatic per-unit resume remains with `JOB-01`/`GEN-04`.                                |
-| JOB-01 | Implement a file-backed local job runner with persisted progress and safe recovery.                                                | **in progress** | Text and visual generation persist in-progress/completed/failed jobs; per-unit resume and stop controls remain.                                               |
+| STO-03 | Implement project creation, loading, and restart-resume behavior.                                                                  | **done**        | Create/reopen, truthful interrupted-job recovery, atomic per-page saves, and resume from the first missing production page are implemented.                   |
+| JOB-01 | Implement a file-backed local job runner with persisted progress and safe recovery.                                                | **done**        | Text, visual, and book jobs persist progress and safe outputs; book production supports pause, failure retry, per-unit resume, and activity history.          |
 | TST-01 | Test schema validation, lifecycle/staleness, persistence, and restart-resume behavior.                                             | **in progress** | Creation, atomic JSON, malformed-data rejection, persisted job status, failure recovery, and browser reopen are covered; general lifecycle/staleness remains. |
 
 ## Phase 3 — Idea, directions, and story approval
@@ -122,7 +126,7 @@ behind `StoryWorkflowService` and `TextProvider`.
 
 | ID      | Task                                                                                                      | Status          | Evidence / notes                                                                                                                  |
 | ------- | --------------------------------------------------------------------------------------------------------- | --------------- | --------------------------------------------------------------------------------------------------------------------------------- |
-| UI-01   | Build the wizard shell and progress/checkpoint presentation.                                              | **done**        | Four shared ordered checkpoints show persisted statuses, the project title, save-and-exit, and pending state.                     |
+| UI-01   | Build the wizard shell and progress/checkpoint presentation.                                              | **done**        | Five shared ordered checkpoints show persisted statuses, the project title, save-and-exit, and pending state.                     |
 | IDEA-01 | Build the intake form with five narrative templates, Help me choose, and Start from scratch.              | **done**        | Optional shared intake excludes nonfiction and almost-wordless templates.                                                         |
 | IDEA-02 | Capture, display, and edit the parent’s original must-keep details at every checkpoint.                   | **done**        | `brief.json` is saved before generation and shown at directions, story, and visual checkpoints.                                   |
 | PRV-01  | Define the `TextProvider` boundary and OpenAI Responses adapter.                                          | **done**        | OpenAI is isolated behind `TextProvider`; tests use `FixtureTextProvider`.                                                        |
@@ -176,16 +180,72 @@ record, and the fourth parent checkpoint.
 
 ## Phase 5 — Full-book production and revision
 
-| ID     | Task                                                                                                       | Status          | Evidence / notes |
-| ------ | ---------------------------------------------------------------------------------------------------------- | --------------- | ---------------- |
-| GEN-01 | Enforce per-book cost estimates, $3 soft budget, and explicit confirmation before $5.                      | **not started** |                  |
-| GEN-02 | Generate and persist cover, front matter, roughly 13 landscape story spreads, and end matter sequentially. | **not started** |                  |
-| GEN-03 | Pass character references and beat-specific continuity facts to each illustration request.                 | **not started** |                  |
-| GEN-04 | Show persisted per-spread generation progress and resume interrupted work.                                 | **not started** |                  |
-| REV-01 | Add page-level keep, editable text, and image-regeneration controls.                                       | **not started** |                  |
-| REV-02 | Regenerate only the selected spread while preserving approved siblings.                                    | **not started** |                  |
-| GEN-05 | Add post-generation preflight for required pages, non-empty text, and required reference details.          | **not started** |                  |
-| TST-04 | Test budget accounting, interrupted-job resume, sibling-spread preservation, and preflight failures.       | **not started** |                  |
+### Completed vertical slice — Produce and locally revise the complete book
+
+**Use case.** As a parent, I can review cost and scope, generate a complete book
+sequentially, leave or stop safely, resume at the next missing page, and revise
+one page without losing the rest of the book.
+
+**Acceptance scenarios.**
+
+1. Full production remains locked until the current story and visual sample are
+   approved. Before spending on final images, the parent can inspect all 16
+   pages as a contact sheet and neutral wireframe reader, edit per-page text,
+   illustration intent, and must-show details, then approve the exact current
+   plan revision.
+2. Cover, title/copyright front matter, 13 story spreads, and closing matter are
+   requested sequentially. Every request includes the approved character
+   reference and page-specific continuity facts, and every successful page is
+   saved before the next request.
+3. Persisted completed/total progress, last safe output, estimate, timestamps,
+   failure location, and activity history survive reopen. A parent can stop
+   future pages, resume at the first missing page, or retry only the failed page.
+   While a local request is active, the review page refreshes automatically and
+   distinguishes live work from an interrupted persisted job; duplicate active
+   production requests are rejected.
+4. Every saved page offers separate editable text and a targeted image
+   regeneration with explicit change/preserve instructions. Numbered
+   predecessors and every sibling page remain unchanged. After page review, one
+   final decision approves the exact current revisions of all 16 pages; a later
+   page change makes that approval stale without deleting it.
+5. Preflight fails explicitly for a missing required page, empty text layer,
+   absent character reference details, or missing continuity facts.
+6. The plan is derived locally without an image-provider request. Production
+   then shows the configurable estimate, $3 soft budget, and required
+   confirmation above $5.
+
+**Applicable screen states.** First-use plan preview, edited plan awaiting fresh
+approval, approved plan, costly confirmation, generating, interrupted/reopened,
+paused, provider failure, ready for review, and localized revision. Known
+progress uses native `progress`; pending forms retain their action label,
+prevent duplicate submission, and announce saved-work context.
+
+**Evidence required.** Vitest covers zero-provider-call plan preview, successor
+plan approval, cost gating, sequential reference inputs, interruption/resume,
+localized regeneration, sibling preservation, and preflight. Playwright covers
+the 16-page contact sheet and wireframe reader, plan edit and approval,
+pause/reopen/resume, generated-page review, editable text, targeted
+regeneration, one complete-book approval, narrow layout, and provider failure
+using fixture images only.
+
+**Architecture impact: Updated.** This adds `BookProductionService`, versioned
+book-plan and exact-revision decision artifacts, versioned book
+page/manifest/job/preflight schemas, an exact-page-revision final-book decision,
+production requests to `ImageProvider`, the fifth persisted checkpoint, a
+process-local duplicate-run claim, live polling, and a parent-readable
+production activity log.
+
+| ID     | Task                                                                                                       | Status   | Evidence / notes                                                                                                                                                                           |
+| ------ | ---------------------------------------------------------------------------------------------------------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| GEN-00 | Preview, edit, and approve all 16 planned pages before final-image spending.                               | **done** | A locally derived contact sheet and wireframe reader expose text, illustration intent, continuity, and must-show details; current-revision approval gates production.                      |
+| GEN-01 | Enforce per-book cost estimates, $3 soft budget, and explicit confirmation before $5.                      | **done** | Configurable per-image estimates roll into persisted spend; UI warns above the soft budget and schema-tested confirmation gates $5.                                                        |
+| GEN-02 | Generate and persist cover, front matter, roughly 13 landscape story spreads, and end matter sequentially. | **done** | One cover, title/copyright page, 13 story spreads, and closing page are planned and atomically persisted in order.                                                                         |
+| GEN-03 | Pass character references and beat-specific continuity facts to each illustration request.                 | **done** | Production requests include the exact reference, Visual Bible details, current/prior beats, setting/prop facts, and prior page.                                                            |
+| GEN-04 | Show persisted per-spread generation progress and resume interrupted work.                                 | **done** | The book job records completed units, current/failed unit, last safe artifact, cost, and events; the UI auto-refreshes, identifies active vs interrupted work, and rejects duplicate runs. |
+| REV-01 | Add page editing, targeted image regeneration, and one final-book approval.                                | **done** | Each page exposes separate-text and change/preserve image actions with numbered successors; one exact-revision decision approves all 16 current pages.                                     |
+| REV-02 | Regenerate only the selected spread while preserving approved siblings.                                    | **done** | Service and Playwright evidence compare an unchanged sibling while the selected page advances revision.                                                                                    |
+| GEN-05 | Add post-generation preflight for required pages, non-empty text, and required reference details.          | **done** | Versioned preflight checks all 16 IDs, text, reference filename/details, and continuity facts.                                                                                             |
+| TST-04 | Test plan approval, budget accounting, interrupted-job resume, sibling-spread preservation, and preflight. | **done** | Seven production-service tests and two fixture-only browser scenarios cover preview, duplicate-run protection, happy, and recovery paths.                                                  |
 
 ## Phase 6 — Reader, PDF, and pilot feedback
 

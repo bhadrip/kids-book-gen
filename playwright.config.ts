@@ -1,12 +1,16 @@
 import { defineConfig, devices } from "@playwright/test";
 
+const isPrReview = process.env.PLAYWRIGHT_PR_REVIEW === "1";
+
 export default defineConfig({
   testDir: "./e2e",
   outputDir: "test-results",
+  reporter: [["html", { open: "never" }], ["list"]],
   use: {
     baseURL: "http://127.0.0.1:3100",
-    screenshot: "only-on-failure",
-    trace: "retain-on-failure",
+    screenshot: isPrReview ? "on" : "only-on-failure",
+    trace: isPrReview ? "on" : "retain-on-failure",
+    video: isPrReview ? "on" : "retain-on-failure",
   },
   projects: [
     {

@@ -121,13 +121,28 @@ Each JSON artifact includes a schema version, status, source artifact IDs, promp
 
 ### 5. Full-book production and local revision
 
+- Assemble a zero-additional-image-cost plan for all 16 pages from the approved
+  story, character reference, Visual Bible, family details, continuity facts,
+  and sample revision. Show it as both a contact sheet and neutral wireframe
+  reader before any full-book image request.
+- Let the parent adjust per-page text, illustration intent, and must-show
+  details as numbered plan successors. Require approval of the exact current
+  plan revision before production can start.
 - Generate the cover, title page, and 12–14 story spreads sequentially, passing the character reference and relevant continuity facts to every request.
-- Show per-spread progress and save each successful output immediately.
-- Provide page-level controls: keep, edit text, or regenerate image with “what to change” and “what to preserve.”
+- Show per-spread progress, refresh it while a request is active, distinguish
+  live work from restart recovery, prevent duplicate active runs, and save each
+  successful output immediately.
+- Provide page-level controls to edit text or regenerate an image with “what to
+  change” and “what to preserve.” After page review, approve the current
+  revisions of the complete book with one final decision instead of requiring
+  per-page approvals.
 - Regenerate only the affected spread and re-render the proof; do not restart the whole book.
 - Use a simple post-generation check for missing spreads, empty text, and required reference details. Parent review is the primary continuity check in P0.
 
-**Done when:** one approved project produces a readable, complete book and a single spread can be changed without losing approved work.
+**Done when:** a parent can inspect and approve the complete book plan without
+generating images, one approved project produces a readable complete book, a
+single spread can be changed without losing approved work, and the current 16
+page revisions can be approved once as a complete book.
 
 ### 6. Reader, PDF, and pilot feedback
 
@@ -140,7 +155,8 @@ Each JSON artifact includes a schema version, status, source artifact IDs, promp
 
 ## Cost and quality guardrails
 
-- Do not generate full-book artwork before story and sample-spread approval.
+- Do not generate full-book artwork before story, sample-spread, and current
+  book-plan approval.
 - Generate one candidate per final spread in P0; let the parent explicitly request a retry.
 - Use medium-quality landscape output for final spreads and lower-cost outputs only for disposable drafts.
 - Set a soft per-book budget of $3 and require explicit confirmation before exceeding $5.

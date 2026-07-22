@@ -71,6 +71,40 @@ export class FixtureImageProvider implements ImageProvider {
     };
   }
 
+  public async generateBookPage(
+    input: Parameters<ImageProvider["generateBookPage"]>[0],
+  ): Promise<GeneratedImage> {
+    await this.wait();
+    if (
+      this.shouldFail ||
+      (input.pageId === "story-03" &&
+        input.visualBible.signatureProps.some((detail) =>
+          detail.includes("Fixture production failure"),
+        ))
+    )
+      throw new Error("Deterministic fixture production failure.");
+    const [first, second, third] = input.preset.swatches;
+    const spreadNumber = input.storySpreadNumber ?? 0;
+    const accentX = 850 + ((spreadNumber * 73) % 420);
+    const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="1536" height="1024" viewBox="0 0 1536 1024" role="img">
+  <defs><linearGradient id="page" x2="1" y2="1"><stop stop-color="${first}"/><stop offset="1" stop-color="#fff8e8"/></linearGradient></defs>
+  <rect width="1536" height="1024" fill="url(#page)"/>
+  <circle cx="${accentX}" cy="230" r="145" fill="${second}" opacity=".84"/>
+  <path d="M0 760 Q300 570 610 760 T1536 690 V1024 H0 Z" fill="${third}" opacity=".94"/>
+  <path d="M890 820 Q900 490 1060 475 Q1220 490 1230 820 Z" fill="#27364a"/>
+  <circle cx="1060" cy="365" r="135" fill="#d97862"/>
+  <circle cx="1012" cy="350" r="13" fill="#201a17"/><circle cx="1108" cy="350" r="13" fill="#201a17"/>
+  <rect x="65" y="65" width="610" height="360" rx="38" fill="#fffdf7" opacity=".18" stroke="#fffdf7" stroke-width="4" stroke-dasharray="16 14"/>
+</svg>`;
+    return {
+      bytes: new TextEncoder().encode(svg),
+      extension: "svg",
+      mimeType: "image/svg+xml",
+      model: "fixture-image-provider",
+      altText: `${input.title}: ${input.illustrationDescription}`,
+    };
+  }
+
   private async wait(): Promise<void> {
     if (this.delayMs === 0) return;
     await new Promise((resolve) => setTimeout(resolve, this.delayMs));

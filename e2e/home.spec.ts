@@ -9,6 +9,7 @@ async function createApprovedFixtureStory(
   page: Page,
   title: string,
   originalIdea: string,
+  mustKeep = "Keep Milo's round glasses and the silver moon kite.",
 ) {
   await page.goto("/");
   await page.getByLabel("Project title").fill(title);
@@ -18,9 +19,7 @@ async function createApprovedFixtureStory(
   )?.replace("Project ID: ", "");
   await page.getByRole("link", { name: "Shape the story idea" }).click();
   await page.getByLabel("Original idea").fill(originalIdea);
-  await page
-    .getByLabel("Must keep")
-    .fill("Keep Milo's round glasses and the silver moon kite.");
+  await page.getByLabel("Must keep").fill(mustKeep);
   await page.getByRole("button", { name: "Generate three directions" }).click();
   await expect(
     page.getByRole("heading", { name: "Three ways this story could go" }),
@@ -40,6 +39,24 @@ async function createApprovedFixtureStory(
   await page.getByRole("button", { name: "Approve this story" }).click();
   await expect(page.getByText("Story approved and saved.")).toBeVisible();
   return projectId;
+}
+
+async function approveFixtureVisual(page: Page, projectId: string) {
+  await page.goto(`/projects/${projectId}/look`);
+  await page
+    .getByRole("button", { name: "Create three character designs" })
+    .click();
+  await page
+    .getByRole("region", { name: "Character design 1" })
+    .getByRole("button", { name: "Choose design 1" })
+    .click();
+  await expect(
+    page.getByRole("heading", { name: "Review the sample spread" }),
+  ).toBeVisible();
+  await page
+    .getByRole("button", { name: "Approve this visual direction" })
+    .click();
+  await expect(page.getByText("This visual sample is approved.")).toBeVisible();
 }
 
 test("shows the local Storytime Studio foundation", async ({ page }) => {
@@ -208,10 +225,14 @@ test("revises directions, generates a story, approves it, and reopens it without
   await expect(page.getByText("Story revision 1")).toBeVisible();
   await expect(page.getByText("Spread 13:")).toBeVisible();
   await page.getByLabel("What should change?").fill("Add one silly obstacle");
+  const revisionNavigation = page.waitForURL(
+    `**/projects/${projectId}/story?decision=revision_requested`,
+  );
   await page.getByRole("button", { name: "Revise this story" }).click();
   await expect(
     page.getByRole("button", { name: "Revising this story…" }),
   ).toBeDisabled();
+  await revisionNavigation;
   await expect(page.getByText("Story revision 2")).toBeVisible();
   await expect(page.getByText("Your revised story is ready.")).toBeVisible();
   await page.getByRole("button", { name: "Approve this story" }).click();
@@ -390,7 +411,7 @@ test("chooses a curated look, preserves character options, and approves a sample
   await page.getByRole("link", { name: "Save and exit" }).click();
   await expect(page.getByText("Approved", { exact: true })).toHaveCount(4);
   await expect(
-    page.getByRole("link", { name: "View approved visual sample" }),
+    page.getByRole("link", { name: "Preview the book plan" }),
   ).toBeVisible();
 
   const decision = JSON.parse(
@@ -400,6 +421,279 @@ test("chooses a curated look, preserves character options, and approves a sample
     ),
   ) as { status?: unknown };
   expect(decision.status).toBe("approved");
+
+  await rm(join(testProjectRoot, projectId ?? ""), {
+    recursive: true,
+    force: true,
+  });
+});
+
+test("shows resumable per-page production, revises one page, and preserves its siblings without model tokens", async ({
+  page,
+}) => {
+  test.setTimeout(120_000);
+  const projectId = await createApprovedFixtureStory(
+    page,
+    "Fixture full-book journey",
+    "A moon kite flies away before bedtime.",
+  );
+  await approveFixtureVisual(page, projectId ?? "");
+  await page.getByRole("link", { name: "Review production estimate" }).click();
+
+  await expect(
+    page.getByRole("heading", {
+      name: "Make the complete book, one saved page at a time.",
+    }),
+  ).toBeVisible();
+  await expect(
+    page.getByText("16 pages remain in this sequential job"),
+  ).toBeVisible();
+  await expect(page.getByText("$2.88")).toBeVisible();
+  await expect(page.getByText("$3.00")).toBeVisible();
+  await expect(
+    page.getByRole("heading", {
+      name: "Preview all 16 pages before image generation",
+    }),
+  ).toBeVisible();
+  await expect(page.locator('[data-testid^="plan-card-"]')).toHaveCount(16);
+  await expect(
+    page.getByRole("button", { name: "Start full-book production" }),
+  ).toHaveCount(0);
+  await page
+    .getByText("Open the one-spread-at-a-time wireframe reader")
+    .click();
+  await expect(page.getByTestId("plan-reader-page")).toHaveCount(16);
+
+  const plannedSpread = page.getByTestId("plan-card-story-07");
+  await plannedSpread.getByText("Adjust this page plan").click();
+  await plannedSpread
+    .getByLabel("Planned illustration")
+    .fill(
+      "A wide bedtime scene with Milo reaching toward the silver moon kite above the rooftops.",
+    );
+  await plannedSpread.getByRole("button", { name: "Save page plan" }).click();
+  await expect(
+    page.getByText("The page plan is saved as a new revision.", {
+      exact: false,
+    }),
+  ).toBeVisible();
+  await page.getByRole("button", { name: "Approve this book plan" }).click();
+  await expect(
+    page.getByText("The zero-cost book plan is approved.", { exact: false }),
+  ).toBeVisible();
+  await expect(
+    page
+      .getByTestId("plan-card-story-07")
+      .getByText(
+        "A wide bedtime scene with Milo reaching toward the silver moon kite above the rooftops.",
+      )
+      .first(),
+  ).toBeVisible();
+  await page.screenshot({
+    path: "test-results/book-plan-preview.png",
+    fullPage: true,
+  });
+
+  const generationFinished = page.waitForURL("**/book?result=saved");
+  await page
+    .getByRole("button", { name: "Start full-book production" })
+    .click();
+  await expect(
+    page.getByRole("button", { name: "Making the book…" }),
+  ).toBeDisabled();
+  await expect(
+    page
+      .getByRole("status")
+      .filter({ hasText: "New pages are saved one at a time" }),
+  ).toBeVisible();
+  await expect
+    .poll(async () => {
+      try {
+        const job = JSON.parse(
+          await readFile(
+            join(testProjectRoot, projectId ?? "", "book-production-job.json"),
+            "utf8",
+          ),
+        ) as { status?: unknown; completedUnitIds?: unknown[] };
+        return job.status === "in_progress"
+          ? (job.completedUnitIds?.length ?? 0)
+          : -1;
+      } catch {
+        return -1;
+      }
+    })
+    .toBeGreaterThan(0);
+
+  const recoveryPage = await page.context().newPage();
+  await recoveryPage.goto(`/projects/${projectId}/book`);
+  await expect(recoveryPage.getByText("Persisted job")).toBeVisible();
+  await expect(
+    recoveryPage.getByText("Generation is active in this app."),
+  ).toBeVisible();
+  await expect(
+    recoveryPage.getByRole("button", { name: "Resume after interruption" }),
+  ).toHaveCount(0);
+  await expect(recoveryPage.getByText(/of 16 pages saved/)).toBeVisible();
+  await recoveryPage
+    .getByRole("button", { name: "Stop after the current page" })
+    .click();
+  await expect(
+    recoveryPage.getByText("Production will pause before the next page."),
+  ).toBeVisible();
+  await generationFinished;
+
+  const pausedJob = JSON.parse(
+    await readFile(
+      join(testProjectRoot, projectId ?? "", "book-production-job.json"),
+      "utf8",
+    ),
+  ) as { status?: unknown; completedUnitIds?: unknown[] };
+  expect(pausedJob.status).toBe("paused");
+  expect(pausedJob.completedUnitIds?.length).toBeGreaterThan(0);
+  expect(pausedJob.completedUnitIds?.length).toBeLessThan(16);
+  await recoveryPage.close();
+
+  await expect(
+    page.getByRole("button", { name: "Resume with the next page" }),
+  ).toBeVisible();
+  const resumeFinished = page.waitForEvent("framenavigated", {
+    predicate: (frame) => frame === page.mainFrame(),
+  });
+  await page.getByRole("button", { name: "Resume with the next page" }).click();
+  await expect(
+    page.getByRole("button", { name: "Resuming the book…" }),
+  ).toBeDisabled();
+  await resumeFinished;
+  await expect(
+    page.getByRole("heading", { name: "Production preflight passed" }),
+  ).toBeVisible();
+  await expect(page.getByTestId("saved-book-page")).toHaveCount(16);
+  await expect(
+    page.getByText("Story spread 13", { exact: true }).first(),
+  ).toBeVisible();
+  await expect(
+    page.getByText("Closing page", { exact: true }).first(),
+  ).toBeVisible();
+
+  const siblingBefore = await readFile(
+    join(testProjectRoot, projectId ?? "", "book-page-story-06.json"),
+    "utf8",
+  );
+  const spreadSeven = page.locator("#story-07");
+  await spreadSeven.getByText("Edit the separate text layer").click();
+  await spreadSeven
+    .getByLabel("Page text")
+    .fill("Milo held the silver string while the moon kite hummed above him.");
+  await spreadSeven.getByRole("button", { name: "Save page text" }).click();
+  await expect(page.getByTestId("book-text-story-07")).toHaveText(
+    "Milo held the silver string while the moon kite hummed above him.",
+  );
+
+  const revisedSpreadSeven = page.locator("#story-07");
+  await revisedSpreadSeven.getByText("Regenerate only this image").click();
+  await revisedSpreadSeven
+    .getByLabel("What should change?")
+    .fill("Make the silver moon kite larger in the sky.");
+  await revisedSpreadSeven
+    .getByLabel("What must stay exactly the same?")
+    .fill("Keep Milo, his round glasses, and the separate page text.");
+  await revisedSpreadSeven
+    .getByRole("button", { name: "Regenerate this page image" })
+    .click();
+  await expect(
+    page.getByText("Every sibling page remains unchanged."),
+  ).toBeVisible();
+  expect(
+    await readFile(
+      join(testProjectRoot, projectId ?? "", "book-page-story-06.json"),
+      "utf8",
+    ),
+  ).toBe(siblingBefore);
+  await page.getByRole("button", { name: "Approve the complete book" }).click();
+  await expect(
+    page.getByText(
+      "The complete book is approved using the current revisions of all 16 pages.",
+    ),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("heading", { name: "The complete book is approved" }),
+  ).toBeVisible();
+
+  const productionJob = JSON.parse(
+    await readFile(
+      join(testProjectRoot, projectId ?? "", "book-production-job.json"),
+      "utf8",
+    ),
+  ) as { estimatedSpentCostUsd?: unknown; status?: unknown };
+  expect(productionJob).toMatchObject({
+    estimatedSpentCostUsd: 3.06,
+    status: "completed",
+  });
+  await expect(
+    page.getByText("This estimate is above the $3.00"),
+  ).toBeVisible();
+
+  await page.setViewportSize({ width: 390, height: 844 });
+  expect(
+    await page.evaluate(
+      () => document.documentElement.scrollWidth <= window.innerWidth,
+    ),
+  ).toBe(true);
+  await page.screenshot({
+    path: "test-results/full-book-review-narrow.png",
+    fullPage: true,
+  });
+
+  await rm(join(testProjectRoot, projectId ?? ""), {
+    recursive: true,
+    force: true,
+  });
+});
+
+test("preserves completed book pages when one production request fails", async ({
+  page,
+}) => {
+  test.setTimeout(75_000);
+  const projectId = await createApprovedFixtureStory(
+    page,
+    "Fixture production failure",
+    "A moon kite flies away before bedtime.",
+    "Fixture production failure; keep Milo's round glasses and the silver moon kite.",
+  );
+  await approveFixtureVisual(page, projectId ?? "");
+  await page.getByRole("link", { name: "Review production estimate" }).click();
+  await page.getByRole("button", { name: "Approve this book plan" }).click();
+  await expect(
+    page.getByText("The zero-cost book plan is approved.", { exact: false }),
+  ).toBeVisible();
+  const failedResponse = page.waitForResponse(
+    (response) =>
+      response.url().includes(`/projects/${projectId}/book/production`) &&
+      response.request().method() === "POST",
+  );
+  await page
+    .getByRole("button", { name: "Start full-book production" })
+    .click();
+  await failedResponse;
+  await expect(
+    page.getByText("Every completed page is still saved", { exact: false }),
+  ).toBeVisible();
+  await page.reload();
+  await expect(page.getByText("Story spread 3 did not finish.")).toBeVisible();
+  await expect(
+    page.getByRole("button", { name: "Retry the failed page" }),
+  ).toBeVisible();
+  await expect(page.getByTestId("saved-book-page")).toHaveCount(4);
+  const failedJob = JSON.parse(
+    await readFile(
+      join(testProjectRoot, projectId ?? "", "book-production-job.json"),
+      "utf8",
+    ),
+  ) as { failedUnitId?: unknown; completedUnitIds?: unknown[] };
+  expect(failedJob).toMatchObject({
+    failedUnitId: "story-03",
+    completedUnitIds: ["cover", "title-page", "story-01", "story-02"],
+  });
 
   await rm(join(testProjectRoot, projectId ?? ""), {
     recursive: true,
