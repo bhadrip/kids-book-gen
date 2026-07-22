@@ -96,4 +96,58 @@ export class OpenAIImageProvider implements ImageProvider {
       altText: `Illustration for spread 7, ${spread.beat}, with the approved character and room for the story text.`,
     };
   }
+
+  public async generateBookPage(
+    input: Parameters<ImageProvider["generateBookPage"]>[0],
+  ): Promise<GeneratedImage> {
+    const characterReference = await toFile(
+      Buffer.from(input.reference.bytes),
+      "approved-character-reference.png",
+      { type: input.reference.mimeType },
+    );
+    const images = [characterReference];
+    if (input.previousReference) {
+      images.push(
+        await toFile(
+          Buffer.from(input.previousReference.bytes),
+          "previous-approved-page.png",
+          { type: input.previousReference.mimeType },
+        ),
+      );
+    }
+    const prompt = [
+      `Create the polished landscape children's-book ${input.kind.replace("_", " ")} illustration for ${input.title}.`,
+      `Page purpose: ${input.beat}`,
+      `Separate text-layer context (do not render it): ${input.text}`,
+      `Continuity facts for this beat: ${input.continuityFacts.join("; ")}`,
+      `Required approved-reference details: ${input.requiredReferenceDetails.join("; ")}`,
+      `Character and world rules: ${JSON.stringify(input.visualBible)}`,
+      `Art direction: ${input.preset.medium}; ${input.preset.line}; ${input.preset.palette}; ${input.preset.lighting}; ${input.preset.shapeLanguage}; ${input.preset.texture}.`,
+      `Requested change: ${input.parentFeedback ?? "None; create the first production revision."}`,
+      `Preserve: ${input.preserveInstructions ?? "All approved character identity, story facts, props, and successful adjacent-page continuity."}`,
+      "Use the first supplied image as the exact recurring character reference. If a second image is supplied, use it only for adjacent-page continuity.",
+      `Leave calm, low-detail negative space in the ${input.visualBible.textSafeArea.replace("_", " ")} for a separate HTML text layer.`,
+      "Do not render words, letters, typography, captions, borders, mockups, or page numbers inside the image.",
+      `Avoid: ${input.visualBible.avoid.join(", ")}. Do not imitate a named artist.`,
+    ].join("\n");
+    const result = await new OpenAI({ apiKey: this.apiKey }).images.edit({
+      model: this.model,
+      image: images,
+      prompt,
+      n: 1,
+      size: "1536x1024",
+      quality: "medium",
+      output_format: "png",
+    });
+    const encoded = result.data?.[0]?.b64_json;
+    if (!encoded)
+      throw new Error("The image provider returned an empty book page.");
+    return {
+      bytes: Buffer.from(encoded, "base64"),
+      extension: "png",
+      mimeType: "image/png",
+      model: this.model,
+      altText: `${input.title}: ${input.beat}, illustrated with the approved recurring character and room for the story text.`,
+    };
+  }
 }

@@ -15,6 +15,9 @@ export async function createImageProvider(
       generateSampleSpread: async () => {
         throw new Error("OPENAI_API_KEY is required for image generation.");
       },
+      generateBookPage: async () => {
+        throw new Error("OPENAI_API_KEY is required for image generation.");
+      },
     };
   const { OpenAIImageProvider } =
     await import("@/lib/visuals/openai-image-provider");

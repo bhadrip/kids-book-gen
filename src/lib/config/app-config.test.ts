@@ -9,6 +9,7 @@ describe("readAppConfig", () => {
       imageModel: "gpt-image-2",
       projectRoot: "data/projects",
       bookBudgetUsd: 3,
+      finalImageEstimateUsd: 0.18,
       textProvider: "openai",
       imageProvider: "openai",
       fixtureDelayMs: 0,
@@ -17,6 +18,9 @@ describe("readAppConfig", () => {
 
   it("rejects a non-positive book budget", () => {
     expect(() => readAppConfig({ KIDS_BOOK_BOOK_BUDGET_USD: "0" })).toThrow();
+    expect(() =>
+      readAppConfig({ KIDS_BOOK_FINAL_IMAGE_ESTIMATE_USD: "0" }),
+    ).toThrow();
   });
 
   it("accepts a bounded fixture delay for observable browser states", () => {

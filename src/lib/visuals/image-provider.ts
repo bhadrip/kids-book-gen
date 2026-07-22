@@ -1,4 +1,5 @@
 import type { ProjectBrief, StoryPackage } from "@/lib/projects/project";
+import type { BookPageId } from "@/lib/production/production-artifacts";
 import type { ArtPreset } from "@/lib/visuals/art-presets";
 import type { VisualBible } from "@/lib/visuals/visual-artifacts";
 
@@ -22,5 +23,25 @@ export interface ImageProvider {
     preset: ArtPreset;
     reference: { bytes: Uint8Array; mimeType: GeneratedImage["mimeType"] };
     parentFeedback?: string;
+  }): Promise<GeneratedImage>;
+  generateBookPage(input: {
+    pageId: BookPageId;
+    kind: "cover" | "front_matter" | "story" | "end_matter";
+    storySpreadNumber?: number;
+    title: string;
+    beat: string;
+    text: string;
+    continuityFacts: string[];
+    requiredReferenceDetails: string[];
+    story: StoryPackage;
+    visualBible: VisualBible;
+    preset: ArtPreset;
+    reference: { bytes: Uint8Array; mimeType: GeneratedImage["mimeType"] };
+    previousReference?: {
+      bytes: Uint8Array;
+      mimeType: GeneratedImage["mimeType"];
+    };
+    parentFeedback?: string;
+    preserveInstructions?: string;
   }): Promise<GeneratedImage>;
 }
