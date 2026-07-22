@@ -138,6 +138,26 @@ export const storyPackageSchema = z.object({
 });
 export type StoryPackage = z.infer<typeof storyPackageSchema>;
 
+export const storyQualityEvaluationSchema = z.object({
+  schemaVersion: z.literal(1),
+  projectId: projectIdSchema,
+  storyRevision: z.number().int().positive(),
+  evaluatedAt: z.string().datetime(),
+  model: z.string().trim().min(1),
+  verdict: z.enum(["pass", "revise"]),
+  checks: z.object({
+    fidelity: z.enum(["pass", "revise"]),
+    structure: z.enum(["pass", "revise"]),
+    ageFit: z.enum(["pass", "revise"]),
+    oralFlow: z.enum(["pass", "revise"]),
+    safety: z.enum(["pass", "revise"]),
+  }),
+  revisionBrief: optionalText(1_500),
+});
+export type StoryQualityEvaluation = z.infer<
+  typeof storyQualityEvaluationSchema
+>;
+
 export const storyDecisionSchema = z.object({
   schemaVersion: z.literal(1),
   projectId: projectIdSchema,

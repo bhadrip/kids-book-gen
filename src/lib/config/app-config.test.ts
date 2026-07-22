@@ -10,6 +10,7 @@ describe("readAppConfig", () => {
       projectRoot: "data/projects",
       bookBudgetUsd: 3,
       textProvider: "openai",
+      imageProvider: "openai",
       fixtureDelayMs: 0,
     });
   });

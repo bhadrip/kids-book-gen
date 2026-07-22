@@ -1,8 +1,46 @@
 import { expect, test } from "@playwright/test";
+import type { Page } from "@playwright/test";
 import { readFile, rm } from "node:fs/promises";
 import { join } from "node:path";
 
 const testProjectRoot = join(process.cwd(), "test-results", "projects");
+
+async function createApprovedFixtureStory(
+  page: Page,
+  title: string,
+  originalIdea: string,
+) {
+  await page.goto("/");
+  await page.getByLabel("Project title").fill(title);
+  await page.getByRole("button", { name: "Create local project" }).click();
+  const projectId = (
+    await page.getByText("Project ID:").textContent()
+  )?.replace("Project ID: ", "");
+  await page.getByRole("link", { name: "Shape the story idea" }).click();
+  await page.getByLabel("Original idea").fill(originalIdea);
+  await page
+    .getByLabel("Must keep")
+    .fill("Keep Milo's round glasses and the silver moon kite.");
+  await page.getByRole("button", { name: "Generate three directions" }).click();
+  await expect(
+    page.getByRole("heading", { name: "Three ways this story could go" }),
+  ).toBeVisible();
+  const firstDirection = page.getByRole("region", {
+    name: "The Moon Kite Mission",
+  });
+  await Promise.all([
+    page.waitForURL(`**/projects/${projectId}/story`),
+    firstDirection
+      .getByRole("button", { name: "Choose this direction" })
+      .click(),
+  ]);
+  await expect(
+    page.getByRole("heading", { name: "The Moon Kite Mission" }),
+  ).toBeVisible();
+  await page.getByRole("button", { name: "Approve this story" }).click();
+  await expect(page.getByText("Story approved and saved.")).toBeVisible();
+  return projectId;
+}
 
 test("shows the local Storytime Studio foundation", async ({ page }) => {
   await page.goto("/");
@@ -76,6 +114,7 @@ test("offers a parent-safe idea intake without making a model request", async ({
 test("revises directions, generates a story, approves it, and reopens it without model tokens", async ({
   page,
 }) => {
+  test.setTimeout(45_000);
   await page.goto("/");
   await page.getByLabel("Project title").fill("Fixture story journey");
   await page.getByRole("button", { name: "Create local project" }).click();
@@ -152,12 +191,14 @@ test("revises directions, generates a story, approves it, and reopens it without
   await firstCard
     .getByLabel("Any steering for the next story step? (optional)")
     .fill("Keep the ending hopeful");
+  const storyNavigation = page.waitForURL(`**/projects/${projectId}/story`);
   await firstCard
     .getByRole("button", { name: "Choose this direction" })
     .click();
   await expect(
     firstCard.getByRole("button", { name: "Generating this story…" }),
   ).toBeDisabled();
+  await storyNavigation;
 
   await expect(
     page.getByRole("heading", {
@@ -178,7 +219,7 @@ test("revises directions, generates a story, approves it, and reopens it without
 
   await page.goto(`/projects/${projectId}`);
   await expect(page.getByText("Approved", { exact: true })).toHaveCount(3);
-  await page.getByRole("link", { name: "View approved story" }).click();
+  await page.goto(`/projects/${projectId}/story`);
   await expect(
     page.getByText("This story revision is approved."),
   ).toBeVisible();
@@ -229,6 +270,180 @@ test("shows a saved-work recovery state when text generation fails", async ({
   await expect(
     page.getByRole("link", { name: "Retry story directions" }),
   ).toBeVisible();
+
+  await rm(join(testProjectRoot, projectId ?? ""), {
+    recursive: true,
+    force: true,
+  });
+});
+
+test("chooses a curated look, preserves character options, and approves a sample spread without model tokens", async ({
+  page,
+}) => {
+  const projectId = await createApprovedFixtureStory(
+    page,
+    "Fixture visual journey",
+    "A moon kite flies away before bedtime.",
+  );
+
+  await page.getByRole("link", { name: "Choose the visual identity" }).click();
+  await expect(
+    page.getByRole("heading", { name: "Choose an art direction" }),
+  ).toBeVisible();
+  await expect(page.getByLabel("Warm and handmade")).toBeChecked();
+  await expect(page.getByLabel("Detailed discovery")).toBeVisible();
+  await page.screenshot({
+    path: "test-results/visual-art-presets.png",
+    fullPage: true,
+  });
+
+  await page
+    .getByRole("button", { name: "Create three character designs" })
+    .click();
+  await expect(
+    page.getByRole("button", { name: "Creating three character designs…" }),
+  ).toBeDisabled();
+  await expect(
+    page.getByRole("heading", {
+      name: "Choose the character your child will recognize",
+    }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("region", { name: "Character design 1" }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("region", { name: "Character design 3" }),
+  ).toBeVisible();
+  await expect(page.getByText("Character design set 1")).toBeVisible();
+
+  await page.getByRole("button", { name: "Regenerate three designs" }).click();
+  await expect(
+    page.getByRole("button", {
+      name: "Regenerating three character designs…",
+    }),
+  ).toBeDisabled();
+  await expect(page.getByText("Character design set 2")).toBeVisible();
+
+  const firstDesignSet = JSON.parse(
+    await readFile(
+      join(testProjectRoot, projectId ?? "", "character-designs-01.json"),
+      "utf8",
+    ),
+  ) as { revision?: unknown };
+  const currentDesignSet = JSON.parse(
+    await readFile(
+      join(testProjectRoot, projectId ?? "", "character-designs.json"),
+      "utf8",
+    ),
+  ) as { revision?: unknown };
+  expect(firstDesignSet.revision).toBe(1);
+  expect(currentDesignSet.revision).toBe(2);
+
+  const secondDesign = page.getByRole("region", { name: "Character design 2" });
+  await secondDesign.getByRole("button", { name: "Choose design 2" }).click();
+  await expect(
+    secondDesign.getByRole("button", {
+      name: "Saving this character and making the sample…",
+    }),
+  ).toBeDisabled();
+  await expect(
+    page.getByRole("heading", { name: "Review the sample spread" }),
+  ).toBeVisible();
+  await expect(page.getByTestId("sample-spread-text")).toHaveText(
+    "Spread 7 moves the adventure forward while preserving the family's idea.",
+  );
+  await expect(page.getByAltText("Approved character reference")).toBeVisible();
+  await page.screenshot({
+    path: "test-results/visual-sample-spread.png",
+    fullPage: true,
+  });
+  await page.setViewportSize({ width: 390, height: 844 });
+  await expect(page.getByTestId("sample-spread-text")).toBeVisible();
+  expect(
+    await page.evaluate(
+      () => document.documentElement.scrollWidth <= window.innerWidth,
+    ),
+  ).toBe(true);
+  await page.screenshot({
+    path: "test-results/visual-sample-spread-narrow.png",
+    fullPage: true,
+  });
+
+  await page
+    .getByLabel("Edit the text shown on this sample")
+    .fill("Milo held the silver string and listened to the moon hum.");
+  await page.getByRole("button", { name: "Save sample text" }).click();
+  await expect(
+    page.getByText("The separate sample text is saved.", { exact: false }),
+  ).toBeVisible();
+  await expect(page.getByTestId("sample-spread-text")).toHaveText(
+    "Milo held the silver string and listened to the moon hum.",
+  );
+
+  await page
+    .getByRole("button", { name: "Approve this visual direction" })
+    .click();
+  await expect(
+    page.getByText("Visual direction approved and saved."),
+  ).toBeVisible();
+  await expect(page.getByText("This visual sample is approved.")).toBeVisible();
+  await page.getByRole("link", { name: "Save and exit" }).click();
+  await expect(page.getByText("Approved", { exact: true })).toHaveCount(4);
+  await expect(
+    page.getByRole("link", { name: "View approved visual sample" }),
+  ).toBeVisible();
+
+  const decision = JSON.parse(
+    await readFile(
+      join(testProjectRoot, projectId ?? "", "visual-decision.json"),
+      "utf8",
+    ),
+  ) as { status?: unknown };
+  expect(decision.status).toBe("approved");
+
+  await rm(join(testProjectRoot, projectId ?? ""), {
+    recursive: true,
+    force: true,
+  });
+});
+
+test("preserves the approved story when visual generation fails", async ({
+  page,
+}) => {
+  const projectId = await createApprovedFixtureStory(
+    page,
+    "Fixture visual failure",
+    "Fixture image failure",
+  );
+  await page.getByRole("link", { name: "Choose the visual identity" }).click();
+  await page
+    .getByRole("button", { name: "Create three character designs" })
+    .click();
+
+  await expect(
+    page.getByText(
+      "The visual draft did not finish. Your approved story and the last saved visual artifact are still safe.",
+      { exact: false },
+    ),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("button", { name: "Retry three character designs" }),
+  ).toBeVisible();
+  await page.getByRole("link", { name: "Save and exit" }).click();
+  await expect(
+    page.getByText("Needs attention", { exact: true }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("link", { name: "Retry character designs" }),
+  ).toBeVisible();
+
+  const storyDecision = JSON.parse(
+    await readFile(
+      join(testProjectRoot, projectId ?? "", "story-decision.json"),
+      "utf8",
+    ),
+  ) as { status?: unknown };
+  expect(storyDecision.status).toBe("approved");
 
   await rm(join(testProjectRoot, projectId ?? ""), {
     recursive: true,

@@ -6,6 +6,7 @@ import {
   storyDecisionSchema,
   storyDirectionsSchema,
   storyPackageSchema,
+  storyQualityEvaluationSchema,
   textGenerationJobSchema,
   type ProjectBrief,
   type StoryDecision,
@@ -98,7 +99,7 @@ export class StoryWorkflowService {
       "Creating a 13-spread story draft",
       "selected-direction.json",
       async () => {
-        const story = await this.provider.generateStory(brief, direction, {
+        const story = await this.generateQualityCheckedStory(brief, direction, {
           revision: 1,
           parentSteering: parentFeedback,
         });
@@ -162,10 +163,14 @@ export class StoryWorkflowService {
       "Revising the 13-spread story draft",
       "story.json",
       async () => {
-        const generated = await this.provider.generateStory(brief, direction, {
-          revision,
-          parentSteering: feedback,
-        });
+        const generated = await this.generateQualityCheckedStory(
+          brief,
+          direction,
+          {
+            revision,
+            parentSteering: feedback,
+          },
+        );
         await this.saveStory(projectId, generated);
         return generated;
       },
@@ -202,6 +207,38 @@ export class StoryWorkflowService {
       story,
     );
     await this.repository.writeArtifact(projectId, "story.json", story);
+  }
+
+  private async generateQualityCheckedStory(
+    brief: ProjectBrief,
+    direction: StoryDirections["directions"][number],
+    options: { revision: number; parentSteering?: string },
+  ): Promise<StoryPackage> {
+    const firstDraft = await this.provider.generateStory(
+      brief,
+      direction,
+      options,
+    );
+    await this.repository.writeArtifact(
+      brief.projectId,
+      `story-quality-input-${String(options.revision).padStart(2, "0")}.json`,
+      firstDraft,
+    );
+    const evaluation = storyQualityEvaluationSchema.parse(
+      await this.provider.evaluateStory(brief, direction, firstDraft),
+    );
+    await this.repository.writeArtifact(
+      brief.projectId,
+      `story-quality-evaluation-${String(options.revision).padStart(2, "0")}.json`,
+      evaluation,
+    );
+    if (evaluation.verdict === "pass") return firstDraft;
+    if (!evaluation.revisionBrief)
+      throw new Error("The quality evaluation did not explain its revision.");
+    return this.provider.generateStory(brief, direction, {
+      ...options,
+      qualityFeedback: evaluation.revisionBrief,
+    });
   }
 
   private async runGenerationJob<T>(

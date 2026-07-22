@@ -6,13 +6,14 @@ import { useEffect, useState } from "react";
 import type { CheckpointStatus } from "@/lib/projects/project-progress";
 
 type ProjectJourneyProps = {
-  current: "idea" | "directions" | "story" | "overview";
+  current: "idea" | "directions" | "story" | "look" | "overview";
   projectId: string;
   projectTitle: string;
   statuses: {
     idea: CheckpointStatus;
     directions: CheckpointStatus;
     story: CheckpointStatus;
+    look: CheckpointStatus;
   };
 };
 
@@ -20,6 +21,7 @@ const checkpoints = [
   { id: "idea", label: "Shape the idea" },
   { id: "directions", label: "Choose a direction" },
   { id: "story", label: "Approve the story" },
+  { id: "look", label: "Approve the look" },
 ] as const;
 
 export function ProjectJourney({
@@ -49,7 +51,7 @@ export function ProjectJourney({
       <p className="mt-3 text-sm text-stone-600">Project</p>
       <p className="text-lg font-semibold text-stone-950">{projectTitle}</p>
       <nav aria-label="Story workflow" className="mt-6">
-        <ol className="grid gap-3 sm:grid-cols-3">
+        <ol className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           {checkpoints.map((checkpoint, index) => {
             const isCurrent = current === checkpoint.id;
             const status =

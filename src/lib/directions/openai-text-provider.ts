@@ -7,10 +7,12 @@ import {
   storyDirectionsSchema,
   storyDirectionSchema,
   storyPackageSchema,
+  storyQualityEvaluationSchema,
   type ProjectBrief,
   type StoryDirection,
   type StoryPackage,
   type StoryDirections,
+  type StoryQualityEvaluation,
 } from "@/lib/projects/project";
 
 const directionResponseSchema = z.object({
@@ -67,7 +69,11 @@ export class OpenAITextProvider implements TextProvider {
   public async generateStory(
     brief: ProjectBrief,
     direction: StoryDirection,
-    options: { revision: number; parentSteering?: string },
+    options: {
+      revision: number;
+      parentSteering?: string;
+      qualityFeedback?: string;
+    },
   ): Promise<StoryPackage> {
     const format = storyPackageSchema.pick({
       title: true,
@@ -90,6 +96,7 @@ export class OpenAITextProvider implements TextProvider {
             brief,
             direction,
             parentSteering: options.parentSteering,
+            hiddenQualityFeedback: options.qualityFeedback,
           }),
         },
       ],
@@ -105,6 +112,43 @@ export class OpenAITextProvider implements TextProvider {
       revision: options.revision,
       sourceDirectionTitle: direction.title,
       parentSteering: options.parentSteering,
+    });
+  }
+
+  public async evaluateStory(
+    brief: ProjectBrief,
+    direction: StoryDirection,
+    story: StoryPackage,
+  ): Promise<StoryQualityEvaluation> {
+    const format = storyQualityEvaluationSchema.pick({
+      verdict: true,
+      checks: true,
+      revisionBrief: true,
+    });
+    const response = await new OpenAI({ apiKey: this.apiKey }).responses.parse({
+      model: this.model,
+      input: [
+        {
+          role: "developer",
+          content:
+            "Privately evaluate this children's story for fidelity to the family brief, causal structure, ages 7–10 parent-read-aloud fit, oral flow, and safety. Choose revise only for a material problem. If revision is needed, provide one concise revision brief that preserves strengths and approved details. Return only the structured response.",
+        },
+        {
+          role: "user",
+          content: JSON.stringify({ brief, direction, story }),
+        },
+      ],
+      text: { format: zodTextFormat(format, "story_quality_evaluation") },
+    });
+    if (!response.output_parsed)
+      throw new Error("No story quality evaluation returned.");
+    return storyQualityEvaluationSchema.parse({
+      ...response.output_parsed,
+      schemaVersion: 1,
+      projectId: brief.projectId,
+      storyRevision: story.revision,
+      evaluatedAt: this.now().toISOString(),
+      model: this.model,
     });
   }
 }
