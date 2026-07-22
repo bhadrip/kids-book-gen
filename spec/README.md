@@ -34,6 +34,10 @@ The service should feel simple to parents while using a configurable set of spec
    parent-facing UX implementation contract and coding-agent checklist.
 9. [Research references](references.md) — cited academic and industry sources.
 
+Unaccepted design directions are indexed separately in
+[proposals/](../proposals/README.md). A proposal does not become current product
+or architecture policy merely because it is recorded in the repository.
+
 ## Product principles
 
 1. Preserve the parent's idea and intent; agents extend it rather than replacing it.
