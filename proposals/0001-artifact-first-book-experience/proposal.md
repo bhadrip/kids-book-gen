@@ -1,6 +1,14 @@
 # Proposed Artifact-First Book Experience
 
+**Proposal:** DP-0001
+
+**Type:** Product and architecture
+
 **Status:** Proposed for product and architecture review
+
+**Discussion:** [PR #12](https://github.com/bhadrip/kids-book-gen/pull/12)
+
+**Resolution:** Pending
 
 **Decision requested:** Whether V0 should replace its checkpoint-heavy parent
 journey with a complete-preview-first experience
@@ -29,7 +37,7 @@ continuity facts, generation jobs, and provenance. Most become internal
 artifacts instead of mandatory parent-facing checkpoints.
 
 This is a proposed direction, not an accepted change to the current MVP
-decisions in [README.md](README.md).
+decisions in [spec/README.md](../../spec/README.md).
 
 ## Why reconsider the current journey
 
@@ -61,14 +69,14 @@ not each intermediate implementation artifact.
 
 The analogous objects for this product are:
 
-| Application builder concept | Kids Book Builder concept |
-| --- | --- |
-| Editable source code | Structured `BookSource` |
-| Working website preview | Complete low-cost book preview |
-| Source version history | Book-source and asset revision history |
-| Published deployment | Approved `ProofSnapshot` and PDF |
-| Visual or prompted edit | Direct text edit or scoped book change |
-| Agent traces and plans | Internal generation artifacts and provenance |
+| Application builder concept | Kids Book Builder concept                    |
+| --------------------------- | -------------------------------------------- |
+| Editable source code        | Structured `BookSource`                      |
+| Working website preview     | Complete low-cost book preview               |
+| Source version history      | Book-source and asset revision history       |
+| Published deployment        | Approved `ProofSnapshot` and PDF             |
+| Visual or prompted edit     | Direct text edit or scoped book change       |
+| Agent traces and plans      | Internal generation artifacts and provenance |
 
 This analogy does not imply that a book is technically equivalent to a website.
 Illustrations are slower and more expensive to regenerate than most code edits,
@@ -218,6 +226,12 @@ book_source:
 The exact schema remains an engineering design task. It should compose or
 reference the existing validated brief, story, Visual Bible, book plan, and
 page artifacts rather than duplicating conflicting sources of truth.
+
+The companion
+[two-layer book source proposal](../0002-two-layer-book-source/proposal.md)
+refines this concept into a product-specific semantic `BookModel`, a
+standards-based EPUB 3 Fixed Layout `PublicationSource`, and linked versioned
+assets.
 
 ### `PipelineRecipe`
 
@@ -389,15 +403,15 @@ implementation expands.
 
 ## Risks and mitigations
 
-| Risk | Mitigation |
-| --- | --- |
-| A complete first draft feels generic or wrong | Keep must-keeps persistent and offer concrete whole-book revision immediately. |
-| Removing direction choice reduces creative agency | Offer “Explore alternatives” as an optional branch from the complete preview. |
-| One large text call produces internally inconsistent pages | Retain structured schemas, hidden evaluation, and at most one bounded repair before display. |
-| Low-cost placeholders create false expectations about final art | Label them clearly and show representative generated visual samples before purchase. |
-| Broad edits accidentally invalidate paid work | Compute dependency impact, preserve unaffected artifacts, and confirm cost before regeneration. |
-| `BookSource` becomes a duplicate source of truth | Compose existing versioned artifacts or designate one canonical aggregate with tested derivation rules. |
-| New editors change old books unexpectedly | Create successor revisions, show a diff/impact summary, and retain exact artifact provenance. |
+| Risk                                                            | Mitigation                                                                                              |
+| --------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------- |
+| A complete first draft feels generic or wrong                   | Keep must-keeps persistent and offer concrete whole-book revision immediately.                          |
+| Removing direction choice reduces creative agency               | Offer “Explore alternatives” as an optional branch from the complete preview.                           |
+| One large text call produces internally inconsistent pages      | Retain structured schemas, hidden evaluation, and at most one bounded repair before display.            |
+| Low-cost placeholders create false expectations about final art | Label them clearly and show representative generated visual samples before purchase.                    |
+| Broad edits accidentally invalidate paid work                   | Compute dependency impact, preserve unaffected artifacts, and confirm cost before regeneration.         |
+| `BookSource` becomes a duplicate source of truth                | Compose existing versioned artifacts or designate one canonical aggregate with tested derivation rules. |
+| New editors change old books unexpectedly                       | Create successor revisions, show a diff/impact summary, and retain exact artifact provenance.           |
 
 ## Decisions requested from review
 
@@ -421,10 +435,10 @@ application-service responsibilities, persisted project contracts, generation
 provenance, and compatibility policy. Acceptance would require coordinated
 updates to:
 
-- [ARCHITECTURE.md](../ARCHITECTURE.md)
-- [Agent pipeline](04-agent-pipeline.md)
-- [Product configuration](05-product-configuration.md)
-- [Parent experience guidelines](08-ux-guidelines.md)
+- [ARCHITECTURE.md](../../ARCHITECTURE.md)
+- [Agent pipeline](../../spec/04-agent-pipeline.md)
+- [Product configuration](../../spec/05-product-configuration.md)
+- [Parent experience guidelines](../../spec/08-ux-guidelines.md)
 - The active task and acceptance scenarios
 - Project, artifact, pipeline-recipe, and generation-run schemas
 - Unit, integration, and parent-visible Playwright evidence

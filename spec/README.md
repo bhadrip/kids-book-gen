@@ -32,10 +32,11 @@ The service should feel simple to parents while using a configurable set of spec
 7. [Open questions and roadmap](07-open-questions.md) — unresolved product and validation work.
 8. [Parent experience and interaction guidelines](08-ux-guidelines.md) —
    parent-facing UX implementation contract and coding-agent checklist.
-9. [Proposed artifact-first book experience](09-artifact-first-book-experience.md) —
-   decision proposal for a complete-preview-first parent journey, durable
-   editable book source, and pipeline-recipe provenance.
-10. [Research references](references.md) — cited academic and industry sources.
+9. [Research references](references.md) — cited academic and industry sources.
+
+Unaccepted design directions are indexed separately in
+[proposals/](../proposals/README.md). A proposal does not become current product
+or architecture policy merely because it is recorded in the repository.
 
 ## Product principles
 
