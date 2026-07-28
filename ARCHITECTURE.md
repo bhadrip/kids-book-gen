@@ -187,15 +187,16 @@ The authoritative task status and evidence remain in
 
 ## Detail map
 
-| Concern                                               | Canonical detail                                     |
-| ----------------------------------------------------- | ---------------------------------------------------- |
-| Product research, decisions, and terminology          | [spec/README.md](spec/README.md)                     |
-| Parent-facing interaction contract                    | [spec/08-ux-guidelines.md](spec/08-ux-guidelines.md) |
-| Quality gates, setup, architecture seams, and testing | [development.md](development.md)                     |
-| Agent delivery workflow and context model             | [agenticsdlc.md](agenticsdlc.md)                     |
-| Current feature/task status                           | [tasks/mlp-v0.md](tasks/mlp-v0.md)                   |
-| Durable non-obvious decisions                         | `spec/adr/` when introduced                          |
-| Executable behavior                                   | Source, Zod schemas, and tests                       |
+| Concern                                               | Canonical detail                                           |
+| ----------------------------------------------------- | ---------------------------------------------------------- |
+| Product research, decisions, and terminology          | [spec/README.md](spec/README.md)                           |
+| Parent-facing interaction contract                    | [spec/08-ux-guidelines.md](spec/08-ux-guidelines.md)       |
+| Artifact ownership, lineage, storage, and status      | [spec/09-artifact-catalog.md](spec/09-artifact-catalog.md) |
+| Quality gates, setup, architecture seams, and testing | [development.md](development.md)                           |
+| Agent delivery workflow and context model             | [agenticsdlc.md](agenticsdlc.md)                           |
+| Current feature/task status                           | [tasks/mlp-v0.md](tasks/mlp-v0.md)                         |
+| Durable non-obvious decisions                         | `spec/adr/` when introduced                                |
+| Executable behavior                                   | Source, Zod schemas, and tests                             |
 
 ## Architecture change log
 
@@ -211,3 +212,4 @@ The authoritative task status and evidence remain in
 | 2026-07-22 | Added a locally derived 16-page contact sheet and wireframe reader, versioned page-plan edits, and exact-plan approval before provider-backed production.                                                                          | `src/lib/production/`, `src/app/projects/[projectId]/book/`, `spec/mlp-v0-plan.md`, `e2e/home.spec.ts` |
 | 2026-07-22 | Added authenticated, 14-day Playwright PR review artifacts and an idempotent same-repository PR comment from a token-isolated job.                                                                                                 | `.github/workflows/pr-ui-review.yml`, `playwright.config.ts`                                           |
 | 2026-07-22 | Added exact-revision HTML/PDF proofs, a shared fullscreen reader layout, local Playwright export with overflow rejection, versioned reading feedback, and derived pilot summaries.                                                 | `src/lib/proof/`, `src/app/projects/[projectId]/book/read/`, `e2e/home.spec.ts`, `tasks/mlp-v0.md`     |
+| 2026-07-27 | Added a contributor-facing catalog of implemented artifact ownership, lineage, storage conventions, approval boundaries, lifecycle gaps, and proposed visual-narrative boundaries.                                                 | `spec/09-artifact-catalog.md`, `spec/README.md`                                                        |
