@@ -32,7 +32,9 @@ The service should feel simple to parents while using a configurable set of spec
 7. [Open questions and roadmap](07-open-questions.md) — unresolved product and validation work.
 8. [Parent experience and interaction guidelines](08-ux-guidelines.md) —
    parent-facing UX implementation contract and coding-agent checklist.
-9. [Research references](references.md) — cited academic and industry sources.
+9. [Artifact catalog](09-artifact-catalog.md) — implemented and proposed
+   artifacts, ownership, lineage, storage, approvals, and lifecycle status.
+10. [Research references](references.md) — cited academic and industry sources.
 
 ## Product principles
 
