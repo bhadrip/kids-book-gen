@@ -9,6 +9,10 @@ import {
   type StoryPackage,
   type StoryQualityEvaluation,
 } from "@/lib/projects/project";
+import {
+  visualPlanDraftSchema,
+  type VisualPlanDraft,
+} from "@/lib/visuals/visual-narrative-artifacts";
 
 export class FixtureTextProvider implements TextProvider {
   public constructor(
@@ -128,6 +132,59 @@ export class FixtureTextProvider implements TextProvider {
         ? "Make the middle escalation clearer while preserving the story."
         : undefined,
     });
+  }
+
+  public async generateVisualPlan(
+    brief: ProjectBrief,
+    story: StoryPackage,
+  ): Promise<VisualPlanDraft & { model: string }> {
+    await this.waitForFixtureDelay();
+    if (brief.originalIdea === "Fixture visual plan failure")
+      throw new Error("Deterministic fixture visual-plan failure.");
+    const character = story.characters[0];
+    return {
+      ...visualPlanDraftSchema.parse({
+        emotionalArc: {
+          characters: [
+            {
+              characterName: character?.name ?? "Main character",
+              beats: story.spreads.map((spread, index) => ({
+                spreadNumber: spread.number,
+                enteringState: index === 0 ? "curious" : "engaged",
+                trigger: spread.beat,
+                outwardExpression: `A clear, child-readable response to ${spread.beat.toLowerCase()}.`,
+                leavingState:
+                  index === story.spreads.length - 1 ? "satisfied" : "ready",
+                intensity:
+                  index > 8
+                    ? ("high" as const)
+                    : index > 3
+                      ? ("medium" as const)
+                      : ("low" as const),
+                avoidSignals: brief.avoid ? [brief.avoid] : [],
+              })),
+            },
+          ],
+        },
+        spreadMap: {
+          spreads: story.spreads.map((spread) => ({
+            spreadNumber: spread.number,
+            storyBeat: spread.beat,
+            storyJob: `Move the approved story through ${spread.beat.toLowerCase()}.`,
+            mainAction: `Show the main character acting on ${spread.beat.toLowerCase()}.`,
+            emotionalMovement: `Attention shifts as ${spread.beat.toLowerCase()} unfolds.`,
+            illustrationIntent: `Make ${spread.beat.toLowerCase()} visually clear without repeating the manuscript.`,
+            mustShow: brief.mustKeep ? [brief.mustKeep] : [],
+            mustAvoid: brief.avoid ? [brief.avoid] : [],
+            pageTurnQuestion:
+              spread.number === 13
+                ? "How will this feeling stay with the family?"
+                : "What will happen next?",
+          })),
+        },
+      }),
+      model: "fixture-text-provider",
+    };
   }
 
   private async waitForFixtureDelay(): Promise<void> {

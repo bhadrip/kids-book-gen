@@ -136,6 +136,8 @@ agent:
 
 | Agent | Reads | Produces |
 |---|---|---|
+| Emotional Arc Planner | Approved story, reader profile, boundaries | Character-by-character observable emotional progression |
+| Visual Spread Planner | Approved story and emotional arc | `SpreadMap` |
 | Visual Director | Story bible, spread map, art preference | Art direction |
 | Character Design Agent | Character records and art direction | Model sheets and expressions |
 | World Design Agent | Locations, props, motifs | World reference assets |
@@ -177,7 +179,10 @@ flowchart TD
 
 ```mermaid
 flowchart TD
-    A[Visual bible] --> B[Thumbnail storyboard]
+    A[Approved story] --> A1[Emotional arc and spread map]
+    A1 --> A2[Parent visual-plan approval]
+    A2 --> A3[Visual bible]
+    A3 --> B[Thumbnail storyboard]
     B --> C[Sequence evaluation]
     C --> D{Story readable visually?}
     D -- No --> B

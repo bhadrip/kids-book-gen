@@ -22,6 +22,7 @@ import { BookProductionService } from "@/lib/production/book-production-service"
 import { bookPageSchema } from "@/lib/production/production-artifacts";
 import { FixtureImageProvider } from "@/lib/visuals/fixture-image-provider";
 import { VisualWorkflowService } from "@/lib/visuals/visual-workflow-service";
+import { VisualNarrativeWorkflowService } from "@/lib/visuals/visual-narrative-workflow-service";
 
 const directories: string[] = [];
 const projectId = "a9ef6d30-f300-4897-bc8f-abda9a9c00b2";
@@ -74,6 +75,13 @@ async function setup() {
   const directions = await story.createDirections(brief);
   await story.selectDirection(projectId, directions.directions[0].title);
   await story.decideStory(projectId, "approved");
+  const visualNarrative = new VisualNarrativeWorkflowService(
+    repository,
+    new FixtureTextProvider(workflowNow),
+    workflowNow,
+  );
+  await visualNarrative.generatePlan(projectId);
+  await visualNarrative.decidePlan(projectId, "approved");
   const visuals = new VisualWorkflowService(
     repository,
     new FixtureImageProvider(),

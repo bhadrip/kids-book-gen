@@ -274,12 +274,15 @@ export class StoryWorkflowService {
       });
       return result;
     } catch (error) {
+      const failureMessage =
+        error instanceof Error
+          ? error.message.slice(0, 500)
+          : "Generation did not finish. The last saved artifact is still available.";
       await this.saveGenerationJob(projectId, {
         ...job,
         status: "failed",
         updatedAt: this.now().toISOString(),
-        failureMessage:
-          "Generation did not finish. The last saved artifact is still available.",
+        failureMessage,
       });
       throw error;
     }

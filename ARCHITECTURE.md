@@ -41,7 +41,8 @@ in [development.md](development.md).
 flowchart LR
   Idea[Parent idea and must-keep details] --> Directions[Story directions]
   Directions --> Story[Approved story package]
-  Story --> Visual[Approved visual sample and visual bible]
+  Story --> VisualPlan[Approved emotional arc and visual spread plan]
+  VisualPlan --> Visual[Approved visual sample and visual bible]
   Visual --> Plan[Zero-cost 16-page book plan]
   Plan --> Approval[Exact plan revision approval]
   Approval --> Production[Full-book production]
@@ -77,18 +78,21 @@ of the code boundaries defined in [development.md](development.md).
 
 ## Current implementation status
 
-Foundation, local project storage, text approval, the visual sample gate,
-full-book production, and the finished proof flow are runnable. A parent can
+Foundation, local project storage, text approval, visual-story planning, the
+visual sample gate, full-book production, and the finished proof flow are
+runnable. A parent can
 create and reopen a project,
 save an idea, iterate on directions, select one, revise and approve a 13-spread
-story, choose a curated art direction, regenerate versioned character-design
-sets, choose a character reference, edit the separate sample text layer,
-persist visual approval, inspect and edit a zero-additional-image-cost contact
-sheet and wireframe reader, approve the exact book-plan revision, run or resume
-sequential production, revise one saved book page without replacing its
-siblings, read the exact approved revisions one spread at a time, export a
-screen-quality PDF, and save a local family reflection and pilot summary. The
-current data flow is:
+story, generate and minimally review a versioned visual spread plan backed by
+an internal emotional arc, approve its exact revision, choose a curated art
+direction from six bundled same-scene visual previews, regenerate versioned
+character-design sets, choose a character reference, edit the separate sample
+text layer, persist visual approval, inspect
+and edit a zero-additional-image-cost contact sheet and wireframe reader,
+approve the exact book-plan revision, run or resume sequential production,
+revise one saved book page without replacing its siblings, read the exact
+approved revisions one spread at a time, export a screen-quality PDF, and save
+a local family reflection and pilot summary. The current data flow is:
 
 ```mermaid
 flowchart LR
@@ -99,6 +103,7 @@ flowchart LR
   Idea[Idea checkpoint] --> Workflow[StoryWorkflowService]
   Directions[Directions checkpoint] --> Workflow
   Story[Story checkpoint] --> Workflow
+  Look[Look checkpoint] --> VisualNarrative[VisualNarrativeWorkflowService]
   Look[Look checkpoint] --> VisualWorkflow[VisualWorkflowService]
   Book[Book checkpoint] --> ProductionWorkflow[BookProductionService]
   Reader[Fullscreen reader and feedback] --> ProofWorkflow[BookProofService]
@@ -112,6 +117,8 @@ flowchart LR
   Provider --> OpenAI[OpenAI adapter]
   Provider --> Fixture[Deterministic fixture adapter]
   Workflow --> Repo
+  VisualNarrative --> Provider
+  VisualNarrative --> Repo
   VisualWorkflow --> ImageProvider[ImageProvider]
   ImageProvider --> OpenAIImages[OpenAI image adapter]
   ImageProvider --> ImageFixture[Deterministic fixture adapter]
@@ -131,12 +138,18 @@ direction revisions, selected direction, story revisions, and approval
 decisions are schema-versioned JSON artifacts. Story drafts also pass one hidden
 quality evaluation with at most one automatic rewrite before parent review.
 `StoryWorkflowService` owns the text workflow; routes do not import the OpenAI
-SDK. `VisualWorkflowService` owns curated presets, versioned character-option
-generation and regeneration, reference selection, the Visual Bible, sample
-revisions, and visual approval. The `ImageProvider` boundary has OpenAI and
-deterministic fixture adapters and accepts production-page requests containing
-the approved character reference, the prior saved page when available, and
-beat-specific continuity facts. `BookProductionService` first derives a
+SDK. `VisualNarrativeWorkflowService` owns paired, versioned `EmotionalArc` and
+`SpreadMap` generation, bounded parent steering, persisted recovery state, and
+exact-revision approval. Parents see only the spread beat, main action,
+emotional movement, and relevant must-show detail. `VisualWorkflowService`
+requires that approval before character generation and passes the approved
+planning artifacts into character and sample image requests. It owns curated
+presets, versioned character-option generation and regeneration, reference
+selection, the Visual Bible, sample revisions, and visual approval. The
+`ImageProvider` boundary has OpenAI and deterministic fixture adapters and
+accepts production-page requests containing the approved character reference,
+the prior saved page when available, and beat-specific continuity facts.
+`BookProductionService` first derives a
 versioned 16-page `BookPlan` locally from the current approved story, character
 reference, Visual Bible, sample revision, family details, text-safe areas, and
 continuity facts. The parent can edit page text, illustration intent, and

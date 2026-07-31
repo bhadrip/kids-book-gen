@@ -131,6 +131,9 @@ describe("StoryWorkflowService", () => {
       evaluateStory: async () => {
         throw new Error("provider unavailable");
       },
+      generateVisualPlan: async () => {
+        throw new Error("provider unavailable");
+      },
     };
     const unavailableService = new StoryWorkflowService(
       repository,

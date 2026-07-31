@@ -27,6 +27,7 @@ import {
 import { FixtureImageProvider } from "@/lib/visuals/fixture-image-provider";
 import type { ImageProvider } from "@/lib/visuals/image-provider";
 import { VisualWorkflowService } from "@/lib/visuals/visual-workflow-service";
+import { VisualNarrativeWorkflowService } from "@/lib/visuals/visual-narrative-workflow-service";
 
 const directories: string[] = [];
 const projectId = "4a2b8437-2e5d-492d-885b-4f1052d4da88";
@@ -110,6 +111,13 @@ async function setup(provider: ImageProvider = new FixtureImageProvider()) {
   const directions = await storyService.createDirections(brief);
   await storyService.selectDirection(projectId, directions.directions[0].title);
   await storyService.decideStory(projectId, "approved");
+  const visualNarrativeService = new VisualNarrativeWorkflowService(
+    repository,
+    new FixtureTextProvider(now),
+    now,
+  );
+  await visualNarrativeService.generatePlan(projectId);
+  await visualNarrativeService.decidePlan(projectId, "approved");
   const visualService = new VisualWorkflowService(
     repository,
     new FixtureImageProvider(),

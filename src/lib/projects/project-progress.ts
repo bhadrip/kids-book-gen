@@ -23,6 +23,13 @@ import {
   selectedCharacterSchema,
   visualDecisionSchema,
 } from "@/lib/visuals/visual-artifacts";
+import {
+  emotionalArcSchema,
+  spreadMapSchema,
+  visualPlanDecisionSchema,
+  visualPlanIsCurrent,
+  visualPlanJobSchema,
+} from "@/lib/visuals/visual-narrative-artifacts";
 
 export type CheckpointStatus =
   | "Not started"
@@ -56,6 +63,10 @@ export async function getProjectProgress(
     story,
     decision,
     job,
+    emotionalArc,
+    spreadMap,
+    visualPlanDecision,
+    visualPlanJob,
     characterDesigns,
     selectedCharacter,
     sample,
@@ -100,6 +111,30 @@ export async function getProjectProgress(
         projectId,
         "text-generation-job.json",
         textGenerationJobSchema,
+      ),
+    ),
+    readOptional(
+      repository.readArtifact(
+        projectId,
+        "emotional-arc.json",
+        emotionalArcSchema,
+      ),
+    ),
+    readOptional(
+      repository.readArtifact(projectId, "spread-map.json", spreadMapSchema),
+    ),
+    readOptional(
+      repository.readArtifact(
+        projectId,
+        "visual-plan-decision.json",
+        visualPlanDecisionSchema,
+      ),
+    ),
+    readOptional(
+      repository.readArtifact(
+        projectId,
+        "visual-plan-job.json",
+        visualPlanJobSchema,
       ),
     ),
     readOptional(
@@ -199,9 +234,20 @@ export async function getProjectProgress(
           : "Not started";
   const visualOutOfDate = Boolean(
     story &&
-    ((sample && sample.sourceStoryRevision !== story.revision) ||
+    ((spreadMap && spreadMap.sourceStoryRevision !== story.revision) ||
+      (emotionalArc && emotionalArc.sourceStoryRevision !== story.revision) ||
+      (sample && sample.sourceStoryRevision !== story.revision) ||
       (characterDesigns &&
         characterDesigns.sourceStoryRevision !== story.revision)),
+  );
+  const visualPlanApproved = Boolean(
+    story &&
+    visualPlanIsCurrent({
+      storyRevision: story.revision,
+      emotionalArc,
+      spreadMap,
+      decision: visualPlanDecision,
+    }),
   );
   let look: CheckpointStatus = visualOutOfDate
     ? "Out of date"
@@ -211,9 +257,11 @@ export async function getProjectProgress(
       ? "Approved"
       : sample
         ? "Ready for your review"
-        : selectedCharacter || characterDesigns
+        : selectedCharacter || characterDesigns || visualPlanApproved
           ? "Needs attention"
-          : "Not started";
+          : spreadMap
+            ? "Ready for your review"
+            : "Not started";
   const bookOutOfDate = Boolean(
     book &&
     story &&
@@ -299,7 +347,24 @@ export async function getProjectProgress(
     };
   }
 
+  if (visualPlanJob?.status === "in_progress") {
+    look = "In progress";
+    return {
+      idea,
+      directions: directionsStatus,
+      story: storyStatus,
+      look,
+      book: bookStatus,
+      nextAction: {
+        href: `/projects/${projectId}/look`,
+        label: "Check visual story planning",
+        reason: `${visualPlanJob.stage} is in progress. ${visualPlanJob.lastSavedArtifact} is safely saved.`,
+      },
+    };
+  }
+
   if (imageJob?.status === "failed") look = "Needs attention";
+  if (visualPlanJob?.status === "failed") look = "Needs attention";
 
   if (bookJob?.status === "in_progress" || bookJob?.status === "paused") {
     bookStatus = "In progress";
@@ -396,16 +461,28 @@ export async function getProjectProgress(
           ? "Review the sample spread"
           : characterDesigns
             ? "Choose a character design"
-            : imageJob?.status === "failed"
-              ? "Retry character designs"
-              : "Choose the visual identity",
+            : spreadMap && !visualPlanApproved
+              ? "Review the visual story plan"
+              : visualPlanJob?.status === "failed"
+                ? "Retry the visual story plan"
+                : !visualPlanApproved
+                  ? "Create the visual story plan"
+                  : imageJob?.status === "failed"
+                    ? "Retry character designs"
+                    : "Choose the visual identity",
         reason: sample
           ? "Review the illustration with its separate, editable text layer."
           : characterDesigns
             ? "Three saved character directions are ready for your choice."
-            : imageJob?.status === "failed"
-              ? "Your approved story is safe. Retry only the visual draft when ready."
-              : "Choose a curated art look, then compare three character designs.",
+            : spreadMap && !visualPlanApproved
+              ? "Check the main action and emotional movement across all 13 spreads before making artwork."
+              : visualPlanJob?.status === "failed"
+                ? "Your approved story and last valid plan are safe. Retry only visual story planning."
+                : !visualPlanApproved
+                  ? "Plan the action and emotional movement across the approved story before choosing an art look."
+                  : imageJob?.status === "failed"
+                    ? "Your approved story is safe. Retry only the visual draft when ready."
+                    : "Choose a curated art look, then compare three character designs.",
       },
     };
   }
