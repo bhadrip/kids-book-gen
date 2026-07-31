@@ -4,6 +4,8 @@ import { join } from "node:path";
 
 import { afterEach, describe, expect, it } from "vitest";
 
+import { FixtureTextProvider } from "@/lib/directions/fixture-text-provider";
+import { StoryWorkflowService } from "@/lib/directions/story-workflow-service";
 import { FileProjectRepository } from "@/lib/projects/file-project-repository";
 import { getProjectProgress } from "@/lib/projects/project-progress";
 import {
@@ -14,6 +16,7 @@ import {
   storyPackageSchema,
   textGenerationJobSchema,
 } from "@/lib/projects/project";
+import { VisualNarrativeWorkflowService } from "@/lib/visuals/visual-narrative-workflow-service";
 
 const directories: string[] = [];
 const projectId = "4a2b8437-2e5d-492d-885b-4f1052d4da88";
@@ -197,6 +200,54 @@ describe("getProjectProgress", () => {
         label: "Check generation status",
         reason: expect.stringContaining("brief.json is safely saved"),
       },
+    });
+  });
+
+  it("moves from visual-plan creation to review and exact approval", async () => {
+    const repository = await setup();
+    const now = () => new Date(timestamp);
+    const provider = new FixtureTextProvider(now);
+    const storyService = new StoryWorkflowService(repository, provider, now);
+    const brief = projectBriefSchema.parse({
+      schemaVersion: 1,
+      projectId,
+      template: "start_from_scratch",
+      originalIdea: "A moon kite flies away.",
+      createdAt: timestamp,
+    });
+    const directions = await storyService.createDirections(brief);
+    await storyService.selectDirection(
+      projectId,
+      directions.directions[0].title,
+    );
+    await storyService.decideStory(projectId, "approved");
+
+    await expect(
+      getProjectProgress(repository, projectId),
+    ).resolves.toMatchObject({
+      look: "Not started",
+      nextAction: { label: "Create the visual story plan" },
+    });
+
+    const visualNarrative = new VisualNarrativeWorkflowService(
+      repository,
+      provider,
+      now,
+    );
+    await visualNarrative.generatePlan(projectId);
+    await expect(
+      getProjectProgress(repository, projectId),
+    ).resolves.toMatchObject({
+      look: "Ready for your review",
+      nextAction: { label: "Review the visual story plan" },
+    });
+
+    await visualNarrative.decidePlan(projectId, "approved");
+    await expect(
+      getProjectProgress(repository, projectId),
+    ).resolves.toMatchObject({
+      look: "Needs attention",
+      nextAction: { label: "Choose the visual identity" },
     });
   });
 });

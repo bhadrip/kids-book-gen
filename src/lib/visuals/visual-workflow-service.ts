@@ -25,6 +25,14 @@ import {
   type VisualBible,
   type VisualDecision,
 } from "@/lib/visuals/visual-artifacts";
+import {
+  emotionalArcSchema,
+  spreadMapSchema,
+  visualPlanDecisionSchema,
+  visualPlanIsCurrent,
+  type EmotionalArc,
+  type SpreadMap,
+} from "@/lib/visuals/visual-narrative-artifacts";
 
 async function readOptional<T>(operation: Promise<T>): Promise<T | null> {
   return operation.catch(() => null);
@@ -51,6 +59,10 @@ export class VisualWorkflowService {
     presetId: ArtPresetId,
   ): Promise<CharacterDesigns> {
     const { brief, story } = await this.loadApprovedStory(projectId);
+    const { emotionalArc, spreadMap } = await this.loadApprovedVisualPlan(
+      projectId,
+      story.revision,
+    );
     const preset = getArtPreset(presetId);
     const current = await readOptional(
       this.repository.readArtifact(
@@ -71,6 +83,8 @@ export class VisualWorkflowService {
           brief,
           story,
           preset,
+          emotionalArc,
+          spreadMap,
         });
         const options = await Promise.all(
           images.map(async (image, index) => {
@@ -254,6 +268,10 @@ export class VisualWorkflowService {
       "story.json",
       storyPackageSchema,
     );
+    const { emotionalArc, spreadMap } = await this.loadApprovedVisualPlan(
+      projectId,
+      story.revision,
+    );
     const selected = await this.repository.readArtifact(
       projectId,
       "selected-character.json",
@@ -290,6 +308,8 @@ export class VisualWorkflowService {
         const image = await this.provider.generateSampleSpread({
           story,
           visualBible,
+          emotionalArc,
+          spreadMap,
           preset: getArtPreset(visualBible.presetId),
           reference: {
             bytes: referenceBytes,
@@ -385,6 +405,49 @@ export class VisualWorkflowService {
       throw new Error("Approve the current story before choosing its look.");
     }
     return { brief, story };
+  }
+
+  private async loadApprovedVisualPlan(
+    projectId: string,
+    storyRevision: number,
+  ): Promise<{ emotionalArc: EmotionalArc; spreadMap: SpreadMap }> {
+    const [emotionalArc, spreadMap, decision] = await Promise.all([
+      readOptional(
+        this.repository.readArtifact(
+          projectId,
+          "emotional-arc.json",
+          emotionalArcSchema,
+        ),
+      ),
+      readOptional(
+        this.repository.readArtifact(
+          projectId,
+          "spread-map.json",
+          spreadMapSchema,
+        ),
+      ),
+      readOptional(
+        this.repository.readArtifact(
+          projectId,
+          "visual-plan-decision.json",
+          visualPlanDecisionSchema,
+        ),
+      ),
+    ]);
+    if (
+      !visualPlanIsCurrent({
+        storyRevision,
+        emotionalArc,
+        spreadMap,
+        decision,
+      }) ||
+      !emotionalArc ||
+      !spreadMap
+    )
+      throw new Error(
+        "Approve the current visual story plan before creating character designs.",
+      );
+    return { emotionalArc, spreadMap };
   }
 
   private async runGenerationJob<T>(

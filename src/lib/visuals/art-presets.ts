@@ -24,6 +24,8 @@ export type ArtPreset = {
   detailLevel: string;
   avoid: readonly string[];
   swatches: readonly [string, string, string];
+  previewImage: string;
+  previewAlt: string;
 };
 
 export const artPresets: readonly ArtPreset[] = [
@@ -41,6 +43,9 @@ export const artPresets: readonly ArtPreset[] = [
     detailLevel: "medium",
     avoid: ["photorealism", "plastic 3D surfaces", "busy backgrounds"],
     swatches: ["#d77a61", "#e8c07d", "#77a88d"],
+    previewImage: "/art-presets/warm-handmade.png",
+    previewAlt:
+      "A pea with a leaf hat and red wagon painted in soft watercolor and colored pencil.",
   },
   {
     id: "bold_funny_v1",
@@ -56,6 +61,9 @@ export const artPresets: readonly ArtPreset[] = [
     detailLevel: "low to medium",
     avoid: ["photorealism", "subdued expressions", "tiny decorative clutter"],
     swatches: ["#e85d3f", "#f4c542", "#1b9aaa"],
+    previewImage: "/art-presets/bold-funny.png",
+    previewAlt:
+      "A pea with a leaf hat and red wagon drawn with chunky ink, comic movement, and bright color.",
   },
   {
     id: "magical_luminous_v1",
@@ -71,6 +79,9 @@ export const artPresets: readonly ArtPreset[] = [
     detailLevel: "medium",
     avoid: ["neon overload", "horror lighting", "photorealism"],
     swatches: ["#3d348b", "#56a3a6", "#f6bd60"],
+    previewImage: "/art-presets/magical-luminous.png",
+    previewAlt:
+      "A pea with a leaf hat and red wagon in a glowing, misty garden with luminous color.",
   },
   {
     id: "graphic_adventure_v1",
@@ -86,6 +97,9 @@ export const artPresets: readonly ArtPreset[] = [
     detailLevel: "medium",
     avoid: ["muddy values", "static centered poses", "photorealism"],
     swatches: ["#c65d3b", "#436b52", "#243b53"],
+    previewImage: "/art-presets/graphic-adventure.png",
+    previewAlt:
+      "A pea with a leaf hat and red wagon rendered with bold angular shapes and screen-print texture.",
   },
   {
     id: "quiet_emotional_v1",
@@ -100,6 +114,9 @@ export const artPresets: readonly ArtPreset[] = [
     detailLevel: "low to medium",
     avoid: ["melodramatic expressions", "harsh contrast", "visual clutter"],
     swatches: ["#c99da3", "#9caf9b", "#9db7c5"],
+    previewImage: "/art-presets/quiet-emotional.png",
+    previewAlt:
+      "A pea with a leaf hat and red wagon in a spacious, gentle watercolor scene.",
   },
   {
     id: "detailed_discovery_v1",
@@ -115,6 +132,9 @@ export const artPresets: readonly ArtPreset[] = [
     detailLevel: "high but organized",
     avoid: ["random clutter", "hidden focal point", "photorealism"],
     swatches: ["#677a52", "#b66a50", "#4e8098"],
+    previewImage: "/art-presets/detailed-discovery.png",
+    previewAlt:
+      "A pea with a leaf hat and red wagon in a finely inked garden rich with organized details.",
   },
 ] as const;
 

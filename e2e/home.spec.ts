@@ -44,6 +44,12 @@ async function createApprovedFixtureStory(
 async function approveFixtureVisual(page: Page, projectId: string) {
   await page.goto(`/projects/${projectId}/look`);
   await page
+    .getByRole("button", { name: "Create the visual story plan" })
+    .click();
+  await page
+    .getByRole("button", { name: "Yes, continue to the character" })
+    .click();
+  await page
     .getByRole("button", { name: "Create three character designs" })
     .click();
   await page
@@ -309,6 +315,7 @@ test("shows a saved-work recovery state when text generation fails", async ({
 test("chooses a curated look, preserves character options, and approves a sample spread without model tokens", async ({
   page,
 }) => {
+  test.setTimeout(60_000);
   const projectId = await createApprovedFixtureStory(
     page,
     "Fixture visual journey",
@@ -317,10 +324,55 @@ test("chooses a curated look, preserves character options, and approves a sample
 
   await page.getByRole("link", { name: "Choose the visual identity" }).click();
   await expect(
+    page.getByRole("heading", {
+      name: "Check how the story will unfold in pictures",
+    }),
+  ).toBeVisible();
+  await page
+    .getByRole("button", { name: "Create the visual story plan" })
+    .click();
+  await expect(page.getByText("Plan revision 1")).toBeVisible();
+  await expect(
+    page.getByRole("heading", { name: "Does this feel like your story?" }),
+  ).toBeVisible();
+  await page
+    .getByText("Review the 13-part picture sequence", { exact: true })
+    .click();
+  await expect(
+    page.getByTestId("visual-plan-sequence").locator("li"),
+  ).toHaveCount(13);
+  await expect(
+    page
+      .getByRole("complementary")
+      .getByText("Keep Milo's round glasses and the silver moon kite.", {
+        exact: true,
+      }),
+  ).toBeVisible();
+  await page.screenshot({
+    path: "test-results/visual-story-plan.png",
+    fullPage: true,
+  });
+  await page
+    .getByRole("button", { name: "Yes, continue to the character" })
+    .click();
+  await expect(
+    page.getByText("Visual story plan approved.", { exact: false }),
+  ).toBeVisible();
+  await expect(
     page.getByRole("heading", { name: "Choose an art direction" }),
   ).toBeVisible();
   await expect(page.getByLabel("Warm and handmade")).toBeChecked();
   await expect(page.getByLabel("Detailed discovery")).toBeVisible();
+  await expect(
+    page.getByAltText(
+      "A pea with a leaf hat and red wagon painted in soft watercolor and colored pencil.",
+    ),
+  ).toBeVisible();
+  await expect(
+    page.getByAltText(
+      "A pea with a leaf hat and red wagon in a finely inked garden rich with organized details.",
+    ),
+  ).toBeVisible();
   await page.screenshot({
     path: "test-results/visual-art-presets.png",
     fullPage: true,
@@ -806,6 +858,12 @@ test("preserves the approved story when visual generation fails", async ({
     "Fixture image failure",
   );
   await page.getByRole("link", { name: "Choose the visual identity" }).click();
+  await page
+    .getByRole("button", { name: "Create the visual story plan" })
+    .click();
+  await page
+    .getByRole("button", { name: "Yes, continue to the character" })
+    .click();
   await page
     .getByRole("button", { name: "Create three character designs" })
     .click();

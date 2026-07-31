@@ -19,6 +19,7 @@ import {
   visualBibleSchema,
   visualDecisionSchema,
 } from "@/lib/visuals/visual-artifacts";
+import { VisualNarrativeWorkflowService } from "@/lib/visuals/visual-narrative-workflow-service";
 import { VisualWorkflowService } from "@/lib/visuals/visual-workflow-service";
 
 const directories: string[] = [];
@@ -62,6 +63,15 @@ async function setup(options?: {
   await storyService.selectDirection(projectId, directions.directions[0].title);
   if (options?.approveStory !== false)
     await storyService.decideStory(projectId, "approved");
+  if (options?.approveStory !== false) {
+    const narrativeService = new VisualNarrativeWorkflowService(
+      repository,
+      new FixtureTextProvider(now),
+      now,
+    );
+    await narrativeService.generatePlan(projectId);
+    await narrativeService.decidePlan(projectId, "approved");
+  }
   return {
     repository,
     service: new VisualWorkflowService(
@@ -221,5 +231,21 @@ describe("VisualWorkflowService", () => {
       status: "failed",
       lastSavedArtifact: "story-decision.json",
     });
+  });
+
+  it("requires exact visual-plan approval before character generation", async () => {
+    const { repository, service } = await setup();
+    await repository.writeArtifact(projectId, "visual-plan-decision.json", {
+      schemaVersion: 1,
+      projectId,
+      spreadMapRevision: 1,
+      status: "change_requested",
+      feedback: "Try again.",
+      decidedAt: now().toISOString(),
+    });
+
+    await expect(
+      service.generateCharacterDesigns(projectId, "warm_handmade_v1"),
+    ).rejects.toThrow("Approve the current visual story plan");
   });
 });

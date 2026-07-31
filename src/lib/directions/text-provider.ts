@@ -5,6 +5,7 @@ import type {
   StoryPackage,
   StoryQualityEvaluation,
 } from "@/lib/projects/project";
+import type { VisualPlanDraft } from "@/lib/visuals/visual-narrative-artifacts";
 
 export interface TextProvider {
   generateDirections(
@@ -25,4 +26,9 @@ export interface TextProvider {
     direction: StoryDirection,
     story: StoryPackage,
   ): Promise<StoryQualityEvaluation>;
+  generateVisualPlan(
+    brief: ProjectBrief,
+    story: StoryPackage,
+    options: { revision: number; parentSteering?: string },
+  ): Promise<VisualPlanDraft & { model: string }>;
 }

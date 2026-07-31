@@ -14,6 +14,10 @@ import {
   type StoryDirections,
   type StoryQualityEvaluation,
 } from "@/lib/projects/project";
+import {
+  visualPlanDraftSchema,
+  type VisualPlanDraft,
+} from "@/lib/visuals/visual-narrative-artifacts";
 
 const directionResponseSchema = z.object({
   directions: z.array(storyDirectionSchema).length(3),
@@ -120,10 +124,16 @@ export class OpenAITextProvider implements TextProvider {
     direction: StoryDirection,
     story: StoryPackage,
   ): Promise<StoryQualityEvaluation> {
-    const format = storyQualityEvaluationSchema.pick({
-      verdict: true,
-      checks: true,
-      revisionBrief: true,
+    const format = z.object({
+      verdict: z.enum(["pass", "revise"]),
+      checks: z.object({
+        fidelity: z.enum(["pass", "revise"]),
+        structure: z.enum(["pass", "revise"]),
+        ageFit: z.enum(["pass", "revise"]),
+        oralFlow: z.enum(["pass", "revise"]),
+        safety: z.enum(["pass", "revise"]),
+      }),
+      revisionBrief: z.string().trim().min(1).max(1_500).nullable(),
     });
     const response = await new OpenAI({ apiKey: this.apiKey }).responses.parse({
       model: this.model,
@@ -144,11 +154,46 @@ export class OpenAITextProvider implements TextProvider {
       throw new Error("No story quality evaluation returned.");
     return storyQualityEvaluationSchema.parse({
       ...response.output_parsed,
+      revisionBrief: response.output_parsed.revisionBrief ?? undefined,
       schemaVersion: 1,
       projectId: brief.projectId,
       storyRevision: story.revision,
       evaluatedAt: this.now().toISOString(),
       model: this.model,
     });
+  }
+
+  public async generateVisualPlan(
+    brief: ProjectBrief,
+    story: StoryPackage,
+    options: { revision: number; parentSteering?: string },
+  ): Promise<VisualPlanDraft & { model: string }> {
+    const response = await new OpenAI({ apiKey: this.apiKey }).responses.parse({
+      model: this.model,
+      input: [
+        {
+          role: "developer",
+          content:
+            "Plan the approved children's story for visual storytelling. Return exactly one spread-map entry for each of the 13 story spreads in order. Track only emotionally important characters. Describe observable, child-readable performance. Preserve every must-keep and avoid boundary. The child protagonist's agency must remain visible; supporting characters must not signal pressure, guilt, accusation, or manipulation unless the approved story explicitly requires and safely resolves it. Images must add action and emotional meaning rather than merely repeat the manuscript.",
+        },
+        {
+          role: "user",
+          content: JSON.stringify({
+            brief,
+            story,
+            parentSteering: options.parentSteering,
+          }),
+        },
+      ],
+      text: {
+        format: zodTextFormat(visualPlanDraftSchema, "visual_story_plan"),
+      },
+    });
+    if (!response.output_parsed)
+      throw new Error("No visual story plan returned.");
+    return {
+      ...visualPlanDraftSchema.parse(response.output_parsed),
+      model: this.model,
+    };
   }
 }
