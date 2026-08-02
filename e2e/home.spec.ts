@@ -237,6 +237,17 @@ test("revises directions, generates a story, approves it, and reopens it without
     }),
   ).toBeVisible();
   await expect(page.getByText("Story revision 1")).toBeVisible();
+  await expect(
+    page.getByRole("heading", { name: "About this story" }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("heading", { name: "Characters in this story" }),
+  ).toBeVisible();
+  await expect(page.getByText("protagonist", { exact: true })).toBeVisible();
+  await expect(
+    page.getByRole("heading", { name: "Family details to preserve" }),
+  ).toBeVisible();
+  await expect(page.getByText("Keep the moon kite and Milo.")).toBeVisible();
   await expect(page.getByText("Spread 13:")).toBeVisible();
   await page.getByLabel("What should change?").fill("Add one silly obstacle");
   const revisionNavigation = page.waitForURL(

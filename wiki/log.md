@@ -25,3 +25,8 @@
 - Added six bundled same-scene art-preset previews so parents can compare
   medium, line, palette, lighting, shape, texture, and detail before generating
   character drafts.
+
+## 2026-08-01
+
+- Clarified the parent story-review screen by labeling the story promise,
+  showing the generated cast, and renaming the family preservation reminder.

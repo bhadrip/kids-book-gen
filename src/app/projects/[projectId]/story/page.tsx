@@ -52,11 +52,39 @@ export default async function StoryPage({
         statuses={progress}
       />
       <h1 className="mt-4 text-4xl font-semibold">{story.title}</h1>
-      <p className="mt-4 text-stone-700">{story.promise}</p>
-      <p className="mt-4 rounded-xl bg-amber-50 p-4 text-amber-900">
-        Must keep:{" "}
-        {brief.mustKeep ?? "No additional must-keep details provided."}
-      </p>
+      <section className="mt-8" aria-labelledby="story-about-heading">
+        <h2 className="text-2xl font-semibold" id="story-about-heading">
+          About this story
+        </h2>
+        <p className="mt-2 leading-7 text-stone-700">{story.promise}</p>
+      </section>
+      <section className="mt-8" aria-labelledby="story-characters-heading">
+        <h2 className="text-2xl font-semibold" id="story-characters-heading">
+          Characters in this story
+        </h2>
+        <ul className="mt-4 grid gap-3 sm:grid-cols-2">
+          {story.characters.map((character) => (
+            <li
+              className="rounded-xl border border-stone-200 bg-white p-4"
+              key={`${character.name}-${character.role}`}
+            >
+              <h3 className="font-semibold text-stone-950">{character.name}</h3>
+              <p className="mt-1 text-sm font-medium text-rose-700">
+                {character.role}
+              </p>
+              <p className="mt-2 text-sm leading-6 text-stone-600">
+                {character.description}
+              </p>
+            </li>
+          ))}
+        </ul>
+      </section>
+      <aside className="mt-8 rounded-xl bg-amber-50 p-4 text-amber-900">
+        <h2 className="font-semibold">Family details to preserve</h2>
+        <p className="mt-2">
+          {brief.mustKeep ?? "No additional family details were provided."}
+        </p>
+      </aside>
       <p className="mt-2 text-sm text-stone-500">
         Story revision {story.revision}
       </p>
