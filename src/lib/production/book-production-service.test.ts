@@ -146,6 +146,23 @@ describe("BookProductionService", () => {
     const preview = await service.previewBookPlan(projectId);
     expect(preview).toMatchObject({ approved: false });
     expect(preview.plan.pages).toHaveLength(16);
+    expect(preview.plan).toMatchObject({ sourceVisualPlanRevision: 1 });
+    expect(
+      preview.plan.pages.find((page) => page.pageId === "story-01"),
+    ).toMatchObject({
+      storyboardScene: {
+        mainAction: expect.stringContaining("Show the main character acting"),
+        emotionalMovement: expect.stringContaining("Attention shifts"),
+        illustrationIntent: expect.stringContaining("visually clear"),
+        mustShow: ["Keep Milo's round glasses and the silver moon kite."],
+        characterExpressions: [
+          expect.objectContaining({
+            characterName: "Milo",
+            intensity: "low",
+          }),
+        ],
+      },
+    });
     expect(provider.productionInputs).toHaveLength(0);
     await expect(service.startOrResume(projectId)).rejects.toThrow(
       "Approve the current zero-cost book plan",
@@ -174,6 +191,9 @@ describe("BookProductionService", () => {
       requiredReferenceDetails: expect.arrayContaining([
         expect.stringContaining("facial features"),
       ]),
+      storyboardScene: expect.objectContaining({
+        mainAction: expect.stringContaining("Show the main character acting"),
+      }),
     });
     expect(
       provider.productionInputs[2]?.previousReference?.bytes.byteLength,

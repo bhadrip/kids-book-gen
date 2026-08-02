@@ -10,7 +10,7 @@ This is the local task tracker for `mlp-v0`. Statuses: **done**, **in progress**
   and revise a quality-checked 13-spread text story, approve it, choose one of
   six art presets, compare or regenerate three character designs, save a
   character reference, edit and approve one illustrated sample spread, confirm
-  or edit a zero-additional-image-cost 16-page contact sheet and wireframe
+  or edit a zero-additional-image-cost 16-page thumbnail storyboard and page
   reader, approve its exact revision, resume sequential full-book production,
   review 16 saved landscape pages, edit a page, regenerate one image without
   replacing siblings, approve the current complete book once, read it one
@@ -191,9 +191,14 @@ one page without losing the rest of the book.
 
 1. Full production remains locked until the current story and visual sample are
    approved. Before spending on final images, the parent can inspect all 16
-   pages as a contact sheet and neutral wireframe reader, edit per-page text,
-   illustration intent, and must-show details, then approve the exact current
-   plan revision.
+   pages as a parent-friendly thumbnail storyboard containing only line
+   sketches and positioned final text. Selecting a thumbnail opens that page in
+   a focused reader with Previous and Next controls, where the parent can choose
+   “Change the words” or “Change the picture,” then approve the exact current
+   plan revision. The sketches add no image-provider requests and do not claim
+   to predict final artwork.
+   Story-page sketches use the approved Spread Map and Emotional Arc rather than
+   page-number templates; book-plan lineage records the visual-plan revision.
 2. Cover, title/copyright front matter, 13 story spreads, and closing matter are
    requested sequentially. Every request includes the approved character
    reference and page-specific continuity facts, and every successful page is
@@ -224,7 +229,7 @@ prevent duplicate submission, and announce saved-work context.
 **Evidence required.** Vitest covers zero-provider-call plan preview, successor
 plan approval, cost gating, sequential reference inputs, interruption/resume,
 localized regeneration, sibling preservation, and preflight. Playwright covers
-the 16-page contact sheet and wireframe reader, plan edit and approval,
+the 16-page thumbnail storyboard and page reader, focused plan edit and approval,
 pause/reopen/resume, generated-page review, editable text, targeted
 regeneration, one complete-book approval, narrow layout, and provider failure
 using fixture images only.
@@ -236,17 +241,17 @@ production requests to `ImageProvider`, the fifth persisted checkpoint, a
 process-local duplicate-run claim, live polling, and a parent-readable
 production activity log.
 
-| ID     | Task                                                                                                       | Status   | Evidence / notes                                                                                                                                                                           |
-| ------ | ---------------------------------------------------------------------------------------------------------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| GEN-00 | Preview, edit, and approve all 16 planned pages before final-image spending.                               | **done** | A locally derived contact sheet and wireframe reader expose text, illustration intent, continuity, and must-show details; current-revision approval gates production.                      |
-| GEN-01 | Enforce per-book cost estimates, $3 soft budget, and explicit confirmation before $5.                      | **done** | Configurable per-image estimates roll into persisted spend; UI warns above the soft budget and schema-tested confirmation gates $5.                                                        |
-| GEN-02 | Generate and persist cover, front matter, roughly 13 landscape story spreads, and end matter sequentially. | **done** | One cover, title/copyright page, 13 story spreads, and closing page are planned and atomically persisted in order.                                                                         |
-| GEN-03 | Pass character references and beat-specific continuity facts to each illustration request.                 | **done** | Production requests include the exact reference, Visual Bible details, current/prior beats, setting/prop facts, and prior page.                                                            |
-| GEN-04 | Show persisted per-spread generation progress and resume interrupted work.                                 | **done** | The book job records completed units, current/failed unit, last safe artifact, cost, and events; the UI auto-refreshes, identifies active vs interrupted work, and rejects duplicate runs. |
-| REV-01 | Add page editing, targeted image regeneration, and one final-book approval.                                | **done** | Each page exposes separate-text and change/preserve image actions with numbered successors; one exact-revision decision approves all 16 current pages.                                     |
-| REV-02 | Regenerate only the selected spread while preserving approved siblings.                                    | **done** | Service and Playwright evidence compare an unchanged sibling while the selected page advances revision.                                                                                    |
-| GEN-05 | Add post-generation preflight for required pages, non-empty text, and required reference details.          | **done** | Versioned preflight checks all 16 IDs, text, reference filename/details, and continuity facts.                                                                                             |
-| TST-04 | Test plan approval, budget accounting, interrupted-job resume, sibling-spread preservation, and preflight. | **done** | Seven production-service tests and two fixture-only browser scenarios cover preview, duplicate-run protection, happy, and recovery paths.                                                  |
+| ID     | Task                                                                                                       | Status   | Evidence / notes                                                                                                                                                                                                                    |
+| ------ | ---------------------------------------------------------------------------------------------------------- | -------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| GEN-00 | Preview, edit, and approve all 16 planned pages before final-image spending.                               | **done** | A locally drawn thumbnail storyboard shows only sketches and final text; thumbnail selection opens a Previous/Next page reader with focused word/picture editing, successor plans, and current-revision approval before production. |
+| GEN-01 | Enforce per-book cost estimates, $3 soft budget, and explicit confirmation before $5.                      | **done** | Configurable per-image estimates roll into persisted spend; UI warns above the soft budget and schema-tested confirmation gates $5.                                                                                                 |
+| GEN-02 | Generate and persist cover, front matter, roughly 13 landscape story spreads, and end matter sequentially. | **done** | One cover, title/copyright page, 13 story spreads, and closing page are planned and atomically persisted in order.                                                                                                                  |
+| GEN-03 | Pass character references and beat-specific continuity facts to each illustration request.                 | **done** | Production requests include the exact reference, Visual Bible details, current/prior beats, setting/prop facts, and prior page.                                                                                                     |
+| GEN-04 | Show persisted per-spread generation progress and resume interrupted work.                                 | **done** | The book job records completed units, current/failed unit, last safe artifact, cost, and events; the UI auto-refreshes, identifies active vs interrupted work, and rejects duplicate runs.                                          |
+| REV-01 | Add page editing, targeted image regeneration, and one final-book approval.                                | **done** | Each page exposes separate-text and change/preserve image actions with numbered successors; one exact-revision decision approves all 16 current pages.                                                                              |
+| REV-02 | Regenerate only the selected spread while preserving approved siblings.                                    | **done** | Service and Playwright evidence compare an unchanged sibling while the selected page advances revision.                                                                                                                             |
+| GEN-05 | Add post-generation preflight for required pages, non-empty text, and required reference details.          | **done** | Versioned preflight checks all 16 IDs, text, reference filename/details, and continuity facts.                                                                                                                                      |
+| TST-04 | Test plan approval, budget accounting, interrupted-job resume, sibling-spread preservation, and preflight. | **done** | Seven production-service tests and two fixture-only browser scenarios cover preview, duplicate-run protection, happy, and recovery paths.                                                                                           |
 
 ## Phase 6 — Reader, PDF, and pilot feedback
 

@@ -5,6 +5,7 @@ import { notFound } from "next/navigation";
 import { PendingForm } from "@/components/pending-form";
 import { ProductionLiveStatus } from "@/components/production-live-status";
 import { ProjectJourney } from "@/components/project-journey";
+import { StoryboardReview } from "@/components/storyboard-review";
 import { readAppConfig } from "@/lib/config/app-config";
 import { FileProjectRepository } from "@/lib/projects/file-project-repository";
 import { getProjectProgress } from "@/lib/projects/project-progress";
@@ -16,7 +17,6 @@ import {
   bookPageSchema,
   bookPreflightSchema,
   bookProductionJobSchema,
-  type BookPlanPage,
 } from "@/lib/production/production-artifacts";
 import {
   sampleSpreadSchema,
@@ -127,55 +127,6 @@ async function loadBook(projectId: string) {
 const assetUrl = (projectId: string, filename: string) =>
   `/api/projects/${projectId}/assets/${filename}`;
 
-function textPosition(textSafeArea: BookPlanPage["textSafeArea"]): string {
-  const positions = {
-    upper_left: "top-[7%] left-[5%]",
-    upper_right: "top-[7%] right-[5%]",
-    lower_left: "bottom-[7%] left-[5%]",
-    lower_right: "right-[5%] bottom-[7%]",
-  } as const;
-  return positions[textSafeArea];
-}
-
-function PlanWireframe({
-  page,
-  compact = false,
-}: {
-  page: BookPlanPage;
-  compact?: boolean;
-}) {
-  return (
-    <div
-      className={`relative aspect-[3/2] overflow-hidden bg-stone-100 ${compact ? "min-h-44" : "min-h-[28rem] rounded-3xl"}`}
-    >
-      <div className="absolute inset-4 flex items-center justify-center rounded-2xl border-2 border-dashed border-stone-300 bg-gradient-to-br from-stone-50 to-stone-200 p-5 text-center">
-        <div className="max-w-[72%]">
-          <p className="text-xs font-semibold tracking-[0.14em] text-sky-800 uppercase">
-            Artwork wireframe
-          </p>
-          <p
-            className={`${compact ? "mt-2 line-clamp-4 text-xs leading-5" : "mt-4 text-base leading-7"} text-stone-600`}
-          >
-            {page.illustrationDescription}
-          </p>
-        </div>
-      </div>
-      <div
-        className={`absolute ${textPosition(page.textSafeArea)} max-h-[58%] w-[42%] overflow-auto rounded-xl bg-[#fffdf7]/95 ${compact ? "p-2" : "p-5 shadow-lg"}`}
-      >
-        <p className="text-[0.6rem] font-semibold tracking-wide text-sky-800 uppercase sm:text-xs">
-          {page.title}
-        </p>
-        <p
-          className={`${compact ? "mt-1 line-clamp-4 text-[0.58rem] leading-3 sm:text-xs sm:leading-4" : "mt-3 text-base leading-7 whitespace-pre-line"} text-stone-950`}
-        >
-          {page.text}
-        </p>
-      </div>
-    </div>
-  );
-}
-
 export default async function BookPage({
   params,
   searchParams,
@@ -254,9 +205,8 @@ export default async function BookPage({
           className="mt-6 rounded-2xl bg-green-50 p-5 text-green-900"
           role="status"
         >
-          The page plan is saved as a new revision. The approved story and
-          visual sample were not changed; review and approve the current plan
-          before production.
+          Your page change is saved. The rest of your story and approved visual
+          sample stayed the same. Review the storyboard before continuing.
         </p>
       ) : null}
       {result === "plan_approved" ? (
@@ -264,8 +214,8 @@ export default async function BookPage({
           className="mt-6 rounded-2xl bg-green-50 p-5 text-green-900"
           role="status"
         >
-          The zero-cost book plan is approved. Review the production estimate
-          and start image generation when ready.
+          Your storyboard is approved. Review the artwork cost, then create the
+          final pictures when you’re ready.
         </p>
       ) : null}
       {result === "plan_failed" ? (
@@ -343,26 +293,24 @@ export default async function BookPage({
           <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
             <div>
               <p className="text-sm font-semibold text-sky-800">
-                Zero-additional-image-cost preview
+                No-cost preview
               </p>
               <h2
                 className="mt-2 text-3xl font-semibold text-stone-950"
                 id="book-plan-heading"
               >
-                Preview all 16 pages before image generation
+                Review your book storyboard
               </h2>
               <p className="mt-3 max-w-3xl leading-7 text-stone-700">
-                This plan is assembled locally from the approved manuscript,
-                character reference, Visual Bible, story beats, and family
-                details. No image-provider request is made to show or revise
-                these wireframes.
+                These simple sketches show the planned words, picture idea, and
+                text placement for every page. They are not the final artwork,
+                and reviewing them does not generate or charge for images.
               </p>
             </div>
             <p
               className={`w-fit rounded-full px-4 py-2 text-sm font-semibold ${planApproved ? "bg-green-100 text-green-900" : "bg-amber-100 text-amber-950"}`}
             >
-              Plan revision {data.planPreview.plan.revision} ·{" "}
-              {planApproved ? "Approved" : "Ready for review"}
+              {planApproved ? "Storyboard approved" : "Ready for your review"}
             </p>
           </div>
 
@@ -370,145 +318,23 @@ export default async function BookPage({
             <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
               <div>
                 <h3 className="text-2xl font-semibold text-stone-950">
-                  Contact sheet
+                  Your 16-page storyboard
                 </h3>
                 <p className="mt-2 text-sm leading-6 text-stone-600">
-                  Scan pacing, text density, locations, repeated compositions,
-                  and must-show details across the whole book.
+                  Look for missing details, repeated pictures, or anything you
+                  would like to change before final artwork begins.
                 </p>
               </div>
               <p className="text-sm font-semibold text-stone-500">
                 1 cover · 1 title page · 13 story spreads · 1 closing page
               </p>
             </div>
-            <ol className="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-              {data.planPreview.plan.pages.map((planPage) => (
-                <li
-                  className="scroll-mt-6 overflow-hidden rounded-2xl border border-stone-200 bg-stone-50"
-                  data-testid={`plan-card-${planPage.pageId}`}
-                  id={`plan-${planPage.pageId}`}
-                  key={planPage.pageId}
-                >
-                  <PlanWireframe compact page={planPage} />
-                  <div className="p-4">
-                    <p className="text-xs font-semibold tracking-wide text-sky-800 uppercase">
-                      Page {planPage.sequence} of 16
-                    </p>
-                    <h4 className="mt-1 font-semibold text-stone-950">
-                      {planPage.title}
-                    </h4>
-                    <p className="mt-2 text-sm leading-6 text-stone-600">
-                      {planPage.beat}
-                    </p>
-                    <details className="mt-3">
-                      <summary className="cursor-pointer text-sm font-semibold text-stone-800">
-                        What this page will preserve
-                      </summary>
-                      <ul className="mt-2 list-disc space-y-1 pl-5 text-xs leading-5 text-stone-600">
-                        {planPage.requiredReferenceDetails.map((detail) => (
-                          <li key={detail}>{detail}</li>
-                        ))}
-                      </ul>
-                    </details>
-                    {planEditable ? (
-                      <details className="mt-4 border-t border-stone-200 pt-4">
-                        <summary className="cursor-pointer text-sm font-semibold text-stone-950">
-                          Adjust this page plan
-                        </summary>
-                        <PendingForm
-                          action={`/api/projects/${projectId}/book/plan/pages/${planPage.pageId}`}
-                          className="mt-4"
-                          pendingLabel="Saving the page plan…"
-                          pendingMessage="A numbered plan successor is being saved. The approved story and visual sample remain unchanged."
-                          submitClassName="mt-4 w-full justify-center rounded-xl border border-stone-950 px-4 py-3 text-sm font-semibold text-stone-950"
-                          submitLabel="Save page plan"
-                        >
-                          <label
-                            className="block text-sm font-semibold text-stone-950"
-                            htmlFor={`plan-text-${planPage.pageId}`}
-                          >
-                            Separate page text
-                          </label>
-                          <textarea
-                            className="mt-2 block min-h-28 w-full rounded-xl border border-stone-300 p-3 text-sm leading-6"
-                            defaultValue={planPage.text}
-                            id={`plan-text-${planPage.pageId}`}
-                            maxLength={3000}
-                            name="text"
-                            required
-                          />
-                          <label
-                            className="mt-4 block text-sm font-semibold text-stone-950"
-                            htmlFor={`plan-art-${planPage.pageId}`}
-                          >
-                            Planned illustration
-                          </label>
-                          <textarea
-                            className="mt-2 block min-h-32 w-full rounded-xl border border-stone-300 p-3 text-sm leading-6"
-                            defaultValue={planPage.illustrationDescription}
-                            id={`plan-art-${planPage.pageId}`}
-                            maxLength={2000}
-                            name="illustrationDescription"
-                            required
-                          />
-                          <label
-                            className="mt-4 block text-sm font-semibold text-stone-950"
-                            htmlFor={`plan-must-show-${planPage.pageId}`}
-                          >
-                            Must show or preserve
-                          </label>
-                          <p className="mt-1 text-xs leading-5 text-stone-500">
-                            Put one required detail on each line.
-                          </p>
-                          <textarea
-                            className="mt-2 block min-h-32 w-full rounded-xl border border-stone-300 p-3 text-sm leading-6"
-                            defaultValue={planPage.requiredReferenceDetails.join(
-                              "\n",
-                            )}
-                            id={`plan-must-show-${planPage.pageId}`}
-                            maxLength={4000}
-                            name="requiredReferenceDetails"
-                            required
-                          />
-                        </PendingForm>
-                      </details>
-                    ) : null}
-                  </div>
-                </li>
-              ))}
-            </ol>
+            <StoryboardReview
+              pages={data.planPreview.plan.pages}
+              planEditable={planEditable}
+              projectId={projectId}
+            />
           </div>
-
-          <details className="mt-6 rounded-3xl border border-stone-200 bg-white p-6 shadow-sm">
-            <summary className="cursor-pointer text-xl font-semibold text-stone-950">
-              Open the one-spread-at-a-time wireframe reader
-            </summary>
-            <p className="mt-3 max-w-3xl text-sm leading-6 text-stone-600">
-              Scroll sideways to inspect page turns, text placement, and the
-              planned visual sequence at book size. These neutral placeholders
-              do not predict final composition or character fidelity; the
-              approved sample remains the visual-quality reference.
-            </p>
-            <div className="mt-6 flex snap-x snap-mandatory gap-6 overflow-x-auto pb-5">
-              {data.planPreview.plan.pages.map((planPage) => (
-                <article
-                  className="w-full min-w-full snap-center"
-                  data-testid="plan-reader-page"
-                  key={`reader-${planPage.pageId}`}
-                >
-                  <div className="mb-3 flex items-center justify-between gap-4">
-                    <h3 className="font-semibold text-stone-950">
-                      {planPage.title}
-                    </h3>
-                    <p className="text-sm text-stone-500">
-                      {planPage.sequence} of 16
-                    </p>
-                  </div>
-                  <PlanWireframe page={planPage} />
-                </article>
-              ))}
-            </div>
-          </details>
 
           {planEditable ? (
             <section
@@ -517,13 +343,13 @@ export default async function BookPage({
             >
               <h3 className="text-2xl font-semibold text-stone-950">
                 {planApproved
-                  ? "This book plan is approved"
-                  : "Approve the plan before spending on full artwork"}
+                  ? "Your storyboard is approved"
+                  : "Does this look like the book you want us to illustrate?"}
               </h3>
               <p className="mt-3 max-w-3xl leading-7 text-stone-700">
                 {planApproved
-                  ? "Production will use this exact text, illustration description, continuity, and must-show detail set. Editing any page creates a successor plan that needs fresh approval."
-                  : "Approval locks this exact plan revision for production. You can still edit any page above first; those edits never overwrite the approved story or visual sample."}
+                  ? "We’ll use these words, picture ideas, and important details when creating the final artwork."
+                  : "Check the story flow, words, and important details. You can change any page above before continuing."}
               </p>
               {!planApproved ? (
                 <PendingForm
@@ -532,7 +358,7 @@ export default async function BookPage({
                   pendingLabel="Saving plan approval…"
                   pendingMessage="Approval is being saved for this exact 16-page plan revision. No provider request is made."
                   submitClassName="rounded-xl bg-stone-950 px-5 py-3 font-semibold text-white"
-                  submitLabel="Approve this book plan"
+                  submitLabel="Looks good — continue to artwork"
                 >
                   <input name="status" type="hidden" value="approved" />
                 </PendingForm>
@@ -650,9 +476,8 @@ export default async function BookPage({
             <div className="max-w-sm rounded-2xl bg-amber-50 p-5 text-amber-950">
               <p className="font-semibold">Book plan approval required</p>
               <p className="mt-2 text-sm leading-6">
-                Review the contact sheet and wireframe reader above, make any
-                changes, then approve the current plan to unlock paid image
-                production.
+                Review the storyboard above, make any changes, then approve it
+                to continue to final artwork.
               </p>
               <a
                 className="mt-3 inline-block font-semibold underline underline-offset-4"

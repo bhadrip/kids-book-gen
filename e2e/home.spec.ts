@@ -512,43 +512,66 @@ test("shows resumable per-page production, revises one page, and preserves its s
   await expect(page.getByText("$3.00")).toBeVisible();
   await expect(
     page.getByRole("heading", {
-      name: "Preview all 16 pages before image generation",
+      name: "Review your book storyboard",
     }),
   ).toBeVisible();
   await expect(page.locator('[data-testid^="plan-card-"]')).toHaveCount(16);
   await expect(
+    page.locator('[data-testid^="plan-card-"] .line-clamp-5'),
+  ).toHaveCount(0);
+  await expect(
     page.getByRole("button", { name: "Start full-book production" }),
   ).toHaveCount(0);
-  await page
-    .getByText("Open the one-spread-at-a-time wireframe reader")
-    .click();
-  await expect(page.getByTestId("plan-reader-page")).toHaveCount(16);
+  await expect(page.getByTestId("plan-reader-page")).toHaveCount(1);
 
   const plannedSpread = page.getByTestId("plan-card-story-07");
-  await plannedSpread.getByText("Adjust this page plan").click();
   await plannedSpread
-    .getByLabel("Planned illustration")
+    .getByRole("button", { name: "Open page 9 of 16: Story spread 7" })
+    .click();
+  const pageReader = page.getByRole("region", {
+    name: "Open one page at a time",
+  });
+  await expect(pageReader.getByText("Page 9 of 16")).toBeVisible();
+  await expect(
+    pageReader.getByRole("img", {
+      name: /Storyboard scene: Show the main character acting/,
+    }),
+  ).toBeVisible();
+  await pageReader.getByRole("button", { name: "Next page" }).click();
+  await expect(pageReader.getByText("Page 10 of 16")).toBeVisible();
+  await pageReader.getByRole("button", { name: "Previous page" }).click();
+  await expect(pageReader.getByText("Page 9 of 16")).toBeVisible();
+  await expect(pageReader.getByText("Change the words")).toBeVisible();
+  await pageReader.getByText("Change the picture").click();
+  await pageReader
+    .getByLabel("What would you like to happen in this picture?")
     .fill(
       "A wide bedtime scene with Milo reaching toward the silver moon kite above the rooftops.",
     );
-  await plannedSpread.getByRole("button", { name: "Save page plan" }).click();
+  await pageReader
+    .getByRole("button", { name: "Save this picture idea" })
+    .click();
   await expect(
-    page.getByText("The page plan is saved as a new revision.", {
+    page.getByText("Your page change is saved.", {
       exact: false,
     }),
   ).toBeVisible();
-  await page.getByRole("button", { name: "Approve this book plan" }).click();
+  await page
+    .getByRole("button", { name: "Looks good — continue to artwork" })
+    .click();
   await expect(
-    page.getByText("The zero-cost book plan is approved.", { exact: false }),
+    page.getByText("Your storyboard is approved.", { exact: false }),
   ).toBeVisible();
+  await page
+    .getByTestId("plan-card-story-07")
+    .getByRole("button", { name: "Open page 9 of 16: Story spread 7" })
+    .click();
+  await pageReader.getByText("Change the picture").click();
   await expect(
-    page
-      .getByTestId("plan-card-story-07")
-      .getByText(
-        "A wide bedtime scene with Milo reaching toward the silver moon kite above the rooftops.",
-      )
-      .first(),
-  ).toBeVisible();
+    pageReader.getByLabel("What would you like to happen in this picture?"),
+  ).toHaveValue(
+    "A wide bedtime scene with Milo reaching toward the silver moon kite above the rooftops.",
+  );
   await page.screenshot({
     path: "test-results/book-plan-preview.png",
     fullPage: true,

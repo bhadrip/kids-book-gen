@@ -25,3 +25,24 @@
 - Added six bundled same-scene art-preset previews so parents can compare
   medium, line, palette, lighting, shape, texture, and detail before generating
   character drafts.
+
+## 2026-08-01
+
+- Reframed the 16-page production contact sheet as a parent-facing book
+  storyboard with locally drawn line-sketch thumbnails.
+- Split per-page planning changes into focused “Change the words” and “Change
+  the picture” paths while retaining successor revisions, preserved reference
+  details, unchanged sibling pages, and exact-plan approval.
+- Reduced overview thumbnails to the line sketch and final positioned text;
+  thumbnail selection now opens a focused Previous/Next page reader containing
+  the editing controls.
+- Wired approved Spread Map and Emotional Arc semantics into each story-page
+  book plan and its source-revision checks. Local SVG storyboards now select
+  supported poses, props, settings, and expressions from those saved artifacts
+  instead of page-number templates.
+- Reserved text-safe regions in the storyboard drawing layer, replaced loose
+  substring symbol matching with whole-word matching, and prioritized one clear
+  scene composition to prevent hidden or overlapping thumbnail imagery.
+- Replaced thumbnail line clamping with proportional canonical text layout and
+  bounded font fitting, added an explicit overflow warning at the minimum book
+  size, and enlarged desktop thumbnails from four to three columns.

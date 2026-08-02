@@ -88,7 +88,7 @@ an internal emotional arc, approve its exact revision, choose a curated art
 direction from six bundled same-scene visual previews, regenerate versioned
 character-design sets, choose a character reference, edit the separate sample
 text layer, persist visual approval, inspect
-and edit a zero-additional-image-cost contact sheet and wireframe reader,
+and edit a zero-additional-image-cost thumbnail storyboard and page reader,
 approve the exact book-plan revision, run or resume sequential production,
 revise one saved book page without replacing its siblings, read the exact
 approved revisions one spread at a time, export a screen-quality PDF, and save
@@ -150,11 +150,14 @@ selection, the Visual Bible, sample revisions, and visual approval. The
 accepts production-page requests containing the approved character reference,
 the prior saved page when available, and beat-specific continuity facts.
 `BookProductionService` first derives a
-versioned 16-page `BookPlan` locally from the current approved story, character
-reference, Visual Bible, sample revision, family details, text-safe areas, and
-continuity facts. The parent can edit page text, illustration intent, and
-must-show details as successor artifacts; an exact-revision decision gates
-provider-backed production. The service then owns configurable cost estimates,
+versioned 16-page `BookPlan` locally from the current approved story,
+`EmotionalArc`, `SpreadMap`, character reference, Visual Bible, sample revision,
+family details, text-safe areas, and continuity facts. Each story page preserves
+the approved main action, emotional movement, illustration intent, must-show and
+must-avoid constraints, and observable character expression for local semantic
+storyboard rendering. The parent can edit page text or picture intent as a
+successor artifact; an exact-revision decision gates provider-backed
+production. The service then owns configurable cost estimates,
 the $3 soft-budget presentation and over-$5 confirmation gate, per-page atomic
 saves, pause/resume recovery, numbered local page successors, and preflight. A
 versioned production job records completed units, last safe output, estimated
@@ -226,3 +229,5 @@ The authoritative task status and evidence remain in
 | 2026-07-22 | Added authenticated, 14-day Playwright PR review artifacts and an idempotent same-repository PR comment from a token-isolated job.                                                                                                 | `.github/workflows/pr-ui-review.yml`, `playwright.config.ts`                                           |
 | 2026-07-22 | Added exact-revision HTML/PDF proofs, a shared fullscreen reader layout, local Playwright export with overflow rejection, versioned reading feedback, and derived pilot summaries.                                                 | `src/lib/proof/`, `src/app/projects/[projectId]/book/read/`, `e2e/home.spec.ts`, `tasks/mlp-v0.md`     |
 | 2026-07-27 | Added a contributor-facing catalog of implemented artifact ownership, lineage, storage conventions, approval boundaries, lifecycle gaps, and proposed visual-narrative boundaries.                                                 | `spec/09-artifact-catalog.md`, `spec/README.md`                                                        |
+| 2026-08-01 | Reframed the production plan as a parent-friendly 16-page storyboard with locally drawn line sketches and focused word-or-picture editing while preserving the existing versioned approval gate.                                   | `src/app/projects/[projectId]/book/`, `spec/mlp-v0-plan.md`, `tasks/mlp-v0.md`, `e2e/home.spec.ts`     |
+| 2026-08-01 | Wired approved emotional-arc and spread-map semantics into book-plan lineage and local story-aware SVG rendering without adding a Step 5 model request.                                                                            | `src/lib/production/`, `src/components/storyboard-review.tsx`, `spec/09-artifact-catalog.md`, tests    |
