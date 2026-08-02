@@ -123,10 +123,30 @@ Each JSON artifact includes a schema version, status, source artifact IDs, promp
 
 - Assemble a zero-additional-image-cost plan for all 16 pages from the approved
   story, character reference, Visual Bible, family details, continuity facts,
-  and sample revision. Show it as both a contact sheet and neutral wireframe
-  reader before any full-book image request.
-- Let the parent adjust per-page text, illustration intent, and must-show
-  details as numbered plan successors. Require approval of the exact current
+  and sample revision. Present it to parents as a thumbnail book storyboard
+  with simple locally drawn line sketches and the exact positioned book text.
+  Keep planning metadata out of the thumbnail grid. Selecting a thumbnail opens
+  a one-page-at-a-time reader with Previous and Next controls before any
+  full-book image request. Make clear that the sketches are planning aids, not
+  predictions of final artwork.
+- Derive every story thumbnail from the approved Spread Map and Emotional Arc:
+  retain main action, emotional movement, illustration intent, must-show and
+  must-avoid constraints, and observable character expression on the book-plan
+  page. Render supported poses, props, and settings locally without another LLM
+  or image-provider request in Step 5.
+- Reserve the approved text-safe area in every thumbnail and reader page so the
+  line drawing never sits behind the final text. Prefer one clear primary scene
+  object; when a spread requires a sequence of actions, space the symbols as an
+  intentional visual progression rather than stacking them.
+- Use one canonical spread layout for both the reader and its proportional
+  thumbnail. Fit complete text through a bounded set of book typography sizes;
+  never clamp or truncate it. If text still overflows at the minimum size, flag
+  the page for shortening. Use at most three storyboard columns on desktop so
+  the sequence remains scannable.
+- Let the parent open any page and choose either “Change the words” or “Change
+  the picture.” Keep production-only continuity and preservation details out of
+  the editing flow while showing the important details that will remain. Save
+  edits as numbered plan successors and require approval of the exact current
   plan revision before production can start.
 - Generate the cover, title page, and 12–14 story spreads sequentially, passing the character reference and relevant continuity facts to every request.
 - Show per-spread progress, refresh it while a request is active, distinguish

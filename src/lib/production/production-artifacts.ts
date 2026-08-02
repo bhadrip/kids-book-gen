@@ -36,6 +36,24 @@ const textSafeAreaSchema = z.enum([
   "lower_right",
 ]);
 
+export const storyboardSceneSchema = z.object({
+  mainAction: z.string().trim().min(1).max(500),
+  emotionalMovement: z.string().trim().min(1).max(500),
+  illustrationIntent: z.string().trim().min(1).max(1_000),
+  mustShow: z.array(z.string().trim().min(1).max(500)).max(8),
+  mustAvoid: z.array(z.string().trim().min(1).max(500)).max(8),
+  characterExpressions: z
+    .array(
+      z.object({
+        characterName: z.string().trim().min(1).max(120),
+        outwardExpression: z.string().trim().min(1).max(500),
+        intensity: z.enum(["low", "medium", "high"]),
+      }),
+    )
+    .max(8),
+});
+export type StoryboardScene = z.infer<typeof storyboardSceneSchema>;
+
 export const bookPlanPageSchema = z.object({
   pageId: bookPageIdSchema,
   sequence: z.number().int().min(1).max(16),
@@ -51,6 +69,7 @@ export const bookPlanPageSchema = z.object({
     .array(z.string().trim().min(1).max(500))
     .min(1)
     .max(16),
+  storyboardScene: storyboardSceneSchema.optional(),
   textSafeArea: textSafeAreaSchema,
   previousPageId: bookPageIdSchema.optional(),
 });
@@ -62,6 +81,7 @@ export const bookPlanSchema = z.object({
   revision: z.number().int().positive(),
   sourceStoryRevision: z.number().int().positive(),
   sourceSampleRevision: z.number().int().positive(),
+  sourceVisualPlanRevision: z.number().int().positive().optional(),
   pages: z.array(bookPlanPageSchema).length(16),
   createdAt: z.string().datetime(),
   updatedAt: z.string().datetime(),

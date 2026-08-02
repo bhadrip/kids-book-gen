@@ -48,6 +48,15 @@ pipeline](../../../spec/04-agent-pipeline.md).
 8. **Storyboard and sample**
    - Produce low-cost thumbnails for the entire sequence, then one or two
      near-final sample spreads with typography.
+   - In the implemented parent flow, each of the 16 thumbnails contains only a
+     locally drawn line sketch and the positioned final text. Selecting one
+     opens a Previous/Next page reader where a parent can change the words or
+     picture idea while important reference details and unchanged pages are
+     preserved.
+   - Story pages reuse the approved Spread Map and Emotional Arc. Their main
+     action, emotional movement, visual constraints, and character expression
+     drive a bounded local library of SVG poses, props, and settings, so Step 5
+     adds no model call.
    - Gate: visual causality, emotional readability, sequence rhythm,
      text-image cooperation, and parent approval.
 

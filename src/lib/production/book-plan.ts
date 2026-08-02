@@ -6,11 +6,17 @@ import {
   type BookPageId,
 } from "@/lib/production/production-artifacts";
 import type { VisualBible } from "@/lib/visuals/visual-artifacts";
+import type {
+  EmotionalArc,
+  SpreadMap,
+} from "@/lib/visuals/visual-narrative-artifacts";
 
 export function deriveBookPlan(input: {
   projectId: string;
   story: StoryPackage;
   visualBible: VisualBible;
+  emotionalArc: EmotionalArc;
+  spreadMap: SpreadMap;
   sampleRevision: number;
   revision: number;
   createdAt: string;
@@ -70,6 +76,29 @@ export function deriveBookPlan(input: {
     const previousBeat = story.spreads[spread.number - 2]?.beat;
     const location =
       visualBible.locations[(spread.number - 1) % visualBible.locations.length];
+    const visualSpread = input.spreadMap.spreads.find(
+      (candidate) => candidate.spreadNumber === spread.number,
+    );
+    if (!visualSpread)
+      throw new Error(
+        `The approved visual plan is missing spread ${spread.number}.`,
+      );
+    const characterExpressions = input.emotionalArc.characters.flatMap(
+      (character) => {
+        const beat = character.beats.find(
+          (candidate) => candidate.spreadNumber === spread.number,
+        );
+        return beat
+          ? [
+              {
+                characterName: character.characterName,
+                outwardExpression: beat.outwardExpression,
+                intensity: beat.intensity,
+              },
+            ]
+          : [];
+      },
+    );
     pages.push({
       pageId,
       sequence: spread.number + 2,
@@ -79,9 +108,11 @@ export function deriveBookPlan(input: {
       beat: spread.beat,
       text: spread.text,
       textSource: "approved_story",
-      illustrationDescription: `${visualBible.mainCharacter.name} at ${location}, visually expressing this story beat: ${spread.beat}. Preserve the approved character and family details while leaving the ${visualBible.textSafeArea.replace("_", " ")} calm for the separate text layer.`,
+      illustrationDescription: `${visualSpread.illustrationIntent} Main action: ${visualSpread.mainAction} Location: ${location}. Preserve the approved character and family details while leaving the ${visualBible.textSafeArea.replace("_", " ")} calm for the separate text layer.`,
       continuityFacts: [
-        `Current beat: ${spread.beat}`,
+        `Current beat: ${visualSpread.storyBeat}`,
+        `Main action: ${visualSpread.mainAction}`,
+        `Emotional movement: ${visualSpread.emotionalMovement}`,
         previousBeat
           ? `Continue visibly from the prior beat: ${previousBeat}`
           : `Establish the beginning: ${story.arc.beginning}`,
@@ -91,6 +122,14 @@ export function deriveBookPlan(input: {
         ),
       ],
       requiredReferenceDetails,
+      storyboardScene: {
+        mainAction: visualSpread.mainAction,
+        emotionalMovement: visualSpread.emotionalMovement,
+        illustrationIntent: visualSpread.illustrationIntent,
+        mustShow: visualSpread.mustShow,
+        mustAvoid: visualSpread.mustAvoid,
+        characterExpressions,
+      },
       textSafeArea: visualBible.textSafeArea,
       previousPageId,
     });
@@ -120,6 +159,7 @@ export function deriveBookPlan(input: {
     revision: input.revision,
     sourceStoryRevision: story.revision,
     sourceSampleRevision: input.sampleRevision,
+    sourceVisualPlanRevision: input.spreadMap.revision,
     pages,
     createdAt: input.createdAt,
     updatedAt: input.updatedAt,

@@ -77,12 +77,17 @@ flowchart TD
     Story --> StoryEvaluation["StoryQualityEvaluation"]
     Story --> StoryDecision["StoryDecision"]
     StoryEvaluation --> StoryDecision
-    StoryDecision --> CharacterDesigns["CharacterDesigns"]
+    StoryDecision --> EmotionalArc["EmotionalArc"]
+    EmotionalArc --> SpreadMap["SpreadMap"]
+    SpreadMap --> VisualPlanDecision["VisualPlanDecision"]
+    VisualPlanDecision --> CharacterDesigns["CharacterDesigns"]
     CharacterDesigns --> SelectedCharacter["SelectedCharacter"]
     SelectedCharacter --> VisualBible["VisualBible"]
     VisualBible --> Sample["SampleSpread"]
     Sample --> VisualDecision["VisualDecision"]
     VisualDecision --> Plan["BookPlan"]
+    SpreadMap --> Plan
+    EmotionalArc --> Plan
     Plan --> PlanDecision["BookPlanDecision"]
     PlanDecision --> Pages["BookPage revisions"]
     Pages --> Preflight["BookPreflight"]
@@ -151,7 +156,7 @@ Producer:
 
 | Artifact | Purpose | Inputs | Parent interaction | Storage |
 | --- | --- | --- | --- | --- |
-| `BookPlan` | Plans all 16 pages with beat, text, illustration intent, continuity facts, required references, and text-safe area. | Approved story, character reference, Visual Bible, sample, and family details | Parent edits and approves the exact plan | `book-plan-rNN.json`; current `book-plan.json` |
+| `BookPlan` | Plans all 16 pages with text, illustration intent, continuity facts, required references, text-safe area, and story-page storyboard scenes carrying approved action, emotion, constraints, and character performance. | Approved story, Emotional Arc, Spread Map, character reference, Visual Bible, sample, and family details | Parent edits words or picture intent and approves the exact plan | `book-plan-rNN.json`; current `book-plan.json` |
 | `BookPlanDecision` | Gates paid production on an exact plan revision. | `BookPlan` | Explicit parent approval | `book-plan-decision-rNN.json`; current `book-plan-decision.json` |
 | `BookPage` | Preserves one generated page revision, its source revisions, image reference, text, continuity inputs, instructions, model, and cost. | Approved plan and visual references | Parent keeps, edits text, or requests targeted regeneration | `book-page-<page-id>-rNN.json`; current `book-page-<page-id>.json` |
 | `BookManifest` | Summarizes existing pages, spend, production status, and preflight state. | Saved pages and production state | Drives review/recovery UI | `book.json` |
@@ -163,9 +168,11 @@ Generated page image filenames are referenced by each `BookPage`; the filename
 is part of the validated artifact rather than a separate global naming
 contract.
 
-Current limitation: `BookPlan` is the closest implemented artifact to a spread
-map, but it does not explicitly model emotional before/after state, page-turn
-question, shot/composition plan, character performance, or sequence rhythm.
+Current limitation: `BookPlan` now retains the approved visual action, emotional
+movement, must-show/must-avoid constraints, and observable character expression
+needed by the local storyboard. It does not yet model explicit shot type,
+coordinates, depth, or pose geometry, so the SVG renderer maps supported story
+language to a bounded library of poses, props, and settings.
 
 ## Proof and learning workflow
 

@@ -43,6 +43,13 @@ import {
   type SelectedCharacter,
   type VisualBible,
 } from "@/lib/visuals/visual-artifacts";
+import {
+  emotionalArcSchema,
+  spreadMapSchema,
+  visualPlanDecisionSchema,
+  type EmotionalArc,
+  type SpreadMap,
+} from "@/lib/visuals/visual-narrative-artifacts";
 
 const hardConfirmationThresholdUsd = 5;
 
@@ -83,6 +90,8 @@ type VisualPrerequisites = {
   story: StoryPackage;
   selectedCharacter: SelectedCharacter;
   visualBible: VisualBible;
+  emotionalArc: EmotionalArc;
+  spreadMap: SpreadMap;
   sampleRevision: number;
 };
 
@@ -170,6 +179,13 @@ export class BookProductionService {
                   : "parent_edited",
               illustrationDescription: input.illustrationDescription,
               requiredReferenceDetails: input.requiredReferenceDetails,
+              storyboardScene: page.storyboardScene
+                ? {
+                    ...page.storyboardScene,
+                    mainAction: input.illustrationDescription,
+                    illustrationIntent: input.illustrationDescription,
+                  }
+                : undefined,
             }
           : page,
       ),
@@ -646,6 +662,9 @@ export class BookProductionService {
       visualBible,
       sample,
       decision,
+      emotionalArc,
+      spreadMap,
+      visualPlanDecision,
     ] = await Promise.all([
       this.repository.readArtifact(projectId, "story.json", storyPackageSchema),
       this.repository.readArtifact(
@@ -673,6 +692,21 @@ export class BookProductionService {
         "visual-decision.json",
         visualDecisionSchema,
       ),
+      this.repository.readArtifact(
+        projectId,
+        "emotional-arc.json",
+        emotionalArcSchema,
+      ),
+      this.repository.readArtifact(
+        projectId,
+        "spread-map.json",
+        spreadMapSchema,
+      ),
+      this.repository.readArtifact(
+        projectId,
+        "visual-plan-decision.json",
+        visualPlanDecisionSchema,
+      ),
     ]);
     if (
       storyDecision.status !== "approved" ||
@@ -698,10 +732,22 @@ export class BookProductionService {
       selectedCharacter.referenceAssetFilename
     )
       throw new Error("The selected character reference is out of date.");
+    if (
+      visualPlanDecision.status !== "approved" ||
+      visualPlanDecision.spreadMapRevision !== spreadMap.revision ||
+      spreadMap.sourceEmotionalArcRevision !== emotionalArc.revision ||
+      spreadMap.sourceStoryRevision !== story.revision ||
+      emotionalArc.sourceStoryRevision !== story.revision
+    )
+      throw new Error(
+        "Approve the current visual story plan before producing the book.",
+      );
     return {
       story,
       selectedCharacter,
       visualBible,
+      emotionalArc,
+      spreadMap,
       sampleRevision: sample.revision,
     };
   }
@@ -748,6 +794,8 @@ export class BookProductionService {
       projectId,
       story: prerequisites.story,
       visualBible: prerequisites.visualBible,
+      emotionalArc: prerequisites.emotionalArc,
+      spreadMap: prerequisites.spreadMap,
       sampleRevision: prerequisites.sampleRevision,
       revision,
       createdAt: timestamp,
@@ -761,7 +809,8 @@ export class BookProductionService {
   ): boolean {
     return (
       plan.sourceStoryRevision === prerequisites.story.revision &&
-      plan.sourceSampleRevision === prerequisites.sampleRevision
+      plan.sourceSampleRevision === prerequisites.sampleRevision &&
+      plan.sourceVisualPlanRevision === prerequisites.spreadMap.revision
     );
   }
 
