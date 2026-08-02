@@ -1,5 +1,6 @@
 import { randomUUID } from "node:crypto";
 
+import { FileCharacterLibraryRepository } from "@/lib/characters/file-character-library-repository";
 import type { AppConfig } from "@/lib/config/app-config";
 import { FileProjectRepository } from "@/lib/projects/file-project-repository";
 import { createImageProvider } from "@/lib/visuals/create-image-provider";
@@ -12,7 +13,9 @@ export async function createVisualWorkflow(config: AppConfig, now: () => Date) {
   });
   return new VisualWorkflowService(
     repository,
+    new FileCharacterLibraryRepository(config.characterLibraryRoot),
     await createImageProvider(config),
     now,
+    randomUUID,
   );
 }

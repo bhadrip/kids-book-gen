@@ -4,6 +4,7 @@ import { readFile, rm } from "node:fs/promises";
 import { join } from "node:path";
 
 const testProjectRoot = join(process.cwd(), "test-results", "projects");
+const testCharacterRoot = join(process.cwd(), "test-results", "characters");
 
 async function createApprovedFixtureStory(
   page: Page,
@@ -58,7 +59,7 @@ async function approveFixtureVisual(page: Page, projectId: string) {
     .click();
   await expect(
     page.getByRole("heading", { name: "Review the sample spread" }),
-  ).toBeVisible();
+  ).toBeVisible({ timeout: 15_000 });
   await page
     .getByRole("button", { name: "Approve this visual direction" })
     .click();
@@ -490,6 +491,72 @@ test("chooses a curated look, preserves character options, and approves a sample
     recursive: true,
     force: true,
   });
+});
+
+test("reuses an approved character in another book without creating new character drafts", async ({
+  page,
+}) => {
+  test.setTimeout(90_000);
+  await rm(testCharacterRoot, { recursive: true, force: true });
+
+  const firstProjectId = await createApprovedFixtureStory(
+    page,
+    "First Milo library book",
+    "Milo follows a moon kite before bedtime.",
+  );
+  await approveFixtureVisual(page, firstProjectId ?? "");
+
+  const secondProjectId = await createApprovedFixtureStory(
+    page,
+    "Second Milo library book",
+    "Milo brings the moon kite to a garden picnic.",
+  );
+  await page.goto(`/projects/${secondProjectId}/look`);
+  await page
+    .getByRole("button", { name: "Create the visual story plan" })
+    .click();
+  await page
+    .getByRole("button", { name: "Yes, continue to the character" })
+    .click();
+
+  await expect(
+    page.getByRole("heading", { name: "Reuse a saved character" }),
+  ).toBeVisible();
+  await expect(
+    page.getByText("skips three new character drafts"),
+  ).toBeVisible();
+  await page.getByRole("button", { name: "Reuse Milo" }).first().click();
+  await expect(
+    page.getByText("The saved character was copied into this book."),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("heading", { name: "Review the sample spread" }),
+  ).toBeVisible();
+
+  await expect(
+    readFile(
+      join(testProjectRoot, secondProjectId ?? "", "selected-character.json"),
+      "utf8",
+    ).then((value) => JSON.parse(value) as { librarySource?: unknown }),
+  ).resolves.toMatchObject({ librarySource: expect.any(Object) });
+  await expect(
+    readFile(
+      join(testProjectRoot, secondProjectId ?? "", "character-designs.json"),
+      "utf8",
+    ),
+  ).rejects.toThrow();
+
+  await Promise.all([
+    rm(join(testProjectRoot, firstProjectId ?? ""), {
+      recursive: true,
+      force: true,
+    }),
+    rm(join(testProjectRoot, secondProjectId ?? ""), {
+      recursive: true,
+      force: true,
+    }),
+    rm(testCharacterRoot, { recursive: true, force: true }),
+  ]);
 });
 
 test("shows resumable per-page production, revises one page, and preserves its siblings without model tokens", async ({

@@ -15,6 +15,8 @@ Persistent project knowledge for research, product design, and implementation.
 
 ## Canonical project specifications
 
+- [Reusable character library task](../tasks/reusable-character-library.md)
+
 - [`spec/01-research-findings.md`](../spec/01-research-findings.md)
 - [`spec/02-book-quality-model.md`](../spec/02-book-quality-model.md)
 - [`spec/03-evaluation-rubric.md`](../spec/03-evaluation-rubric.md)

@@ -25,3 +25,9 @@
 - Added six bundled same-scene art-preset previews so parents can compare
   medium, line, palette, lighting, shape, texture, and detail before generating
   character drafts.
+
+## 2026-08-01
+
+- Added the reusable-character-library delivery contract and indexed its
+  installation-private ownership, pinned-copy reuse, and deferred hosted
+  sharing boundaries.
