@@ -128,7 +128,7 @@ Producer:
 | `CharacterDesigns` | Presents three character options tied to a story revision and art preset. | Approved story and chosen art preset | Parent regenerates or chooses an option | `character-designs-NN.json`; current `character-designs.json` |
 | `SelectedCharacter` | Locks the selected option and a copied versioned reference asset. | `CharacterDesigns` | Explicit parent selection | `selected-character-NN.json`; current `selected-character.json` |
 | `VisualBible` | Preserves identity invariants, props, locations, palette, safe text area, and visual avoid rules. | Story, preset, and selected reference | Reviewed through the visual checkpoint | `visual-bible-NN.json`; current `visual-bible.json` |
-| `SampleSpread` | Tests the visual treatment on spread 7 while keeping text separately editable. | Story, `VisualBible`, and character reference | Parent edits text or requests an image revision | `sample-spread-NN.json`; current `sample-spread.json` |
+| `SampleSpread` | Tests the visual treatment on spread 7 while rendering approved story text separately from the artwork. | Story, `VisualBible`, and character reference | Parent approves the treatment or requests an image revision; story-text changes return to Step 3 | `sample-spread-NN.json`; current `sample-spread.json` |
 | `VisualDecision` | Approves or requests changes to an exact sample revision. | `SampleSpread` | Explicit parent decision | `visual-decision-NN.json`; current `visual-decision.json` |
 | `ImageGenerationJob` | Makes character and sample generation failure and recovery resumable. | Current visual-stage inputs | Parent sees progress and recovery state | Stage job records and `image-generation-job.json` |
 

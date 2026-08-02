@@ -228,36 +228,6 @@ export class VisualWorkflowService {
     return { decision, sample: revised };
   }
 
-  public async editSampleText(
-    projectId: string,
-    text: string,
-  ): Promise<SampleSpread> {
-    const current = await this.repository.readArtifact(
-      projectId,
-      "sample-spread.json",
-      sampleSpreadSchema,
-    );
-    const revision = current.revision + 1;
-    const edited = sampleSpreadSchema.parse({
-      ...current,
-      revision,
-      text,
-      textSource: "parent_edited",
-      textEditedAt: this.now().toISOString(),
-    });
-    await this.repository.writeArtifact(
-      projectId,
-      `sample-spread-${String(revision).padStart(2, "0")}.json`,
-      edited,
-    );
-    await this.repository.writeArtifact(
-      projectId,
-      "sample-spread.json",
-      edited,
-    );
-    return edited;
-  }
-
   private async generateSample(
     projectId: string,
     kind: ImageGenerationJob["kind"],

@@ -171,33 +171,6 @@ describe("VisualWorkflowService", () => {
     ).resolves.toEqual(selectedBefore);
   });
 
-  it("edits only the separate text layer and preserves the illustration", async () => {
-    const { repository, service } = await setup();
-    await service.generateCharacterDesigns(projectId, "quiet_emotional_v1");
-    const first = await service.selectCharacterAndGenerateSample(
-      projectId,
-      "character-3",
-    );
-
-    const edited = await service.editSampleText(
-      projectId,
-      "Milo held the silver string and listened to the moon hum.",
-    );
-
-    expect(edited).toMatchObject({
-      revision: 2,
-      assetFilename: first.assetFilename,
-      textSource: "parent_edited",
-    });
-    await expect(
-      repository.readArtifact(
-        projectId,
-        "sample-spread-01.json",
-        sampleSpreadSchema,
-      ),
-    ).resolves.toMatchObject({ text: first.text, revision: 1 });
-  });
-
   it("requires story approval and preserves it after an image-provider failure", async () => {
     const unapproved = await setup({ approveStory: false });
     await expect(
