@@ -89,7 +89,8 @@ an internal emotional arc, approve its exact revision, choose a curated art
 direction from six bundled same-scene visual previews, regenerate versioned
 character-design sets, choose a character reference, save that approved choice
 to the installation-private reusable character library, reuse a pinned copy in
-another local project without generating three new drafts, review the approved story
+another local project without generating three new drafts, review the approved
+story
 text on a sample spread, persist visual approval, inspect
 and edit a zero-additional-image-cost contact sheet and wireframe reader,
 approve the exact book-plan revision, run or resume sequential production,

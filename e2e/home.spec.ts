@@ -422,12 +422,13 @@ test("chooses a curated look, preserves character options, and approves a sample
   expect(currentDesignSet.revision).toBe(2);
 
   const secondDesign = page.getByRole("region", { name: "Character design 2" });
-  await secondDesign.getByRole("button", { name: "Choose design 2" }).click();
-  await expect(
+  const samplePending = expect(
     secondDesign.getByRole("button", {
       name: "Saving this character and making the sample…",
     }),
   ).toBeDisabled();
+  await secondDesign.getByRole("button", { name: "Choose design 2" }).click();
+  await samplePending;
   await expect(
     page.getByRole("heading", { name: "Review the sample spread" }),
   ).toBeVisible();
