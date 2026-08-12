@@ -58,7 +58,10 @@ learning exercise, but that is a secondary use case.
 
 Source project: `745b83c0-60df-41c0-9305-7c2314a9aa1a`. The example compares
 the project's revision 1 `EmotionalArc` and `SpreadMap` with its generated story
-pages and proof.
+pages and the exact reviewed
+[generated proof](examples/milo-the-last-little-bite-proof.pdf). The committed
+proof's SHA-256 checksum is
+`2bf270731276a9676a9cd81954d09708c3266d5f3e3cfe46737c7c99383c2ff2`.
 
 The planning artifacts describe a coherent, safe progression for Milo:
 
