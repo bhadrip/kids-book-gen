@@ -114,7 +114,8 @@ Primary schema:
 | `TextGenerationJob` | Makes direction/story generation failure and recovery resumable. | Current text-stage inputs | Parent sees progress and recovery state | Stage job records and `text-generation-job.json` |
 
 Current limitation: `StoryPackage` contains a coarse beginning/middle/ending arc
-and spread beats, not independent causal-beat or emotional-arc artifacts.
+and spread beats. The visual workflow derives the independent `EmotionalArc`
+after exact story approval; there is not yet an independent causal-beat artifact.
 
 ## Visual workflow
 
@@ -125,6 +126,10 @@ Producer:
 
 | Artifact | Purpose | Inputs | Parent interaction | Storage |
 | --- | --- | --- | --- | --- |
+| `EmotionalArc` | Preserves character-by-character entering state, trigger, observable expression, leaving state, intensity, and prohibited signals for each visually relevant spread. | Approved story | Internal input summarized through the visual-plan review | `emotional-arc-NN.json`; current `emotional-arc.json` |
+| `SpreadMap` | Owns each spread's story job, main action, emotional movement, illustration intent, must-show and must-avoid details, and page-turn question. | Approved story and `EmotionalArc` | Parent reviews the concise visual story plan | `spread-map-NN.json`; current `spread-map.json` |
+| `VisualPlanDecision` | Approves or requests changes to an exact spread-map revision. | `SpreadMap` | Explicit parent approval before character generation | `visual-plan-decision-NN.json`; current `visual-plan-decision.json` |
+| `VisualPlanJob` | Makes emotional-arc and spread-map generation failure and recovery resumable. | Current approved story | Parent sees progress and recovery state | Stage job records and `visual-plan-job.json` |
 | `CharacterDesigns` | Presents three character options tied to a story revision and art preset. | Approved story and chosen art preset | Parent regenerates or chooses an option | `character-designs-NN.json`; current `character-designs.json` |
 | `SelectedCharacter` | Locks the selected option and a copied versioned reference asset. | `CharacterDesigns` | Explicit parent selection | `selected-character-NN.json`; current `selected-character.json` |
 | `VisualBible` | Preserves identity invariants, props, locations, palette, safe text area, and visual avoid rules. | Story, preset, and selected reference | Reviewed through the visual checkpoint | `visual-bible-NN.json`; current `visual-bible.json` |
@@ -138,9 +143,11 @@ Associated assets include:
 - `character-reference-rNN.<ext>`
 - `sample-spread-rNN.<ext>`
 
-Current limitation: the visual workflow does not yet persist a whole-book
-emotional arc, character performance sheet, thumbnail storyboard, or visual
-narrative evaluation.
+Current limitation: the visual workflow does not yet persist a character
+performance sheet, thumbnail storyboard, or post-generation visual-narrative
+evaluation comparing the approved emotional plan with the finished pages. The
+discovery checklist for that comparison is
+[`tasks/approved-book-emotional-evaluation-checklist.md`](../tasks/approved-book-emotional-evaluation-checklist.md).
 
 ## Book-production workflow
 
@@ -185,11 +192,12 @@ Associated proof assets use:
 - `proof-rNN.html` and current `proof.html`
 - `proof-rNN.pdf` and current `proof.pdf`
 
-## Proposed visual-narrative artifacts
+## Candidate visual-narrative extensions
 
-These are candidate boundaries for the next visual-narrative vertical slice.
-They are not implemented contracts, approved schemas, or permission to add all
-of them in one change.
+`EmotionalArc` and `SpreadMap` are implemented visual-workflow artifacts. The
+remaining nodes below are candidate boundaries for later visual-narrative
+vertical slices. They are not implemented contracts, approved schemas, or
+permission to add all of them in one change.
 
 ```mermaid
 flowchart TD
@@ -205,11 +213,9 @@ flowchart TD
     Approval --> Production["BookPlan / final production"]
 ```
 
-| Proposed artifact | Decision it would own | Likely producer | Likely consumers | Candidate parent interaction |
+| Candidate artifact | Decision it would own | Likely producer | Likely consumers | Candidate parent interaction |
 | --- | --- | --- | --- | --- |
 | `BeatGraph` | Cause, action, consequence, escalation, choice, and resolution for each beat | Story/beat planning stage | Emotional arc and spread planning | Review with the story; approval policy unresolved |
-| `EmotionalArc` | Character-by-character emotional state and change across beats | Visual narrative planning stage | Spread map, character performance, storyboard, meaning evaluation | Editable summary; approval policy unresolved |
-| `SpreadMap` | Story job, visual job, text job, before/after state, page turn, and continuity needs per spread | Spread planning stage | Manuscript, storyboard, and book plan | Editable sequence; likely approval before paid art |
 | `CharacterPerformanceSheet` | Pose, expression, gesture, movement, silhouette, and prohibited-performance vocabulary needed by the whole story | Character performance/design stage | Storyboard and illustration | Visual review alongside character identity |
 | `Storyboard` | Whole-book thumbnail sequence, composition, viewpoint, rhythm, and visual causality | Storyboard stage | Visual evaluation and sample generation | Review before polished sample/final art |
 | `StoryboardEvaluation` | Evidence about visual readability, emotional clarity, repetition, page turns, and text-image cooperation | Visual narrative evaluator | Revision planning and approval gate | Usually summarized, with actionable evidence |

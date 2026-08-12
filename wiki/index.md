@@ -20,3 +20,7 @@ Persistent project knowledge for research, product design, and implementation.
 - [`spec/03-evaluation-rubric.md`](../spec/03-evaluation-rubric.md)
 - [`spec/04-agent-pipeline.md`](../spec/04-agent-pipeline.md)
 - [`spec/09-artifact-catalog.md`](../spec/09-artifact-catalog.md)
+
+## Product discovery
+
+- [Approved-book emotional-fidelity evaluation checklist](../tasks/approved-book-emotional-evaluation-checklist.md)
