@@ -1,4 +1,4 @@
-# Discovery checklist: Evaluate the approved book's emotional fidelity
+# Discovery checklist: Evaluate generated pages for emotional fidelity
 
 ## Status
 
@@ -9,7 +9,7 @@ make the evaluation an approval gate, or decide who can see the results.
 
 Should the product offer an optional evaluation that compares the emotional
 journey planned for each character with the emotional performance visible in the
-exact approved book?
+exact generated page set before final book approval?
 
 The evaluation is diagnostic. It may suggest a localized revision, but it must
 not silently rewrite text, regenerate art, invalidate an approval, or claim that
@@ -28,7 +28,72 @@ one subjective reading is definitive.
   reviewed.
 
 The missing capability is a post-generation comparison of the approved plan
-with observable evidence in those final pages.
+with observable evidence in the generated pages. Planning artifacts can be
+internally consistent while the image model under-expresses, exaggerates, or
+omits the planned performance. That discrepancy cannot be evaluated reliably
+before the page image exists.
+
+## Proposed journey placement
+
+Run the primary evaluation after all story-page images have been generated and
+before `BookDecision` approves the complete page set:
+
+```text
+Approved EmotionalArc and SpreadMap
+→ approved BookPlan
+→ generated BookPages
+→ emotional-fidelity evaluation
+→ optional localized page revision
+→ parent reviews and approves the complete page set
+→ BookProof
+```
+
+This is a review of generated output, not another planning-stage evaluation.
+Earlier stages may validate whether the intended arc is coherent and visually
+expressible, but only this point can compare that intent with the finished
+illustrations. An already approved proof may be evaluated as an audit or pilot
+learning exercise, but that is a secondary use case.
+
+## Worked example: Milo in _The Last Little Bite_
+
+Source project: `745b83c0-60df-41c0-9305-7c2314a9aa1a`. The example compares
+the project's revision 1 `EmotionalArc` and `SpreadMap` with its generated story
+pages and proof.
+
+The planning artifacts describe a coherent, safe progression for Milo:
+
+```text
+comfortable routine
+→ gentle awareness
+→ reflection
+→ appreciation
+→ readiness
+→ confidence
+→ experimentation
+→ practical care
+→ patient learning
+→ peaceful confidence
+```
+
+They also consistently prohibit shame, coercion, forced eating, adult
+surveillance, and moralized clean-plate praise. The post-generation review is
+needed because several intended transitions are less legible in the finished
+book than in that plan.
+
+| Spread | Planned evidence                                                                                                                           | Observed generated-page evidence                                                                                                                          | Example result     | Bounded suggestion                                                                                                                |
+| -----: | ------------------------------------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------ | --------------------------------------------------------------------------------------------------------------------------------- |
+|    1–2 | Milo moves from comfortable habit toward a first hint of awareness by visibly noticing the remaining bites.                                | Milo appears comfortable at the meal; the next page emphasizes the isolated plate, but his change in awareness is subtle.                                 | `could_be_clearer` | Preserve the warm, nonjudgmental meal and make Milo's backward glance or pause more readable.                                     |
+|    4–5 | Reflection about the food's journey becomes appreciation, shown through attentive focus, gentle hands, and a warm appreciative expression. | The journey is visualized clearly and Milo remains positive, but the internal reflective beat resolves quickly into readiness.                            | `could_be_clearer` | Preserve the food-journey panorama and give Milo one quieter expression or gesture of recognition before the solution beat.       |
+|      6 | Readiness becomes self-directed confidence without a triumphant or moralizing pose.                                                        | Milo raises a finger enthusiastically while his family watches; his agency is clear, though the performance reads more triumphant than the plan requests. | `could_be_clearer` | Keep Milo as the source of the idea while softening the pose into pleased, thoughtful confidence.                                 |
+|      9 | Milo moves from comfortably full to relieved while collaborating with family to save the remaining bites.                                  | Collaboration and family warmth are visible, but relief is not distinct from the cheerful expressions used on adjacent pages.                             | `could_be_clearer` | Preserve the cooperative storage action and show a small release of tension, such as relaxed shoulders when the container closes. |
+|     11 | Imperfect portions lead to patient persistence and self-compassion rather than failure.                                                    | The montage shows surprise, uncertainty, and success, but the text summarizes learning and the patient emotional bridge is mostly inferred.               | `could_be_clearer` | Preserve the varied attempts and add a calm trying-again expression or other visual link between uncertainty and confidence.      |
+|     13 | Competence resolves into peaceful confidence and family connection without treating the clean plate as obedience.                          | Milo is relaxed and connected with his family; the empty plate is contextualized by the text rather than celebrated with applause.                        | `clear`            | Preserve this ending if earlier pages are revised.                                                                                |
+
+This example does not show that the upstream artifacts failed. It shows why an
+evaluator must compare those artifacts with the generated sequence: a prompt can
+contain the correct emotional direction while the final image communicates it
+only partially. It also demonstrates why results should cite observable evidence
+and recommend localized changes instead of assigning one opaque score.
 
 ## Product-decision checklist
 
@@ -50,13 +115,14 @@ Resolve these questions before implementation.
 ### Trigger, timing, and cost
 
 - [ ] Decide whether evaluation is manual, automatic, or both. Default proposal:
-      one manual action on the complete proof.
-- [ ] Decide whether an already approved book is required, or whether a complete
-      unapproved proof may also be evaluated.
+      one manual action after the complete page set is generated.
+- [ ] Use the complete generated, not-yet-approved page set as the primary input;
+      decide separately whether approved proofs may be evaluated for audit or
+      pilot learning.
 - [ ] Show the estimated model cost before a manual provider call.
 - [ ] Prevent duplicate calls while an evaluation is running.
-- [ ] Define retry behavior that preserves the approved proof and last safe
-      artifacts.
+- [ ] Define retry behavior that preserves the current generated pages, existing
+      decisions, and last safe artifacts.
 - [ ] Decide whether unchanged inputs may reuse a prior result.
 
 ### Exact evaluation inputs
@@ -143,8 +209,9 @@ good or bad.
 - [ ] Name what to change and what to preserve.
 - [ ] Target only the affected page unless the finding demonstrates a
       cross-spread problem.
-- [ ] Preserve the approved proof until a successor page is generated, reviewed,
-      and approved through the existing workflow.
+- [ ] Preserve the current page revision until a successor page is generated,
+      reviewed, and approved through the existing workflow; when evaluating an
+      already approved proof, preserve that proof as historical evidence.
 - [ ] Do not dismiss or resolve a finding merely because regeneration completed;
       compare the successor against the intended transition again.
 
@@ -172,7 +239,8 @@ Use this only after the product decisions above are resolved.
       paid provider calls.
 - [ ] Tests cover supporting-character findings and prohibited emotional signals.
 - [ ] Tests prove stale or mismatched inputs cannot be reported as current.
-- [ ] Tests prove evaluation failure does not change the approved proof.
+- [ ] Tests prove evaluation failure does not change page revisions, decisions,
+      or an existing approved proof.
 - [ ] Tests prove suggestions cannot regenerate or replace a page without an
       explicit user action.
 - [ ] Focused browser coverage verifies role visibility, cost disclosure,
