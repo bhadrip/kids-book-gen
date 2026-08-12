@@ -24,3 +24,7 @@ Persistent project knowledge for research, product design, and implementation.
 ## Product discovery
 
 - [Approved-book emotional-fidelity evaluation checklist](../tasks/approved-book-emotional-evaluation-checklist.md)
+
+## Generated-book reviews
+
+- [_The Last Little Bite_: emotional-arc review notes](pages/reviews/the-last-little-bite-emotional-arc-review.md)
