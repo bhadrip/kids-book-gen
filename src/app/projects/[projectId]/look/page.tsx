@@ -288,15 +288,6 @@ export default async function LookPage({
           The sample spread is saved and ready for your review.
         </p>
       ) : null}
-      {result === "text_saved" ? (
-        <p
-          className="mt-6 rounded-2xl bg-green-50 p-5 text-green-900"
-          role="status"
-        >
-          The separate sample text is saved. Review this new sample revision
-          before approving it.
-        </p>
-      ) : null}
       {result === "approved" ? (
         <p
           className="mt-6 rounded-2xl bg-green-50 p-5 text-green-900"
@@ -764,20 +755,31 @@ export default async function LookPage({
 
           <details className="mt-6 rounded-2xl border border-stone-200 bg-white p-5">
             <summary className="cursor-pointer font-semibold text-stone-950">
-              What this visual identity will preserve
+              What we’ll keep consistent in every picture
             </summary>
             <div className="mt-4 grid gap-5 text-sm leading-6 text-stone-700 md:grid-cols-3">
               <div>
-                <h3 className="font-semibold text-stone-950">Character</h3>
+                <h3 className="font-semibold text-stone-950">Main character</h3>
                 <p className="mt-1">
-                  {data.visualBible.mainCharacter.description}
+                  The same {data.visualBible.mainCharacter.description} will
+                  appear throughout the book.
                 </p>
               </div>
               <div>
-                <h3 className="font-semibold text-stone-950">Palette</h3>
-                <div className="mt-2 flex gap-2">
+                <h3 className="font-semibold text-stone-950">
+                  Colors and art style
+                </h3>
+                <p className="mt-1">
+                  We’ll use the {currentPreset?.label.toLowerCase() ?? "chosen"}{" "}
+                  art style and these colors across every page.
+                </p>
+                <div
+                  aria-label="Selected color palette"
+                  className="mt-2 flex gap-2"
+                >
                   {data.visualBible.palette.map((swatch) => (
                     <span
+                      aria-hidden="true"
                       className="size-8 rounded-full border border-black/10"
                       key={swatch}
                       style={{ backgroundColor: swatch }}
@@ -786,41 +788,17 @@ export default async function LookPage({
                 </div>
               </div>
               <div>
-                <h3 className="font-semibold text-stone-950">Text safety</h3>
+                <h3 className="font-semibold text-stone-950">
+                  Space for the story text
+                </h3>
                 <p className="mt-1">
-                  Keep the upper-left calm and never render words into artwork.
+                  We’ll keep the upper-left area simple so the words are easy to
+                  read. Words will be added separately, not drawn into the
+                  picture.
                 </p>
               </div>
             </div>
           </details>
-
-          <PendingForm
-            action={`/api/projects/${projectId}/visuals/sample-text`}
-            className="mt-6 rounded-2xl border border-stone-200 bg-white p-5"
-            pendingLabel="Saving the separate text layer…"
-            pendingMessage="The illustration and approved manuscript remain unchanged while this sample-layout text is saved as a new revision."
-            submitClassName="mt-4 rounded-xl border border-stone-950 px-5 py-3 font-semibold text-stone-950"
-            submitLabel="Save sample text"
-          >
-            <label
-              className="block font-semibold text-stone-950"
-              htmlFor="sample-text"
-            >
-              Edit the text shown on this sample
-            </label>
-            <p className="mt-1 text-sm text-stone-600">
-              This changes only the separate layout text, never the artwork or
-              approved manuscript.
-            </p>
-            <textarea
-              className="mt-3 block min-h-32 w-full rounded-xl border border-stone-300 p-3 leading-7 outline-none focus:border-rose-700 focus:ring-2 focus:ring-rose-100"
-              defaultValue={data.sample.text}
-              id="sample-text"
-              maxLength={3000}
-              name="text"
-              required
-            />
-          </PendingForm>
 
           <section
             className="mt-8 rounded-3xl border border-stone-200 bg-white p-6 shadow-sm"
@@ -831,16 +809,17 @@ export default async function LookPage({
             </h2>
             {visualApproved ? (
               <div className="mt-4 rounded-2xl bg-green-50 p-5 text-green-900">
-                <p className="font-semibold">This visual sample is approved.</p>
+                <p className="font-semibold">Your book’s look is approved.</p>
                 <p className="mt-2">
-                  Full-book production is unlocked. Review its page count and
-                  cost estimate before starting the sequential job.
+                  Next, review the plan for the complete book, including its
+                  pages and estimated illustration cost. Nothing will be
+                  generated or charged until you confirm.
                 </p>
                 <Link
                   className="mt-4 inline-block rounded-xl bg-stone-950 px-5 py-3 font-semibold text-white"
                   href={`/projects/${projectId}/book`}
                 >
-                  Review production estimate
+                  Review the book plan
                 </Link>
               </div>
             ) : (

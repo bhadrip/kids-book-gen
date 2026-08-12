@@ -62,7 +62,7 @@ async function approveFixtureVisual(page: Page, projectId: string) {
   await page
     .getByRole("button", { name: "Approve this visual direction" })
     .click();
-  await expect(page.getByText("This visual sample is approved.")).toBeVisible();
+  await expect(page.getByText("Your book’s look is approved.")).toBeVisible();
 }
 
 test("shows the local Storytime Studio foundation", async ({ page }) => {
@@ -421,12 +421,13 @@ test("chooses a curated look, preserves character options, and approves a sample
   expect(currentDesignSet.revision).toBe(2);
 
   const secondDesign = page.getByRole("region", { name: "Character design 2" });
-  await secondDesign.getByRole("button", { name: "Choose design 2" }).click();
-  await expect(
+  const samplePending = expect(
     secondDesign.getByRole("button", {
       name: "Saving this character and making the sample…",
     }),
   ).toBeDisabled();
+  await secondDesign.getByRole("button", { name: "Choose design 2" }).click();
+  await samplePending;
   await expect(
     page.getByRole("heading", { name: "Review the sample spread" }),
   ).toBeVisible();
@@ -434,6 +435,21 @@ test("chooses a curated look, preserves character options, and approves a sample
     "Spread 7 moves the adventure forward while preserving the family's idea.",
   );
   await expect(page.getByAltText("Approved character reference")).toBeVisible();
+  await page.getByText("What we’ll keep consistent in every picture").click();
+  await expect(
+    page.getByRole("heading", { name: "Main character" }),
+  ).toBeVisible();
+  await expect(
+    page.getByText(
+      /We’ll use the .* art style and these colors across every page/,
+    ),
+  ).toBeVisible();
+  await expect(
+    page.getByText(
+      "Words will be added separately, not drawn into the picture.",
+      { exact: false },
+    ),
+  ).toBeVisible();
   await page.screenshot({
     path: "test-results/visual-sample-spread.png",
     fullPage: true,
@@ -451,23 +467,12 @@ test("chooses a curated look, preserves character options, and approves a sample
   });
 
   await page
-    .getByLabel("Edit the text shown on this sample")
-    .fill("Milo held the silver string and listened to the moon hum.");
-  await page.getByRole("button", { name: "Save sample text" }).click();
-  await expect(
-    page.getByText("The separate sample text is saved.", { exact: false }),
-  ).toBeVisible();
-  await expect(page.getByTestId("sample-spread-text")).toHaveText(
-    "Milo held the silver string and listened to the moon hum.",
-  );
-
-  await page
     .getByRole("button", { name: "Approve this visual direction" })
     .click();
   await expect(
     page.getByText("Visual direction approved and saved."),
   ).toBeVisible();
-  await expect(page.getByText("This visual sample is approved.")).toBeVisible();
+  await expect(page.getByText("Your book’s look is approved.")).toBeVisible();
   await page.getByRole("link", { name: "Save and exit" }).click();
   await expect(page.getByText("Approved", { exact: true })).toHaveCount(4);
   await expect(
@@ -498,7 +503,7 @@ test("shows resumable per-page production, revises one page, and preserves its s
     "A moon kite flies away before bedtime.",
   );
   await approveFixtureVisual(page, projectId ?? "");
-  await page.getByRole("link", { name: "Review production estimate" }).click();
+  await page.getByRole("link", { name: "Review the book plan" }).click();
 
   await expect(
     page.getByRole("heading", {
@@ -809,7 +814,7 @@ test("preserves completed book pages when one production request fails", async (
     "Fixture production failure; keep Milo's round glasses and the silver moon kite.",
   );
   await approveFixtureVisual(page, projectId ?? "");
-  await page.getByRole("link", { name: "Review production estimate" }).click();
+  await page.getByRole("link", { name: "Review the book plan" }).click();
   await page.getByRole("button", { name: "Approve this book plan" }).click();
   await expect(
     page.getByText("The zero-cost book plan is approved.", { exact: false }),

@@ -83,7 +83,11 @@ export function PendingForm({
       method="post"
       onSubmit={(event) => void submit(event)}
     >
-      <fieldset aria-disabled={pending} className="min-w-0 border-0 p-0">
+      <fieldset
+        aria-disabled={pending}
+        className="min-w-0 border-0 p-0"
+        disabled={pending}
+      >
         {children}
         <button
           aria-describedby={statusId}

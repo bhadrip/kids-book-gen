@@ -9,7 +9,7 @@ This is the local task tracker for `mlp-v0`. Statuses: **done**, **in progress**
   an idea, generate and revise directions, select one with steering, generate
   and revise a quality-checked 13-spread text story, approve it, choose one of
   six art presets, compare or regenerate three character designs, save a
-  character reference, edit and approve one illustrated sample spread, confirm
+  character reference, review and approve one illustrated sample spread, confirm
   or edit a zero-additional-image-cost 16-page contact sheet and wireframe
   reader, approve its exact revision, resume sequential full-book production,
   review 16 saved landscape pages, edit a page, regenerate one image without
@@ -176,7 +176,7 @@ record, and the fourth parent checkpoint.
 | PRV-02 | Define the `ImageProvider` boundary and OpenAI image adapter.                                                | **done** | OpenAI generation/edit calls stay behind the adapter; deterministic SVG fixtures keep tests zero-token.                                                          |
 | VIS-02 | Generate two or three character-design options and persist the chosen reference asset.                       | **done** | Three options, a visible regeneration action, and numbered revisions are preserved; the chosen asset is copied atomically to a stable versioned reference.       |
 | VIS-03 | Create and persist a Visual Bible with character invariants, props, locations, palette, and text-safe areas. | **done** | The Visual Bible is schema-validated and tied to the current story revision, preset, and character reference.                                                    |
-| VIS-04 | Generate one editable-text sample spread and require explicit visual approval.                               | **done** | Spread 7 uses a reference-conditioned image, separate editable text, numbered revisions, and current-revision approval.                                          |
+| VIS-04 | Generate one sample spread with separately rendered story text and require explicit visual approval.         | **done** | Spread 7 uses a reference-conditioned image, displays approved story text separately from the artwork, and requires current-revision approval.                   |
 | TST-03 | Test visual approval gating, reference preservation, and provider-error recovery.                            | **done** | Four visual-service tests and two parent-visible Playwright scenarios cover regeneration, revision preservation, the gate, and recovery behavior.                |
 
 ## Phase 5 — Full-book production and revision
