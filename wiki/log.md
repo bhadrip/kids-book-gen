@@ -25,3 +25,9 @@
 - Added six bundled same-scene art-preset previews so parents can compare
   medium, line, palette, lighting, shape, texture, and detail before generating
   character drafts.
+
+## 2026-08-11
+
+- Added the approved-book emotional-fidelity evaluation discovery checklist and
+  corrected the artifact catalog to reflect the implemented `EmotionalArc` and
+  `SpreadMap` visual-planning artifacts.
