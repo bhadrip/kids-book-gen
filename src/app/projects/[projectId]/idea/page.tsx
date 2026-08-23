@@ -7,6 +7,7 @@ import { FileProjectRepository } from "@/lib/projects/file-project-repository";
 import { getProjectProgress } from "@/lib/projects/project-progress";
 import { projectBriefSchema } from "@/lib/projects/project";
 import { storyMoodOptions } from "@/lib/stories/story-mood";
+import { storyThemeOptions } from "@/lib/stories/story-theme";
 
 export const runtime = "nodejs";
 
@@ -343,15 +344,73 @@ export default async function IdeaPage({
             defaultValue={savedBrief?.mustKeep}
           />
         </label>
-        <label className="block font-semibold" htmlFor="valueOrQuestion">
-          Optional value or question
-          <input
-            className="mt-2 block w-full rounded-xl border p-3"
-            id="valueOrQuestion"
-            name="valueOrQuestion"
-            defaultValue={savedBrief?.valueOrQuestion}
-          />
-        </label>
+        <fieldset className="rounded-2xl border border-stone-200 p-4">
+          <legend className="px-1 font-semibold">
+            Is there something you want the story to explore?
+          </legend>
+          <p className="mt-1 text-sm text-stone-600">
+            This shapes what characters experience and learn. The studio must
+            show it through their choices and consequences—not state it as a
+            lesson.
+          </p>
+          <div className="mt-4 grid gap-3 sm:grid-cols-2">
+            {storyThemeOptions.map((theme) => (
+              <label
+                className="flex cursor-pointer gap-3 rounded-xl border border-stone-200 p-4 has-checked:border-stone-950 has-checked:bg-stone-50"
+                key={theme.value}
+              >
+                <input
+                  className="mt-1 size-4 shrink-0 accent-stone-950"
+                  name="storyTheme"
+                  required
+                  type="radio"
+                  value={theme.value}
+                  defaultChecked={
+                    savedBrief?.storyTheme === theme.value ||
+                    (!savedBrief?.storyTheme &&
+                      !savedBrief?.valueOrQuestion &&
+                      theme.value === "no_particular_message")
+                  }
+                />
+                <span>
+                  <span className="block font-semibold">{theme.title}</span>
+                  <span className="mt-1 block text-sm text-stone-600">
+                    {theme.example}
+                  </span>
+                </span>
+              </label>
+            ))}
+            <label className="flex cursor-pointer gap-3 rounded-xl border border-stone-200 p-4 has-checked:border-stone-950 has-checked:bg-stone-50 sm:col-span-2">
+              <input
+                className="mt-1 size-4 shrink-0 accent-stone-950"
+                name="storyTheme"
+                required
+                type="radio"
+                value="something_else"
+                defaultChecked={
+                  savedBrief?.storyTheme === "something_else" ||
+                  (!savedBrief?.storyTheme &&
+                    Boolean(savedBrief?.valueOrQuestion))
+                }
+              />
+              <span className="w-full">
+                <span className="block font-semibold">Something else</span>
+                <span className="mt-1 block text-sm text-stone-600">
+                  Describe an idea or question your family wants to explore.
+                </span>
+                <input
+                  className="mt-3 block w-full rounded-xl border bg-white p-3 font-normal"
+                  aria-label="Describe another idea to explore"
+                  name="customStoryTheme"
+                  maxLength={500}
+                  defaultValue={
+                    savedBrief?.customStoryTheme ?? savedBrief?.valueOrQuestion
+                  }
+                />
+              </span>
+            </label>
+          </div>
+        </fieldset>
         <label className="block font-semibold" htmlFor="avoid">
           Anything to avoid?
           <input

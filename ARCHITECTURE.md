@@ -85,7 +85,8 @@ runnable. A parent can
 create and reopen a project,
 save an idea with an exact reader age from 3 through 10 and a separate reading
 mode, choose a structured or custom story mood that is enforced during generation
-and hidden evaluation, iterate on reader-profile-tuned directions, select one,
+and hidden evaluation, choose an idea to explore through character action rather
+than a stated lesson, iterate on reader-profile-tuned directions, select one,
 revise and approve a 13-spread
 story, generate and minimally review a versioned visual spread plan backed by
 an internal emotional arc, approve its exact revision, choose a curated art
@@ -153,6 +154,9 @@ reader-profile provenance, and prompt guidance changes materially by the 3–5,
 6–7, or 8–10 age band and the selected delivery mode. Parent-selected mood is a
 separate required creative constraint on tone, pacing, intensity, dialogue,
 suspense, and closure; hidden evaluation can request revision for mood drift.
+The selected idea-to-explore separately governs conflict, choices, consequences,
+recognition, and resolution; hidden evaluation can request revision when it is
+ignored or reduced to a lecture.
 `VisualNarrativeWorkflowService` owns paired, versioned `EmotionalArc` and
 `SpreadMap` generation, bounded parent steering, persisted recovery state, and
 exact-revision approval. Parents see only the spread beat, main action,

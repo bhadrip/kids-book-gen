@@ -140,6 +140,13 @@ test("offers a parent-safe idea intake without making a model request", async ({
   await expect(page.getByLabel("No preference")).toBeChecked();
   await expect(page.getByText("Silly surprises")).toBeVisible();
   await expect(
+    page.getByRole("group", {
+      name: "Is there something you want the story to explore?",
+    }),
+  ).toBeVisible();
+  await expect(page.getByLabel("No particular message")).toBeChecked();
+  await expect(page.getByText("accepting support")).toBeVisible();
+  await expect(
     page.getByRole("button", { name: "Generate three directions" }),
   ).toBeVisible();
   await page.goto(`/projects/${projectId}/book/read`);
@@ -177,6 +184,7 @@ test("revises directions, generates a story, approves it, and reopens it without
     .getByLabel("How will the child read this book?")
     .selectOption("co_read");
   await page.getByLabel("Funny and playful").check();
+  await page.getByLabel("Asking for help").check();
   await page.getByLabel("Must keep").fill("Keep the moon kite and Milo.");
   await page.getByRole("button", { name: "Generate three directions" }).click();
   const directionGeneration = page.locator('form[aria-busy="true"]');
@@ -235,10 +243,16 @@ test("revises directions, generates a story, approves it, and reopens it without
           join(testProjectRoot, projectId ?? "", "brief.json"),
           "utf8",
         ),
-      ) as { storyMood?: unknown };
-      return brief.storyMood;
+      ) as { storyMood?: unknown; storyTheme?: unknown };
+      return {
+        storyMood: brief.storyMood,
+        storyTheme: brief.storyTheme,
+      };
     })
-    .toBe("funny_playful");
+    .toEqual({
+      storyMood: "funny_playful",
+      storyTheme: "asking_for_help",
+    });
 
   await page
     .getByLabel("Want three different directions?")

@@ -47,6 +47,17 @@ export const storyMoodSchema = z.enum([
   "something_else",
 ]);
 
+export const storyThemeSchema = z.enum([
+  "asking_for_help",
+  "brave_while_scared",
+  "repairing_friendship",
+  "including_someone",
+  "handling_disappointment",
+  "understanding_viewpoint",
+  "no_particular_message",
+  "something_else",
+]);
+
 export const projectBriefSchema = z.object({
   schemaVersion: z.literal(1),
   projectId: projectIdSchema,
@@ -58,6 +69,8 @@ export const projectBriefSchema = z.object({
   storyMood: storyMoodSchema.optional(),
   customStoryMood: optionalText(300),
   valueOrQuestion: optionalText(500),
+  storyTheme: storyThemeSchema.optional(),
+  customStoryTheme: optionalText(500),
   avoid: optionalText(500),
   mustKeep: optionalText(1_000),
   readerConfiguration: readerConfigurationSchema.optional(),
@@ -170,6 +183,7 @@ export const storyQualityEvaluationSchema = z.object({
     ageFit: z.enum(["pass", "revise"]),
     oralFlow: z.enum(["pass", "revise"]),
     moodFit: z.enum(["pass", "revise"]).optional(),
+    themeFit: z.enum(["pass", "revise"]).optional(),
     safety: z.enum(["pass", "revise"]),
   }),
   revisionBrief: optionalText(1_500),

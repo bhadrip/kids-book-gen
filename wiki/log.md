@@ -57,3 +57,7 @@
 - Replaced ambiguous desired-feeling intake with structured, example-backed
   story moods plus a custom option. Mood is now an explicit generation
   constraint and a hidden evaluation check rather than unstructured prompt data.
+- Replaced optional value/question free text with example-backed ideas to
+  explore, a no-message option, and a custom question. Generation must enact the
+  selection through choices and consequences, and hidden evaluation checks for
+  both omission and preachy treatment.
