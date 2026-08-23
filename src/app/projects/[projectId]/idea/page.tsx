@@ -6,6 +6,7 @@ import { readAppConfig } from "@/lib/config/app-config";
 import { FileProjectRepository } from "@/lib/projects/file-project-repository";
 import { getProjectProgress } from "@/lib/projects/project-progress";
 import { projectBriefSchema } from "@/lib/projects/project";
+import { storyMoodOptions } from "@/lib/stories/story-mood";
 
 export const runtime = "nodejs";
 
@@ -266,15 +267,73 @@ export default async function IdeaPage({
             defaultValue={savedBrief?.characterDesire}
           />
         </label>
-        <label className="block font-semibold" htmlFor="desiredFeeling">
-          What should this feel like?
-          <input
-            className="mt-2 block w-full rounded-xl border p-3"
-            id="desiredFeeling"
-            name="desiredFeeling"
-            defaultValue={savedBrief?.desiredFeeling}
-          />
-        </label>
+        <fieldset className="rounded-2xl border border-stone-200 p-4">
+          <legend className="px-1 font-semibold">
+            What mood should the story have?
+          </legend>
+          <p className="mt-1 text-sm text-stone-600">
+            Story shape controls what happens. Mood controls how it is told—its
+            tone, pacing, emotional intensity, dialogue, suspense, and ending.
+            The studio treats your choice as a required creative direction.
+          </p>
+          <div className="mt-4 grid gap-3 sm:grid-cols-2">
+            {storyMoodOptions.map((mood) => (
+              <label
+                className="flex cursor-pointer gap-3 rounded-xl border border-stone-200 p-4 has-checked:border-stone-950 has-checked:bg-stone-50"
+                key={mood.value}
+              >
+                <input
+                  className="mt-1 size-4 shrink-0 accent-stone-950"
+                  name="storyMood"
+                  required
+                  type="radio"
+                  value={mood.value}
+                  defaultChecked={
+                    savedBrief?.storyMood === mood.value ||
+                    (!savedBrief?.storyMood &&
+                      !savedBrief?.desiredFeeling &&
+                      mood.value === "no_preference")
+                  }
+                />
+                <span>
+                  <span className="block font-semibold">{mood.title}</span>
+                  <span className="mt-1 block text-sm text-stone-600">
+                    {mood.example}
+                  </span>
+                </span>
+              </label>
+            ))}
+            <label className="flex cursor-pointer gap-3 rounded-xl border border-stone-200 p-4 has-checked:border-stone-950 has-checked:bg-stone-50 sm:col-span-2">
+              <input
+                className="mt-1 size-4 shrink-0 accent-stone-950"
+                name="storyMood"
+                required
+                type="radio"
+                value="something_else"
+                defaultChecked={
+                  savedBrief?.storyMood === "something_else" ||
+                  (!savedBrief?.storyMood &&
+                    Boolean(savedBrief?.desiredFeeling))
+                }
+              />
+              <span className="w-full">
+                <span className="block font-semibold">Something else</span>
+                <span className="mt-1 block text-sm text-stone-600">
+                  Describe the tone or reading experience you want.
+                </span>
+                <input
+                  className="mt-3 block w-full rounded-xl border bg-white p-3 font-normal"
+                  aria-label="Describe another story mood"
+                  name="customStoryMood"
+                  maxLength={300}
+                  defaultValue={
+                    savedBrief?.customStoryMood ?? savedBrief?.desiredFeeling
+                  }
+                />
+              </span>
+            </label>
+          </div>
+        </fieldset>
         <label className="block font-semibold" htmlFor="mustKeep">
           Must keep
           <textarea

@@ -36,6 +36,17 @@ export const narrativeTemplateSchema = z.enum([
   "start_from_scratch",
 ]);
 
+export const storyMoodSchema = z.enum([
+  "warm_cozy",
+  "funny_playful",
+  "exciting_adventurous",
+  "gentle_comforting",
+  "curious_mysterious",
+  "thoughtful_hopeful",
+  "no_preference",
+  "something_else",
+]);
+
 export const projectBriefSchema = z.object({
   schemaVersion: z.literal(1),
   projectId: projectIdSchema,
@@ -44,6 +55,8 @@ export const projectBriefSchema = z.object({
   protagonist: optionalText(160),
   characterDesire: optionalText(500),
   desiredFeeling: optionalText(300),
+  storyMood: storyMoodSchema.optional(),
+  customStoryMood: optionalText(300),
   valueOrQuestion: optionalText(500),
   avoid: optionalText(500),
   mustKeep: optionalText(1_000),
@@ -156,6 +169,7 @@ export const storyQualityEvaluationSchema = z.object({
     structure: z.enum(["pass", "revise"]),
     ageFit: z.enum(["pass", "revise"]),
     oralFlow: z.enum(["pass", "revise"]),
+    moodFit: z.enum(["pass", "revise"]).optional(),
     safety: z.enum(["pass", "revise"]),
   }),
   revisionBrief: optionalText(1_500),

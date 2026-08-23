@@ -136,6 +136,7 @@ export class FixtureTextProvider implements TextProvider {
         structure: needsRevision ? "revise" : "pass",
         ageFit: "pass",
         oralFlow: "pass",
+        moodFit: "pass",
         safety: "pass",
       },
       revisionBrief: needsRevision

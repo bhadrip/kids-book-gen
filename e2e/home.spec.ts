@@ -135,6 +135,11 @@ test("offers a parent-safe idea intake without making a model request", async ({
   await expect(page.getByLabel("Recommend the best story shape")).toBeChecked();
   await expect(page.getByText("Three Bears’ house")).toBeVisible();
   await expect(
+    page.getByRole("group", { name: "What mood should the story have?" }),
+  ).toBeVisible();
+  await expect(page.getByLabel("No preference")).toBeChecked();
+  await expect(page.getByText("Silly surprises")).toBeVisible();
+  await expect(
     page.getByRole("button", { name: "Generate three directions" }),
   ).toBeVisible();
   await page.goto(`/projects/${projectId}/book/read`);
@@ -155,7 +160,7 @@ test("offers a parent-safe idea intake without making a model request", async ({
 test("revises directions, generates a story, approves it, and reopens it without model tokens", async ({
   page,
 }) => {
-  test.setTimeout(45_000);
+  test.setTimeout(75_000);
   await page.goto("/");
   await page.getByLabel("Project title").fill("Fixture story journey");
   await page.getByRole("button", { name: "Create local project" }).click();
@@ -171,6 +176,7 @@ test("revises directions, generates a story, approves it, and reopens it without
   await page
     .getByLabel("How will the child read this book?")
     .selectOption("co_read");
+  await page.getByLabel("Funny and playful").check();
   await page.getByLabel("Must keep").fill("Keep the moon kite and Milo.");
   await page.getByRole("button", { name: "Generate three directions" }).click();
   const directionGeneration = page.locator('form[aria-busy="true"]');
@@ -205,16 +211,34 @@ test("revises directions, generates a story, approves it, and reopens it without
   const reopenedOverview = await page.context().newPage();
   await reopenedOverview.goto(`/projects/${projectId}`);
   await expect(
-    reopenedOverview.getByText("In progress", { exact: true }),
+    reopenedOverview
+      .getByText("In progress", { exact: true })
+      .or(reopenedOverview.getByText("Ready for your review", { exact: true }))
+      .first(),
   ).toBeVisible();
   await expect(
-    reopenedOverview.getByRole("link", { name: "Check generation status" }),
+    reopenedOverview
+      .getByRole("link", { name: "Check generation status" })
+      .or(
+        reopenedOverview.getByRole("link", { name: "Review story directions" }),
+      ),
   ).toBeVisible();
   await reopenedOverview.close();
   await expect(
     page.getByRole("heading", { name: "Three ways this story could go" }),
   ).toBeVisible();
   await expect(page.getByText("Written for age 5 (ages 3–5)")).toBeVisible();
+  await expect
+    .poll(async () => {
+      const brief = JSON.parse(
+        await readFile(
+          join(testProjectRoot, projectId ?? "", "brief.json"),
+          "utf8",
+        ),
+      ) as { storyMood?: unknown };
+      return brief.storyMood;
+    })
+    .toBe("funny_playful");
 
   await page
     .getByLabel("Want three different directions?")

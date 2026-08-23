@@ -54,3 +54,6 @@
 - Wired exact ages 3–10 and separate reading modes into studio intake, text
   generation, hidden evaluation, artifact provenance, checkpoint summaries,
   and migration-safe generation blocking. Added profile and browser coverage.
+- Replaced ambiguous desired-feeling intake with structured, example-backed
+  story moods plus a custom option. Mood is now an explicit generation
+  constraint and a hidden evaluation check rather than unstructured prompt data.
