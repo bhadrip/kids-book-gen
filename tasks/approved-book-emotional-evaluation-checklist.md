@@ -159,6 +159,37 @@ Resolve these questions before implementation.
 - [ ] Separate story-text gaps, visual-plan gaps, and illustration-execution gaps
       instead of assigning every problem to the final image.
 
+### Evaluation metric
+
+Classify each character-and-spread transition with one of three evidence-based
+results:
+
+- [ ] `clear`: the planned transition is legible in the generated sequence and
+      the required outward performance is supported by observable evidence.
+- [ ] `could_be_clearer`: the transition is plausible but subtle, compressed,
+      overly generic, or dependent on inference that the plan intended the image
+      to carry.
+- [ ] `needs_attention`: the transition is absent, contradictory, emotionally
+      discontinuous, or communicates a prohibited signal.
+
+Apply the result using these checks:
+
+- [ ] **State continuity:** the prior leaving state can credibly lead into the
+      next entering state.
+- [ ] **Trigger visibility:** the event causing the change is present and
+      understandable.
+- [ ] **Performance evidence:** expression, pose, gesture, gaze, staging, or
+      interaction makes the state observable.
+- [ ] **Character coverage:** every visually relevant main or supporting
+      character is assessed where their response affects the scene.
+- [ ] **Sequence differentiation:** neighboring emotional states do not collapse
+      into the same generic expression or pose.
+- [ ] **Boundary fidelity:** no `avoidSignals` or other approved emotional-safety
+      boundary is contradicted.
+
+Do not average these results into one overall score. Record page-level evidence,
+confidence, what should change, and what must be preserved.
+
 ### Finding contract
 
 Each finding should contain:
