@@ -336,11 +336,17 @@ export default async function IdeaPage({
           </div>
         </fieldset>
         <label className="block font-semibold" htmlFor="mustKeep">
-          Must keep
+          What important details should the story preserve?
+          <span className="mt-1 block text-sm font-normal text-stone-600">
+            Optional. Add names, favorite objects, places, character traits,
+            family details, or moments that should remain accurate in every
+            draft.
+          </span>
           <textarea
             className="mt-2 block w-full rounded-xl border p-3"
             id="mustKeep"
             name="mustKeep"
+            placeholder="Maya wears purple glasses, her rabbit is named Button, and the story takes place at Grandma’s yellow house."
             defaultValue={savedBrief?.mustKeep}
           />
         </label>

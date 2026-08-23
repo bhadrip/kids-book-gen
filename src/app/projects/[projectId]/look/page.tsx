@@ -241,7 +241,7 @@ export default async function LookPage({
             </p>
             <p className="mt-2">
               {data.brief.mustKeep ??
-                "No additional must-keep details were supplied."}
+                "No additional family details were supplied."}
             </p>
           </aside>
         </>
@@ -438,7 +438,7 @@ export default async function LookPage({
                       </p>
                       <details className="mt-2">
                         <summary className="cursor-pointer text-sm font-semibold text-stone-600">
-                          Feeling and must-keep details
+                          Mood and important family details
                         </summary>
                         <p className="mt-2 text-sm leading-6 text-stone-600">
                           {spread.emotionalMovement}

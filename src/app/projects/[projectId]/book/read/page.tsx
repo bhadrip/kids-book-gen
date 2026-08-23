@@ -135,11 +135,11 @@ export default async function ReaderPage({
               />
               <aside className="mt-4 rounded-2xl border border-amber-200 bg-amber-50 p-5 text-amber-950">
                 <p className="text-xs font-semibold tracking-wide uppercase">
-                  Original must-keep details
+                  Important family details preserved
                 </p>
                 <p className="mt-2">
                   {data.brief.mustKeep ??
-                    "No additional must-keep details were supplied."}
+                    "No additional family details were supplied."}
                 </p>
               </aside>
             </>

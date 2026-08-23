@@ -20,7 +20,9 @@ async function createApprovedFixtureStory(
   )?.replace("Project ID: ", "");
   await page.getByRole("link", { name: "Shape the story idea" }).click();
   await page.getByLabel("Original idea").fill(originalIdea);
-  await page.getByLabel("Must keep").fill(mustKeep);
+  await page
+    .getByLabel("What important details should the story preserve?")
+    .fill(mustKeep);
   await page.getByRole("button", { name: "Generate three directions" }).click();
   await expect(
     page.getByRole("heading", { name: "Three ways this story could go" }),
@@ -124,7 +126,9 @@ test("offers a parent-safe idea intake without making a model request", async ({
     page.getByRole("heading", { name: "What should this story keep?" }),
   ).toBeVisible();
   await expect(page.getByLabel("Original idea")).toBeVisible();
-  await expect(page.getByLabel("Must keep")).toBeVisible();
+  await expect(
+    page.getByLabel("What important details should the story preserve?"),
+  ).toBeVisible();
   await expect(page.getByLabel("Intended reader age")).toHaveValue("8");
   await expect(
     page.getByLabel("How will the child read this book?"),
@@ -185,7 +189,9 @@ test("revises directions, generates a story, approves it, and reopens it without
     .selectOption("co_read");
   await page.getByLabel("Funny and playful").check();
   await page.getByLabel("Asking for help").check();
-  await page.getByLabel("Must keep").fill("Keep the moon kite and Milo.");
+  await page
+    .getByLabel("What important details should the story preserve?")
+    .fill("Keep the moon kite and Milo.");
   await page.getByRole("button", { name: "Generate three directions" }).click();
   const directionGeneration = page.locator('form[aria-busy="true"]');
   await expect(
@@ -334,7 +340,9 @@ test("shows a saved-work recovery state when text generation fails", async ({
 
   await page.getByRole("link", { name: "Shape the story idea" }).click();
   await page.getByLabel("Original idea").fill("Fixture provider failure");
-  await page.getByLabel("Must keep").fill("Keep this saved detail.");
+  await page
+    .getByLabel("What important details should the story preserve?")
+    .fill("Keep this saved detail.");
   await page.getByRole("button", { name: "Generate three directions" }).click();
 
   await expect(
@@ -346,9 +354,9 @@ test("shows a saved-work recovery state when text generation fails", async ({
   await expect(page.getByLabel("Original idea")).toHaveValue(
     "Fixture provider failure",
   );
-  await expect(page.getByLabel("Must keep")).toHaveValue(
-    "Keep this saved detail.",
-  );
+  await expect(
+    page.getByLabel("What important details should the story preserve?"),
+  ).toHaveValue("Keep this saved detail.");
   await expect(
     page.getByRole("button", { name: "Retry three directions" }),
   ).toBeVisible();
