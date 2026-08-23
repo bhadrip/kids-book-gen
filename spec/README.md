@@ -34,7 +34,9 @@ The service should feel simple to parents while using a configurable set of spec
    parent-facing UX implementation contract and coding-agent checklist.
 9. [Artifact catalog](09-artifact-catalog.md) — implemented and proposed
    artifacts, ownership, lineage, storage, approvals, and lifecycle status.
-10. [Research references](references.md) — cited academic and industry sources.
+10. [Parent-selected reader age](10-parent-selected-reader-age.md) — proposed
+    intake, lineage, migration, and age-aware evaluation contract.
+11. [Research references](references.md) — cited academic and industry sources.
 
 ## Product principles
 
