@@ -86,7 +86,7 @@ export default async function IdeaPage({
             >
               {[3, 4, 5, 6, 7, 8, 9, 10].map((age) => (
                 <option key={age} value={age}>
-                  {age} — tuning profile preview
+                  {age}
                 </option>
               ))}
             </select>
