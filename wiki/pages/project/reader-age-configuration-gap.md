@@ -1,12 +1,16 @@
 # Reader age configuration gap
 
-## Confirmed current behavior
+## Implemented behavior
 
-The V0 parent brief does not store age or reading mode. The text-provider
-instructions independently hard-code ages 7–10 and parent read-aloud for story
-generation and hidden quality evaluation. Consequently, a PDF alone does not
-carry enough provenance to establish its intended reader, and a later reviewer
-can accidentally evaluate it against a different age.
+The studio now captures an exact age from 3 through 10 and a separate reading
+mode. It maps the age to a 3–5, 6–7, or 8–10 versioned tuning profile and uses
+both inputs for directions, story generation, and hidden evaluation. The
+configuration is repeated at approval checkpoints and recorded on generated
+text and evaluation artifacts. Legacy briefs remain readable but cannot start
+new generation until the parent confirms reader details.
+
+Dependency staleness and non-destructive reader-configuration successors remain
+unimplemented.
 
 ## Durable product direction
 

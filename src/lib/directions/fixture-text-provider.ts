@@ -24,6 +24,8 @@ export class FixtureTextProvider implements TextProvider {
     brief: ProjectBrief,
     options: { revision: number; parentSteering?: string },
   ): Promise<StoryDirections> {
+    if (!brief.readerConfiguration)
+      throw new Error("Reader configuration is required.");
     await this.waitForFixtureDelay();
     if (brief.originalIdea === "Fixture provider failure") {
       throw new Error("Deterministic fixture provider failure.");
@@ -37,6 +39,7 @@ export class FixtureTextProvider implements TextProvider {
       model: "fixture-text-provider",
       revision: options.revision,
       parentSteering: options.parentSteering,
+      readerConfiguration: brief.readerConfiguration,
       directions: [
         {
           title: `The Moon Kite Mission${suffix}`,
@@ -72,6 +75,8 @@ export class FixtureTextProvider implements TextProvider {
       qualityFeedback?: string;
     },
   ): Promise<StoryPackage> {
+    if (!brief.readerConfiguration)
+      throw new Error("Reader configuration is required.");
     await this.waitForFixtureDelay();
     return storyPackageSchema.parse({
       schemaVersion: 1,
@@ -81,6 +86,7 @@ export class FixtureTextProvider implements TextProvider {
       revision: options.revision,
       sourceDirectionTitle: direction.title,
       parentSteering: options.parentSteering,
+      readerConfiguration: brief.readerConfiguration,
       title: direction.title,
       characters: [
         {
@@ -110,6 +116,8 @@ export class FixtureTextProvider implements TextProvider {
     _direction: StoryDirection,
     story: StoryPackage,
   ): Promise<StoryQualityEvaluation> {
+    if (!brief.readerConfiguration)
+      throw new Error("Reader configuration is required.");
     await this.waitForFixtureDelay();
     const needsRevision =
       brief.originalIdea === "Fixture story needs one quality revision" &&
@@ -120,6 +128,8 @@ export class FixtureTextProvider implements TextProvider {
       storyRevision: story.revision,
       evaluatedAt: this.now().toISOString(),
       model: "fixture-text-provider",
+      readerConfiguration: brief.readerConfiguration,
+      readerProfileVersion: brief.readerConfiguration.profileVersion,
       verdict: needsRevision ? "revise" : "pass",
       checks: {
         fidelity: "pass",

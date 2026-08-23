@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 
 import { PendingForm } from "@/components/pending-form";
 import { ProjectJourney } from "@/components/project-journey";
+import { ReaderConfigurationSummary } from "@/components/reader-configuration-summary";
 import { FileCharacterLibraryRepository } from "@/lib/characters/file-character-library-repository";
 import { readAppConfig } from "@/lib/config/app-config";
 import { FileProjectRepository } from "@/lib/projects/file-project-repository";
@@ -232,15 +233,18 @@ export default async function LookPage({
       </div>
 
       {data.brief ? (
-        <aside className="mt-8 rounded-2xl border border-amber-200 bg-amber-50 px-5 py-4 text-amber-950">
-          <p className="text-xs font-semibold tracking-[0.14em] uppercase">
-            Family details to preserve
-          </p>
-          <p className="mt-2">
-            {data.brief.mustKeep ??
-              "No additional must-keep details were supplied."}
-          </p>
-        </aside>
+        <>
+          <ReaderConfigurationSummary reader={data.brief.readerConfiguration} />
+          <aside className="mt-4 rounded-2xl border border-amber-200 bg-amber-50 px-5 py-4 text-amber-950">
+            <p className="text-xs font-semibold tracking-[0.14em] uppercase">
+              Family details to preserve
+            </p>
+            <p className="mt-2">
+              {data.brief.mustKeep ??
+                "No additional must-keep details were supplied."}
+            </p>
+          </aside>
+        </>
       ) : null}
 
       {result === "failed" ? (

@@ -71,6 +71,7 @@ async function setup() {
     template: "start_from_scratch",
     originalIdea: "A moon kite flies away before bedtime.",
     mustKeep: "Keep Milo's glasses and the silver moon kite.",
+    readerConfiguration: { age: 8, readingMode: "parent_read_aloud" },
     createdAt: workflowNow().toISOString(),
   });
   const directions = await story.createDirections(brief);

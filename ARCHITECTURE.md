@@ -83,7 +83,8 @@ Foundation, local project storage, text approval, visual-story planning, the
 visual sample gate, full-book production, and the finished proof flow are
 runnable. A parent can
 create and reopen a project,
-save an idea, iterate on directions, select one, revise and approve a 13-spread
+save an idea with an exact reader age from 3 through 10 and a separate reading
+mode, iterate on reader-profile-tuned directions, select one, revise and approve a 13-spread
 story, generate and minimally review a versioned visual spread plan backed by
 an internal emotional arc, approve its exact revision, choose a curated art
 direction from six bundled same-scene visual previews, regenerate versioned
@@ -144,7 +145,11 @@ direction revisions, selected direction, story revisions, and approval
 decisions are schema-versioned JSON artifacts. Story drafts also pass one hidden
 quality evaluation with at most one automatic rewrite before parent review.
 `StoryWorkflowService` owns the text workflow; routes do not import the OpenAI
-SDK. `VisualNarrativeWorkflowService` owns paired, versioned `EmotionalArc` and
+SDK. Legacy briefs without reader details remain readable but new text generation
+is blocked until confirmation. Directions, stories, and hidden evaluations carry
+reader-profile provenance, and prompt guidance changes materially by the 3–5,
+6–7, or 8–10 age band and the selected delivery mode.
+`VisualNarrativeWorkflowService` owns paired, versioned `EmotionalArc` and
 `SpreadMap` generation, bounded parent steering, persisted recovery state, and
 exact-revision approval. Parents see only the spread beat, main action,
 emotional movement, and relevant must-show detail. `VisualWorkflowService`

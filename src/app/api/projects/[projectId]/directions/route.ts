@@ -19,6 +19,11 @@ export async function POST(
     const fields = Object.fromEntries(await request.formData());
     const brief = projectBriefSchema.parse({
       ...fields,
+      readerConfiguration: {
+        age: fields.readerAge,
+        readingMode: fields.readingMode,
+        profileVersion: "reader-profiles-v1",
+      },
       schemaVersion: 1,
       projectId,
       createdAt: now().toISOString(),

@@ -51,3 +51,6 @@
 - Added versioned textual-quality rules, reader profiles, a machine-readable
   output contract, and deterministic input/output validation for repeatable
   single-book and benchmark-corpus evaluation.
+- Wired exact ages 3–10 and separate reading modes into studio intake, text
+  generation, hidden evaluation, artifact provenance, checkpoint summaries,
+  and migration-safe generation blocking. Added profile and browser coverage.
