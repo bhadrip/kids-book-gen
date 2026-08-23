@@ -1,0 +1,267 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "CharacterEvaluation",
+  "type": "object",
+  "required": [
+    "schemaVersion",
+    "rubricVersion",
+    "mode",
+    "inputCompleteness",
+    "artifact",
+    "reader",
+    "characters",
+    "pageResults",
+    "wholeBookResults",
+    "hardGates",
+    "summary"
+  ],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "rubricVersion": { "const": "character-evaluation-v1" },
+    "evaluatorModel": { "type": ["string", "null"] },
+    "mode": {
+      "enum": ["proof_only", "plan_to_image", "stage_gate", "regression"]
+    },
+    "inputCompleteness": {
+      "enum": [
+        "proof_only",
+        "story_aware",
+        "plan_aware",
+        "reference_aware",
+        "regression"
+      ]
+    },
+    "artifact": {
+      "type": "object",
+      "required": [
+        "title",
+        "visualSource",
+        "sha256",
+        "revision",
+        "referenceInputs",
+        "limitations"
+      ],
+      "properties": {
+        "title": { "type": "string", "minLength": 1 },
+        "visualSource": { "type": "string", "minLength": 1 },
+        "sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+        "revision": { "type": ["integer", "null"], "minimum": 1 },
+        "referenceInputs": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["kind", "path", "sha256", "revision"],
+            "properties": {
+              "kind": { "type": "string", "minLength": 1 },
+              "path": { "type": "string", "minLength": 1 },
+              "sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+              "revision": { "type": ["integer", "null"], "minimum": 1 }
+            },
+            "additionalProperties": false
+          }
+        },
+        "limitations": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 }
+        }
+      },
+      "additionalProperties": false
+    },
+    "reader": {
+      "type": ["object", "null"],
+      "properties": {
+        "age": { "type": "integer", "minimum": 3, "maximum": 10 },
+        "readingMode": {
+          "enum": [
+            "parent_read_aloud",
+            "co_read",
+            "independent_developing",
+            "independent_confident"
+          ]
+        }
+      },
+      "required": ["age", "readingMode"],
+      "additionalProperties": false
+    },
+    "characters": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["characterId", "name", "role", "baselineAuthority"],
+        "properties": {
+          "characterId": { "type": "string", "minLength": 1 },
+          "name": { "type": "string", "minLength": 1 },
+          "role": { "enum": ["protagonist", "supporting"] },
+          "baselineAuthority": {
+            "enum": ["approved_reference", "approved_plan", "observed_baseline"]
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "pageResults": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["pageId", "pageRevision", "checks"],
+        "properties": {
+          "pageId": { "type": "string", "minLength": 1 },
+          "physicalPageNumber": { "type": ["integer", "null"], "minimum": 1 },
+          "visibleLabel": { "type": ["string", "null"] },
+          "pageRevision": { "type": ["integer", "null"], "minimum": 1 },
+          "checks": {
+            "type": "array",
+            "items": { "$ref": "#/$defs/check" }
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "wholeBookResults": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/check" }
+    },
+    "hardGates": {
+      "type": "object",
+      "required": ["status", "results"],
+      "properties": {
+        "status": { "enum": ["pass", "fail", "human_review"] },
+        "results": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": ["gateId", "result", "evidence"],
+            "properties": {
+              "gateId": { "pattern": "^HG[1-6]$" },
+              "result": {
+                "enum": ["pass", "fail", "human_review", "not_applicable"]
+              },
+              "evidence": { "type": "string", "minLength": 1 }
+            },
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "summary": {
+      "type": "object",
+      "required": [
+        "status",
+        "counts",
+        "strengths",
+        "priorities",
+        "recommendedAction"
+      ],
+      "properties": {
+        "status": {
+          "enum": [
+            "ready",
+            "light_revision",
+            "revision_required",
+            "human_review"
+          ]
+        },
+        "counts": {
+          "type": "object",
+          "required": [
+            "pass",
+            "partial",
+            "fail",
+            "notApplicable",
+            "insufficientEvidence"
+          ],
+          "properties": {
+            "pass": { "type": "integer", "minimum": 0 },
+            "partial": { "type": "integer", "minimum": 0 },
+            "fail": { "type": "integer", "minimum": 0 },
+            "notApplicable": { "type": "integer", "minimum": 0 },
+            "insufficientEvidence": { "type": "integer", "minimum": 0 }
+          },
+          "additionalProperties": false
+        },
+        "strengths": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "priorities": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "recommendedAction": { "type": "string", "minLength": 1 }
+      },
+      "additionalProperties": false
+    }
+  },
+  "$defs": {
+    "check": {
+      "type": "object",
+      "required": [
+        "checkId",
+        "check",
+        "characterId",
+        "result",
+        "score",
+        "confidence",
+        "observedEvidence",
+        "expectedEvidence",
+        "likelySource",
+        "predictedStoryEffect",
+        "revisionInstruction",
+        "preserve",
+        "rerunChecks"
+      ],
+      "properties": {
+        "checkId": {
+          "pattern": "^(A[1-7]|B[1-6]|C[1-7]|D[1-7]|E[1-6]|F[1-7])$"
+        },
+        "check": { "type": "string", "minLength": 1 },
+        "characterId": { "type": ["string", "null"] },
+        "result": {
+          "enum": [
+            "fail",
+            "partial",
+            "pass",
+            "not_applicable",
+            "insufficient_evidence"
+          ]
+        },
+        "score": { "type": ["integer", "null"], "minimum": 0, "maximum": 2 },
+        "confidence": { "enum": ["low", "medium", "high"] },
+        "observedEvidence": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "expectedEvidence": { "type": ["string", "null"] },
+        "likelySource": {
+          "enum": [
+            "story",
+            "emotional_plan",
+            "spread_plan",
+            "reference",
+            "illustration",
+            "sequence",
+            "uncertain"
+          ]
+        },
+        "predictedStoryEffect": { "type": ["string", "null"] },
+        "revisionInstruction": { "type": ["string", "null"] },
+        "preserve": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "rerunChecks": {
+          "type": "array",
+          "items": {
+            "pattern": "^(A[1-7]|B[1-6]|C[1-7]|D[1-7]|E[1-6]|F[1-7])$"
+          }
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}
