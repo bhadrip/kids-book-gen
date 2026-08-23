@@ -1,5 +1,12 @@
 import { mkdir, readdir, readFile, rename, writeFile } from "node:fs/promises";
-import { basename, join, resolve } from "node:path";
+import {
+  basename,
+  isAbsolute,
+  join,
+  relative,
+  resolve,
+  sep,
+} from "node:path";
 
 import {
   createProject,
@@ -108,8 +115,14 @@ export class FileProjectRepository {
   private projectDirectory(id: string): string {
     const root = resolve(this.projectRoot);
     const directory = resolve(root, id);
+    const pathFromRoot = relative(root, directory);
 
-    if (!directory.startsWith(`${root}/`)) {
+    if (
+      pathFromRoot === "" ||
+      pathFromRoot === ".." ||
+      pathFromRoot.startsWith(`..${sep}`) ||
+      isAbsolute(pathFromRoot)
+    ) {
       throw new Error("Project directory must be inside the configured root.");
     }
 
