@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { PendingForm } from "@/components/pending-form";
 import { ProjectJourney } from "@/components/project-journey";
+import { ReaderConfigurationSummary } from "@/components/reader-configuration-summary";
 import { readAppConfig } from "@/lib/config/app-config";
 import { FileProjectRepository } from "@/lib/projects/file-project-repository";
 import { getProjectProgress } from "@/lib/projects/project-progress";
@@ -57,6 +58,7 @@ export default async function StoryPage({
         Must keep:{" "}
         {brief.mustKeep ?? "No additional must-keep details provided."}
       </p>
+      <ReaderConfigurationSummary reader={brief.readerConfiguration} />
       <p className="mt-2 text-sm text-stone-500">
         Story revision {story.revision}
       </p>

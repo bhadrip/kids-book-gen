@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { readerConfigurationSchema } from "@/lib/readers/reader-profile";
 
 export const projectIdSchema = z.string().uuid();
 
@@ -46,6 +47,7 @@ export const projectBriefSchema = z.object({
   valueOrQuestion: optionalText(500),
   avoid: optionalText(500),
   mustKeep: optionalText(1_000),
+  readerConfiguration: readerConfigurationSchema.optional(),
   createdAt: z.string().datetime(),
 });
 
@@ -69,6 +71,7 @@ export const storyDirectionsSchema = z
     model: z.string().trim().min(1),
     revision: z.number().int().positive().default(1),
     parentSteering: optionalText(1_000),
+    readerConfiguration: readerConfigurationSchema.optional(),
     directions: z.array(storyDirectionSchema).length(3),
   })
   .superRefine((value, context) => {
@@ -110,6 +113,7 @@ export const storyPackageSchema = z.object({
   revision: z.number().int().positive(),
   sourceDirectionTitle: z.string().trim().min(1),
   parentSteering: optionalText(1_000),
+  readerConfiguration: readerConfigurationSchema.optional(),
   title: z.string().trim().min(1).max(120),
   characters: z
     .array(
@@ -144,6 +148,8 @@ export const storyQualityEvaluationSchema = z.object({
   storyRevision: z.number().int().positive(),
   evaluatedAt: z.string().datetime(),
   model: z.string().trim().min(1),
+  readerConfiguration: readerConfigurationSchema.optional(),
+  readerProfileVersion: z.literal("reader-profiles-v1").optional(),
   verdict: z.enum(["pass", "revise"]),
   checks: z.object({
     fidelity: z.enum(["pass", "revise"]),

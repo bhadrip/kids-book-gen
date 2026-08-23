@@ -106,6 +106,7 @@ async function setup(provider: ImageProvider = new FixtureImageProvider()) {
     originalIdea: "A moon kite flies away before bedtime.",
     protagonist: "Milo",
     mustKeep: "Keep Milo's round glasses and the silver moon kite.",
+    readerConfiguration: { age: 8, readingMode: "parent_read_aloud" },
     createdAt: now().toISOString(),
   });
   const directions = await storyService.createDirections(brief);

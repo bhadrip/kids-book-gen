@@ -49,6 +49,22 @@ async function setup() {
 }
 
 describe("StoryWorkflowService", () => {
+  it("keeps a legacy brief readable but blocks generation until reader details are confirmed", async () => {
+    const { service } = await setup();
+    const legacyBrief = projectBriefSchema.parse({
+      schemaVersion: 1,
+      projectId,
+      template: "start_from_scratch",
+      originalIdea: "A legacy moon kite story.",
+      createdAt: now().toISOString(),
+    });
+
+    expect(legacyBrief.readerConfiguration).toBeUndefined();
+    await expect(service.createDirections(legacyBrief)).rejects.toThrow(
+      "Confirm reader age and reading mode",
+    );
+  });
+
   it("preserves direction revisions and generates, revises, and approves a story", async () => {
     const { repository, service } = await setup();
     const brief = projectBriefSchema.parse({
@@ -57,6 +73,7 @@ describe("StoryWorkflowService", () => {
       template: "start_from_scratch",
       originalIdea: "A moon kite flies away.",
       mustKeep: "Keep the moon kite.",
+      readerConfiguration: { age: 8, readingMode: "parent_read_aloud" },
       createdAt: now().toISOString(),
     });
     await service.createDirections(brief);
@@ -118,6 +135,7 @@ describe("StoryWorkflowService", () => {
       projectId,
       template: "start_from_scratch",
       originalIdea: "A moon kite flies away.",
+      readerConfiguration: { age: 8, readingMode: "parent_read_aloud" },
       createdAt: now().toISOString(),
     });
     const directions = await service.createDirections(brief);
@@ -179,6 +197,7 @@ describe("StoryWorkflowService", () => {
       projectId,
       template: "start_from_scratch",
       originalIdea: "Fixture story needs one quality revision",
+      readerConfiguration: { age: 5, readingMode: "co_read" },
       createdAt: now().toISOString(),
     });
     const directions = await service.createDirections(brief);

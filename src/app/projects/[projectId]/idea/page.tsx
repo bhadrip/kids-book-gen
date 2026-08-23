@@ -69,6 +69,67 @@ export default async function IdeaPage({
           savedBrief ? "Retry three directions" : "Generate three directions"
         }
       >
+        <fieldset className="rounded-2xl border border-stone-200 p-4">
+          <legend className="px-1 font-semibold">Reader details</legend>
+          <p className="mt-1 text-sm text-stone-600">
+            Age tunes story complexity. Reading mode separately tunes oral flow,
+            decoding support, vocabulary, and text density.
+          </p>
+          <label className="mt-4 block font-semibold" htmlFor="readerAge">
+            Intended reader age
+            <select
+              className="mt-2 block w-full rounded-xl border p-3"
+              id="readerAge"
+              name="readerAge"
+              required
+              defaultValue={savedBrief?.readerConfiguration?.age ?? 8}
+            >
+              {[3, 4, 5, 6, 7, 8, 9, 10].map((age) => (
+                <option key={age} value={age}>
+                  {age} — tuning profile preview
+                </option>
+              ))}
+            </select>
+          </label>
+          <label className="mt-4 block font-semibold" htmlFor="readingMode">
+            How will the child read this book?
+            <select
+              className="mt-2 block w-full rounded-xl border p-3"
+              id="readingMode"
+              name="readingMode"
+              required
+              defaultValue={
+                savedBrief?.readerConfiguration?.readingMode ??
+                "parent_read_aloud"
+              }
+            >
+              <option value="parent_read_aloud">
+                With an adult reading aloud
+              </option>
+              <option value="co_read">Reading together</option>
+              <option value="independent_developing">
+                Developing independent reader
+              </option>
+              <option value="independent_confident">
+                Confident independent reader
+              </option>
+            </select>
+          </label>
+          {!savedBrief?.readerConfiguration && savedBrief ? (
+            <p
+              className="mt-3 rounded-xl bg-amber-50 p-3 text-sm text-amber-900"
+              role="status"
+            >
+              This older project used the legacy ages 7–10 read-aloud
+              assumption. Confirm or change these reader details before
+              generating again.
+            </p>
+          ) : null}
+          <p className="mt-3 text-sm text-stone-600">
+            These profiles tune generation and review criteria, but they do not
+            guarantee comprehension, enjoyment, or reading level.
+          </p>
+        </fieldset>
         <label className="block font-semibold" htmlFor="template">
           Story starting point
           <select

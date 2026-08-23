@@ -124,6 +124,10 @@ test("offers a parent-safe idea intake without making a model request", async ({
   ).toBeVisible();
   await expect(page.getByLabel("Original idea")).toBeVisible();
   await expect(page.getByLabel("Must keep")).toBeVisible();
+  await expect(page.getByLabel("Intended reader age")).toHaveValue("8");
+  await expect(
+    page.getByLabel("How will the child read this book?"),
+  ).toHaveValue("parent_read_aloud");
   await expect(
     page.getByRole("button", { name: "Generate three directions" }),
   ).toBeVisible();
@@ -157,6 +161,10 @@ test("revises directions, generates a story, approves it, and reopens it without
   await page
     .getByLabel("Original idea")
     .fill("A moon kite flies away before bedtime.");
+  await page.getByLabel("Intended reader age").selectOption("5");
+  await page
+    .getByLabel("How will the child read this book?")
+    .selectOption("co_read");
   await page.getByLabel("Must keep").fill("Keep the moon kite and Milo.");
   await page.getByRole("button", { name: "Generate three directions" }).click();
   const directionGeneration = page.locator('form[aria-busy="true"]');
@@ -200,6 +208,7 @@ test("revises directions, generates a story, approves it, and reopens it without
   await expect(
     page.getByRole("heading", { name: "Three ways this story could go" }),
   ).toBeVisible();
+  await expect(page.getByText("Written for age 5 (ages 3–5)")).toBeVisible();
 
   await page
     .getByLabel("Want three different directions?")
