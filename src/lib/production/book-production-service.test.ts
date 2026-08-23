@@ -4,6 +4,7 @@ import { join } from "node:path";
 
 import { afterEach, describe, expect, it } from "vitest";
 
+import { FileCharacterLibraryRepository } from "@/lib/characters/file-character-library-repository";
 import { FixtureTextProvider } from "@/lib/directions/fixture-text-provider";
 import { StoryWorkflowService } from "@/lib/directions/story-workflow-service";
 import { FileProjectRepository } from "@/lib/projects/file-project-repository";
@@ -120,8 +121,10 @@ async function setup(provider: ImageProvider = new FixtureImageProvider()) {
   await visualNarrativeService.decidePlan(projectId, "approved");
   const visualService = new VisualWorkflowService(
     repository,
+    new FileCharacterLibraryRepository(join(directory, "characters")),
     new FixtureImageProvider(),
     now,
+    () => "d779fd90-d5e2-4850-970a-130496ebe6fd",
   );
   await visualService.generateCharacterDesigns(projectId, "warm_handmade_v1");
   await visualService.selectCharacterAndGenerateSample(

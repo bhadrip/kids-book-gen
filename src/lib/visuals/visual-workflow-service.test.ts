@@ -4,6 +4,7 @@ import { join } from "node:path";
 
 import { afterEach, describe, expect, it } from "vitest";
 
+import { FileCharacterLibraryRepository } from "@/lib/characters/file-character-library-repository";
 import { FixtureTextProvider } from "@/lib/directions/fixture-text-provider";
 import { StoryWorkflowService } from "@/lib/directions/story-workflow-service";
 import { FileProjectRepository } from "@/lib/projects/file-project-repository";
@@ -72,19 +73,25 @@ async function setup(options?: {
     await narrativeService.generatePlan(projectId);
     await narrativeService.decidePlan(projectId, "approved");
   }
+  const characterLibrary = new FileCharacterLibraryRepository(
+    join(directory, "characters"),
+  );
   return {
     repository,
+    characterLibrary,
     service: new VisualWorkflowService(
       repository,
+      characterLibrary,
       new FixtureImageProvider(0, options?.imageFailure),
       now,
+      () => "b1cc96a2-889b-4505-ab04-1e9bc69a12e5",
     ),
   };
 }
 
 describe("VisualWorkflowService", () => {
   it("persists three designs, the selected reference, visual bible, sample, and approval", async () => {
-    const { repository, service } = await setup();
+    const { repository, characterLibrary, service } = await setup();
 
     const designs = await service.generateCharacterDesigns(
       projectId,
@@ -109,6 +116,14 @@ describe("VisualWorkflowService", () => {
     ).resolves.toEqual(
       await repository.readAsset(projectId, selected.sourceAssetFilename),
     );
+    expect(await characterLibrary.list()).toMatchObject([
+      {
+        displayName: "Milo",
+        status: "approved",
+        visibility: "private",
+        rendition: { presetId: "warm_handmade_v1" },
+      },
+    ]);
     await expect(
       repository.readArtifact(
         projectId,

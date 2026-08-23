@@ -91,6 +91,10 @@ require a database, queue service, Docker, or hosted storage.
 ## Local data and secrets
 
 - Keep all generated projects under `data/projects/<project-id>/`.
+- Keep installation-private reusable characters under
+  `data/characters/<character-id>/`. Access them through the character-library
+  repository boundary so hosted storage can replace local files without
+  changing workflows.
 - Ignore `data/`, `.env.local`, Playwright output, traces, screenshots, and PDF
   test output in Git.
 - Commit `.env.example` with variable names and safe example values only.

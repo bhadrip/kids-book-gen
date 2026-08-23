@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 
 import { PendingForm } from "@/components/pending-form";
 import { ProjectJourney } from "@/components/project-journey";
+import { FileCharacterLibraryRepository } from "@/lib/characters/file-character-library-repository";
 import { readAppConfig } from "@/lib/config/app-config";
 import { FileProjectRepository } from "@/lib/projects/file-project-repository";
 import { getProjectProgress } from "@/lib/projects/project-progress";
@@ -41,6 +42,9 @@ async function loadLook(projectId: string) {
     now: () => new Date(),
     createId: () => crypto.randomUUID(),
   });
+  const characterLibrary = new FileCharacterLibraryRepository(
+    config.characterLibraryRoot,
+  );
   try {
     const [
       project,
@@ -58,6 +62,7 @@ async function loadLook(projectId: string) {
       visualDecision,
       imageJob,
       progress,
+      libraryCharacters,
     ] = await Promise.all([
       repository.load(projectId),
       optional(
@@ -140,6 +145,7 @@ async function loadLook(projectId: string) {
         ),
       ),
       getProjectProgress(repository, projectId),
+      characterLibrary.list(),
     ]);
     return {
       project,
@@ -157,6 +163,7 @@ async function loadLook(projectId: string) {
       visualDecision,
       imageJob,
       progress,
+      libraryCharacters,
     };
   } catch {
     notFound();
@@ -165,6 +172,9 @@ async function loadLook(projectId: string) {
 
 const assetUrl = (projectId: string, filename: string) =>
   `/api/projects/${projectId}/assets/${filename}`;
+
+const libraryAssetUrl = (characterId: string, filename: string) =>
+  `/api/characters/${characterId}/assets/${filename}`;
 
 export default async function LookPage({
   params,
@@ -286,6 +296,15 @@ export default async function LookPage({
           role="status"
         >
           The sample spread is saved and ready for your review.
+        </p>
+      ) : null}
+      {result === "reused" ? (
+        <p
+          className="mt-6 rounded-2xl bg-green-50 p-5 text-green-900"
+          role="status"
+        >
+          The saved character was copied into this book. The new sample is ready
+          for your review.
         </p>
       ) : null}
       {result === "approved" ? (
@@ -529,6 +548,75 @@ export default async function LookPage({
               used.
             </p>
           </div>
+          {data.libraryCharacters.length > 0 ? (
+            <section
+              aria-labelledby="saved-characters-heading"
+              className="mt-7 rounded-3xl border border-green-200 bg-green-50 p-6"
+            >
+              <h3
+                className="text-2xl font-semibold text-green-950"
+                id="saved-characters-heading"
+              >
+                Reuse a saved character
+              </h3>
+              <p className="mt-2 max-w-3xl leading-7 text-green-950">
+                These approved characters are already saved on this device.
+                Reusing one skips three new character drafts. An exact copy is
+                placed in this book before its sample is made.
+              </p>
+              <div className="mt-5 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+                {data.libraryCharacters.map((character) => {
+                  const preset = getArtPreset(character.rendition.presetId);
+                  return (
+                    <article
+                      className="overflow-hidden rounded-2xl border border-green-200 bg-white"
+                      key={character.id}
+                    >
+                      <div className="relative aspect-square bg-stone-100">
+                        <Image
+                          alt={`${character.displayName} saved character reference`}
+                          className="object-cover"
+                          fill
+                          sizes="(min-width: 1024px) 33vw, 100vw"
+                          src={libraryAssetUrl(
+                            character.id,
+                            character.rendition.referenceAssetFilename,
+                          )}
+                          unoptimized
+                        />
+                      </div>
+                      <div className="p-4">
+                        <h4 className="text-lg font-semibold text-stone-950">
+                          {character.displayName}
+                        </h4>
+                        <p className="mt-1 text-sm text-stone-600">
+                          {preset.label} · saved from an approved choice
+                        </p>
+                        <PendingForm
+                          action={`/api/projects/${projectId}/visuals/reuse-character`}
+                          className="mt-4"
+                          pendingLabel={`Using ${character.displayName} and making the sample…`}
+                          pendingMessage="The library original stays unchanged while an exact copy is saved in this book."
+                          submitClassName="w-full justify-center rounded-xl bg-stone-950 px-4 py-3 font-semibold text-white"
+                          submitLabel={`Reuse ${character.displayName}`}
+                        >
+                          <input
+                            name="characterId"
+                            type="hidden"
+                            value={character.id}
+                          />
+                        </PendingForm>
+                      </div>
+                    </article>
+                  );
+                })}
+              </div>
+              <p className="mt-5 border-t border-green-200 pt-5 text-sm text-green-950">
+                Need someone new? Choose an art direction below to create three
+                new drafts.
+              </p>
+            </section>
+          ) : null}
           <PendingForm
             action={`/api/projects/${projectId}/visuals/character-designs`}
             className="mt-7"

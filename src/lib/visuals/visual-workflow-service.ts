@@ -1,3 +1,5 @@
+import type { FileCharacterLibraryRepository } from "@/lib/characters/file-character-library-repository";
+import { libraryCharacterSchema } from "@/lib/characters/character-library";
 import type { FileProjectRepository } from "@/lib/projects/file-project-repository";
 import {
   projectBriefSchema,
@@ -50,8 +52,10 @@ function mimeTypeFor(filename: string): GeneratedImage["mimeType"] {
 export class VisualWorkflowService {
   public constructor(
     private readonly repository: FileProjectRepository,
+    private readonly characterLibrary: FileCharacterLibraryRepository,
     private readonly provider: ImageProvider,
     private readonly now: () => Date,
+    private readonly createId: () => string,
   ) {}
 
   public async generateCharacterDesigns(
@@ -173,8 +177,8 @@ export class VisualWorkflowService {
       projectId,
       brief,
       story,
-      designs,
       selected,
+      designs.presetId,
     );
     await this.repository.writeArtifact(
       projectId,
@@ -184,6 +188,108 @@ export class VisualWorkflowService {
     await this.repository.writeArtifact(
       projectId,
       "visual-bible.json",
+      visualBible,
+    );
+    const libraryId = this.createId();
+    const libraryFilename = `reference.${extension}`;
+    const savedAt = this.now().toISOString();
+    await this.characterLibrary.save(
+      libraryCharacterSchema.parse({
+        schemaVersion: 1,
+        id: libraryId,
+        revision: 1,
+        displayName: visualBible.mainCharacter.name,
+        status: "approved",
+        visibility: "private",
+        identity: {
+          description: visualBible.mainCharacter.description,
+          identityInvariants: visualBible.mainCharacter.identityInvariants,
+          avoid: visualBible.avoid,
+        },
+        rendition: {
+          presetId: designs.presetId,
+          referenceAssetFilename: libraryFilename,
+          model: designs.model,
+        },
+        origin: {
+          projectId,
+          storyRevision: story.revision,
+          characterDesignRevision: designs.revision,
+          optionId,
+        },
+        createdAt: savedAt,
+        updatedAt: savedAt,
+      }),
+      sourceBytes,
+    );
+    return this.generateSample(projectId, "sample_spread");
+  }
+
+  public async reuseLibraryCharacter(
+    projectId: string,
+    characterId: string,
+  ): Promise<SampleSpread> {
+    const [{ brief, story }, character] = await Promise.all([
+      this.loadApprovedStory(projectId),
+      this.characterLibrary.load(characterId),
+    ]);
+    await this.loadApprovedVisualPlan(projectId, story.revision);
+    if (character.status !== "approved")
+      throw new Error("Choose an approved character from the library.");
+    const extension = character.rendition.referenceAssetFilename
+      .split(".")
+      .at(-1);
+    if (!extension) throw new Error("The library character has no file type.");
+    const referenceAssetFilename = `character-reference-library-${character.id}.${extension}`;
+    const referenceBytes = await this.characterLibrary.readAsset(
+      character.id,
+      character.rendition.referenceAssetFilename,
+    );
+    await this.repository.writeAsset(
+      projectId,
+      referenceAssetFilename,
+      referenceBytes,
+    );
+    const selected = selectedCharacterSchema.parse({
+      schemaVersion: 1,
+      projectId,
+      characterDesignRevision: character.origin.characterDesignRevision,
+      optionId: character.origin.optionId,
+      sourceAssetFilename: referenceAssetFilename,
+      referenceAssetFilename,
+      selectedAt: this.now().toISOString(),
+      librarySource: {
+        characterId: character.id,
+        revision: character.revision,
+      },
+    });
+    await this.repository.writeArtifact(
+      projectId,
+      "selected-character.json",
+      selected,
+    );
+    await this.repository.writeArtifact(
+      projectId,
+      `selected-character-library-${character.id}.json`,
+      selected,
+    );
+    const visualBible = this.createVisualBible(
+      projectId,
+      brief,
+      story,
+      selected,
+      character.rendition.presetId,
+      character.identity,
+      character.displayName,
+    );
+    await this.repository.writeArtifact(
+      projectId,
+      "visual-bible.json",
+      visualBible,
+    );
+    await this.repository.writeArtifact(
+      projectId,
+      `visual-bible-library-${character.id}.json`,
       visualBible,
     );
     return this.generateSample(projectId, "sample_spread");
@@ -323,23 +429,29 @@ export class VisualWorkflowService {
     projectId: string,
     brief: ProjectBrief,
     story: StoryPackage,
-    designs: CharacterDesigns,
     selected: SelectedCharacter,
+    presetId: ArtPresetId,
+    savedIdentity?: {
+      description: string;
+      identityInvariants: string[];
+      avoid: string[];
+    },
+    savedName?: string,
   ): VisualBible {
     const character = story.characters[0];
     if (!character) throw new Error("The story needs a main character first.");
-    const preset = getArtPreset(designs.presetId);
+    const preset = getArtPreset(presetId);
     return visualBibleSchema.parse({
       schemaVersion: 1,
       projectId,
       sourceStoryRevision: story.revision,
-      presetId: designs.presetId,
+      presetId,
       characterReference: selected.referenceAssetFilename,
       createdAt: this.now().toISOString(),
       mainCharacter: {
-        name: character.name,
-        description: character.description,
-        identityInvariants: [
+        name: savedName ?? character.name,
+        description: savedIdentity?.description ?? character.description,
+        identityInvariants: savedIdentity?.identityInvariants ?? [
           "Keep the same apparent age and child-realistic proportions.",
           "Keep facial features, skin tone, hair, and body shape consistent with the approved reference.",
           "Keep signature clothing colors and recognizable details consistent unless the story requires a change.",
@@ -349,7 +461,10 @@ export class VisualWorkflowService {
       locations: [story.arc.beginning, story.arc.middle, story.arc.ending],
       palette: [...preset.swatches],
       textSafeArea: "upper_left",
-      avoid: [...preset.avoid, "words or typography inside artwork"],
+      avoid: savedIdentity?.avoid ?? [
+        ...preset.avoid,
+        "words or typography inside artwork",
+      ],
     });
   }
 

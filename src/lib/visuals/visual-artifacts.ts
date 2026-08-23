@@ -42,6 +42,12 @@ export const selectedCharacterSchema = z.object({
   sourceAssetFilename: imageAssetFilenameSchema,
   referenceAssetFilename: imageAssetFilenameSchema,
   selectedAt: z.string().datetime(),
+  librarySource: z
+    .object({
+      characterId: z.string().uuid(),
+      revision: z.number().int().positive(),
+    })
+    .optional(),
 });
 export type SelectedCharacter = z.infer<typeof selectedCharacterSchema>;
 

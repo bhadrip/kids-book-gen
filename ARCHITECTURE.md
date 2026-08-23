@@ -23,6 +23,7 @@ The authoritative V0 product decisions and research are indexed in
 flowchart LR
   Parent[Parent or caregiver] --> App[Kids Book Builder\nlocal Next.js app]
   App --> LocalData[(Local project artifacts\ndata/projects)]
+  App --> CharacterLibrary[(Reusable character library\ndata/characters)]
   App --> TextProvider[Text provider adapter]
   App --> ImageProvider[Image provider adapter]
   App --> PdfRenderer[PDF renderer adapter]
@@ -86,7 +87,10 @@ save an idea, iterate on directions, select one, revise and approve a 13-spread
 story, generate and minimally review a versioned visual spread plan backed by
 an internal emotional arc, approve its exact revision, choose a curated art
 direction from six bundled same-scene visual previews, regenerate versioned
-character-design sets, choose a character reference, review the approved story
+character-design sets, choose a character reference, save that approved choice
+to the installation-private reusable character library, reuse a pinned copy in
+another local project without generating three new drafts, review the approved
+story
 text on a sample spread, persist visual approval, inspect
 and edit a zero-additional-image-cost contact sheet and wireframe reader,
 approve the exact book-plan revision, run or resume sequential production,
@@ -123,6 +127,8 @@ flowchart LR
   ImageProvider --> OpenAIImages[OpenAI image adapter]
   ImageProvider --> ImageFixture[Deterministic fixture adapter]
   VisualWorkflow --> Repo
+  VisualWorkflow --> CharacterRepo[FileCharacterLibraryRepository]
+  CharacterRepo --> CharacterFiles[(data/characters/<character-id>)]
   ProductionWorkflow --> ImageProvider
   ProductionWorkflow --> Repo
   ProofWorkflow --> PdfRenderer[PdfRenderer]
@@ -227,3 +233,4 @@ The authoritative task status and evidence remain in
 | 2026-07-22 | Added exact-revision HTML/PDF proofs, a shared fullscreen reader layout, local Playwright export with overflow rejection, versioned reading feedback, and derived pilot summaries.                                                         | `src/lib/proof/`, `src/app/projects/[projectId]/book/read/`, `e2e/home.spec.ts`, `tasks/mlp-v0.md`          |
 | 2026-07-27 | Added a contributor-facing catalog of implemented artifact ownership, lineage, storage conventions, approval boundaries, lifecycle gaps, and proposed visual-narrative boundaries.                                                         | `spec/09-artifact-catalog.md`, `spec/README.md`                                                             |
 | 2026-08-01 | Kept story-text revision in Step 3, removed sample-only text editing from Step 4, and clarified the parent-facing visual-approval handoff.                                                                                                 | `src/lib/visuals/`, `src/app/projects/[projectId]/look/`, `spec/09-artifact-catalog.md`, `e2e/home.spec.ts` |
+| 2026-08-01 | Added an adapter-backed local reusable-character library; selected designs are saved once and reused through project-local pinned copies without new character-draft generation.                                                           | `src/lib/characters/`, `src/lib/visuals/`, `e2e/home.spec.ts`                                               |

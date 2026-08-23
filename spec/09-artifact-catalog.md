@@ -143,6 +143,15 @@ Associated assets include:
 - `character-reference-rNN.<ext>`
 - `sample-spread-rNN.<ext>`
 
+Approved character choices are also stored as installation-private
+`LibraryCharacter` artifacts under `data/characters/<character-id>/`. Each
+record owns its identity rules, exact art-preset rendition, origin provenance,
+visibility, and reference asset. Reuse always copies the exact reference into
+the destination project and records its library ID and revision on
+`SelectedCharacter`; existing books therefore never depend on a mutable library
+alias. V0 treats one local installation as one household. Cross-account sharing
+and publication authorization remain deferred.
+
 Current limitation: the visual workflow does not yet persist a character
 performance sheet, thumbnail storyboard, or post-generation visual-narrative
 evaluation comparing the approved emotional plan with the finished pages. The
