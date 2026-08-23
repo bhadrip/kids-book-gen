@@ -1,0 +1,147 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "StoryQualityTextEvaluation",
+  "type": "object",
+  "required": [
+    "schemaVersion",
+    "rubricVersion",
+    "readerProfileVersion",
+    "artifact",
+    "reader",
+    "dimensions",
+    "hardGates",
+    "summary"
+  ],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "rubricVersion": { "const": "story-quality-text-v1" },
+    "readerProfileVersion": { "const": "reader-profiles-v1" },
+    "evaluatorModel": { "type": ["string", "null"] },
+    "artifact": {
+      "type": "object",
+      "required": ["path", "sha256", "title", "unitCount"],
+      "properties": {
+        "path": { "type": "string", "minLength": 1 },
+        "sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+        "title": { "type": "string", "minLength": 1 },
+        "revision": { "type": ["integer", "null"], "minimum": 1 },
+        "unitCount": { "type": "integer", "minimum": 1 }
+      },
+      "additionalProperties": false
+    },
+    "reader": {
+      "type": "object",
+      "required": ["age", "ageBand", "readingMode"],
+      "properties": {
+        "age": { "type": "integer", "minimum": 3, "maximum": 10 },
+        "ageBand": { "enum": ["ages_3_5", "ages_6_7", "ages_8_10"] },
+        "readingMode": {
+          "enum": [
+            "parent_read_aloud",
+            "co_read",
+            "independent_developing",
+            "independent_confident"
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "dimensions": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "ruleId",
+          "result",
+          "confidence",
+          "evidence",
+          "observation",
+          "predictedReaderEffect",
+          "revision",
+          "preserve"
+        ],
+        "properties": {
+          "ruleId": { "type": "string", "minLength": 1 },
+          "result": {
+            "enum": [
+              "not_evident",
+              "weak",
+              "functional",
+              "strong",
+              "distinctive",
+              "not_applicable",
+              "insufficient_evidence"
+            ]
+          },
+          "confidence": { "enum": ["low", "medium", "high"] },
+          "evidence": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "required": ["unit", "observation"],
+              "properties": {
+                "unit": { "type": "integer", "minimum": 1 },
+                "observation": { "type": "string", "minLength": 1 }
+              },
+              "additionalProperties": false
+            }
+          },
+          "observation": { "type": "string", "minLength": 1 },
+          "predictedReaderEffect": { "type": ["string", "null"] },
+          "revision": { "type": ["string", "null"] },
+          "preserve": {
+            "type": "array",
+            "items": { "type": "string", "minLength": 1 }
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "hardGates": {
+      "type": "object",
+      "required": ["status", "failures"],
+      "properties": {
+        "status": { "enum": ["pass", "fail", "human_review"] },
+        "failures": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 }
+        }
+      },
+      "additionalProperties": false
+    },
+    "summary": {
+      "type": "object",
+      "required": [
+        "overallProfile",
+        "strongestQualities",
+        "limitingQualities",
+        "recommendedAction",
+        "highestValueRevision"
+      ],
+      "properties": {
+        "overallProfile": { "type": "string", "minLength": 1 },
+        "strongestQualities": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "limitingQualities": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "recommendedAction": {
+          "enum": [
+            "ready",
+            "light_revision",
+            "substantive_revision",
+            "human_review"
+          ]
+        },
+        "highestValueRevision": { "type": ["string", "null"] }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

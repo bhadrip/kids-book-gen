@@ -31,3 +31,23 @@
 - Added the reusable-character-library delivery contract and indexed its
   installation-private ownership, pinned-copy reuse, and deferred hosted
   sharing boundaries.
+
+## 2026-08-11
+
+- Added the approved-book emotional-fidelity evaluation discovery checklist and
+  corrected the artifact catalog to reflect the implemented `EmotionalArc` and
+  `SpreadMap` visual-planning artifacts.
+- Confirmed that V0 does not capture parent-selected reader age or reading mode
+  and instead hard-codes ages 7–10 parent-read-aloud behavior in text generation
+  and hidden evaluation.
+- Added the proposed parent-selected reader-age specification, including
+  age-aware evaluator profiles, provenance, legacy-project confirmation,
+  dependency staleness, acceptance scenarios, and unresolved product choices.
+
+## 2026-08-22
+
+- Added the reusable `evaluate-story-quality` skill with required inputs of
+  `story.json`, reader age, and reading mode.
+- Added versioned textual-quality rules, reader profiles, a machine-readable
+  output contract, and deterministic input/output validation for repeatable
+  single-book and benchmark-corpus evaluation.

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Evaluate Story Quality"
+  short_description: "Evaluate story quality for a reader profile"
+  default_prompt: "Use $evaluate-story-quality to evaluate this story.json for the specified age and reading mode."

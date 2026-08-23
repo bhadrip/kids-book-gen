@@ -165,7 +165,10 @@ Success criteria:
 
 ## Deferred features
 
-- Ages 3–5 as a validated default
+- Parent-selected age and age-aware evaluation, specified for later
+  implementation in
+  [`10-parent-selected-reader-age.md`](10-parent-selected-reader-age.md)
+- Ages 3–5 as a fully calibrated, supported profile
 - Independent-reading guarantees or formal grade leveling
 - Bilingual production
 - Rhyme and meter

@@ -7,6 +7,7 @@ Persistent project knowledge for research, product design, and implementation.
 - [Ages 3–5 picture-book preferences and reader fit](pages/concepts/ages-3-5-picture-book-fit.md)
 - [Book generation stages](pages/project/book-generation-stages.md)
 - [Quality and likeability control](pages/project/quality-and-likeability-control.md)
+- [Reader age configuration gap](pages/project/reader-age-configuration-gap.md)
 - [Printable 12-stage workflow poster](../output/pdf/picture-book-generation-workflow-poster.pdf)
 
 ## Sources
@@ -22,3 +23,8 @@ Persistent project knowledge for research, product design, and implementation.
 - [`spec/03-evaluation-rubric.md`](../spec/03-evaluation-rubric.md)
 - [`spec/04-agent-pipeline.md`](../spec/04-agent-pipeline.md)
 - [`spec/09-artifact-catalog.md`](../spec/09-artifact-catalog.md)
+- [`spec/10-parent-selected-reader-age.md`](../spec/10-parent-selected-reader-age.md)
+
+## Product discovery
+
+- [Approved-book emotional-fidelity evaluation checklist](../tasks/approved-book-emotional-evaluation-checklist.md)
