@@ -130,33 +130,113 @@ export default async function IdeaPage({
             guarantee comprehension, enjoyment, or reading level.
           </p>
         </fieldset>
-        <label className="block font-semibold" htmlFor="template">
-          Story starting point
-          <select
-            className="mt-2 block w-full rounded-xl border p-3"
-            id="template"
-            name="template"
-            defaultValue={savedBrief?.template ?? "start_from_scratch"}
-          >
-            <option value="mystery_and_reveal">
-              Something strange is happening
-            </option>
-            <option value="mission_with_obstacles">
-              A mission with obstacles
-            </option>
-            <option value="try_fail_change_plan">
-              Try, fail, change the plan
-            </option>
-            <option value="two_sides_to_understand">
-              Two sides to understand
-            </option>
-            <option value="feeling_changes_shape">
-              A feeling changes shape
-            </option>
-            <option value="help_me_choose">Help me choose</option>
-            <option value="start_from_scratch">Start from scratch</option>
-          </select>
-        </label>
+        <fieldset className="rounded-2xl border border-stone-200 p-4">
+          <legend className="px-1 font-semibold">
+            How should the story unfold?
+          </legend>
+          <p className="mt-1 text-sm text-stone-600">
+            Choose a familiar story shape, or let the studio decide. Reader age
+            and reading mode adjust its complexity and language.
+          </p>
+          <p className="mt-5 text-sm font-semibold tracking-wide text-stone-700 uppercase">
+            Choose a story shape
+          </p>
+          <div className="mt-3 grid gap-3">
+            {[
+              {
+                value: "mystery_and_reveal",
+                title: "Follow clues to solve a mystery",
+                example: "Like discovering who entered the Three Bears’ house.",
+              },
+              {
+                value: "mission_with_obstacles",
+                title: "Complete a mission with obstacles",
+                example:
+                  "Like Little Red Riding Hood trying to reach Grandma’s house.",
+              },
+              {
+                value: "try_fail_change_plan",
+                title: "Try, fail, then find a better plan",
+                example:
+                  "Like the Three Little Pigs trying different ways to build a safe home.",
+              },
+              {
+                value: "two_sides_to_understand",
+                title: "Understand two points of view",
+                example:
+                  "Like hearing both Jack’s and the Giant’s sides of the story.",
+              },
+              {
+                value: "feeling_changes_shape",
+                title: "Explore a feeling that changes",
+                example:
+                  "Like the Ugly Duckling moving from loneliness toward belonging.",
+              },
+            ].map((choice) => (
+              <label
+                className="flex cursor-pointer gap-3 rounded-xl border border-stone-200 p-4 has-checked:border-stone-950 has-checked:bg-stone-50"
+                key={choice.value}
+              >
+                <input
+                  className="mt-1 size-4 shrink-0 accent-stone-950"
+                  name="template"
+                  type="radio"
+                  value={choice.value}
+                  defaultChecked={savedBrief?.template === choice.value}
+                />
+                <span>
+                  <span className="block font-semibold">{choice.title}</span>
+                  <span className="mt-1 block text-sm text-stone-600">
+                    {choice.example}
+                  </span>
+                </span>
+              </label>
+            ))}
+          </div>
+          <p className="mt-5 text-sm font-semibold tracking-wide text-stone-700 uppercase">
+            Let the studio decide
+          </p>
+          <div className="mt-3 grid gap-3">
+            <label className="flex cursor-pointer gap-3 rounded-xl border border-stone-200 p-4 has-checked:border-stone-950 has-checked:bg-stone-50">
+              <input
+                className="mt-1 size-4 shrink-0 accent-stone-950"
+                name="template"
+                type="radio"
+                value="help_me_choose"
+                defaultChecked={
+                  !savedBrief || savedBrief.template === "help_me_choose"
+                }
+              />
+              <span>
+                <span className="block font-semibold">
+                  Recommend the best story shape
+                </span>
+                <span className="mt-1 block text-sm text-stone-600">
+                  The studio chooses one of the five shapes above based on your
+                  idea.
+                </span>
+              </span>
+            </label>
+            <label className="flex cursor-pointer gap-3 rounded-xl border border-stone-200 p-4 has-checked:border-stone-950 has-checked:bg-stone-50">
+              <input
+                className="mt-1 size-4 shrink-0 accent-stone-950"
+                name="template"
+                type="radio"
+                value="start_from_scratch"
+                defaultChecked={savedBrief?.template === "start_from_scratch"}
+              />
+              <span>
+                <span className="block font-semibold">
+                  Explore freely without a preset
+                </span>
+                <span className="mt-1 block text-sm text-stone-600">
+                  The studio can create a different kind of story instead of
+                  following one of these shapes.
+                </span>
+              </span>
+            </label>
+          </div>
+        </fieldset>
         <label className="block font-semibold" htmlFor="originalIdea">
           Original idea
           <textarea

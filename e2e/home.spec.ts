@@ -130,6 +130,11 @@ test("offers a parent-safe idea intake without making a model request", async ({
     page.getByLabel("How will the child read this book?"),
   ).toHaveValue("parent_read_aloud");
   await expect(
+    page.getByRole("group", { name: "How should the story unfold?" }),
+  ).toBeVisible();
+  await expect(page.getByLabel("Recommend the best story shape")).toBeChecked();
+  await expect(page.getByText("Three Bears’ house")).toBeVisible();
+  await expect(
     page.getByRole("button", { name: "Generate three directions" }),
   ).toBeVisible();
   await page.goto(`/projects/${projectId}/book/read`);
