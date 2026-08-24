@@ -247,7 +247,7 @@ describe("getProjectProgress", () => {
       getProjectProgress(repository, projectId),
     ).resolves.toMatchObject({
       look: "Needs attention",
-      nextAction: { label: "Choose the visual identity" },
+      nextAction: { label: "Choose an art direction" },
     });
   });
 });

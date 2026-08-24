@@ -259,6 +259,15 @@ test("revises directions, generates a story, approves it, and reopens it without
   await expect(
     page.getByText("This story revision is approved."),
   ).toBeVisible();
+  await expect(
+    page.getByRole("link", { name: "Start the picture plan" }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("button", { name: "Approve this story" }),
+  ).toHaveCount(0);
+  await expect(
+    page.getByRole("button", { name: "Revise this story" }),
+  ).toHaveCount(0);
   await page.screenshot({
     path: "test-results/text-story-approved.png",
     fullPage: true,
@@ -323,7 +332,7 @@ test("chooses a curated look, preserves character options, and approves a sample
     "A moon kite flies away before bedtime.",
   );
 
-  await page.getByRole("link", { name: "Choose the visual identity" }).click();
+  await page.getByRole("link", { name: "Start the picture plan" }).click();
   await expect(
     page.getByRole("heading", {
       name: "Check how the story will unfold in pictures",
@@ -929,7 +938,7 @@ test("preserves the approved story when visual generation fails", async ({
     "Fixture visual failure",
     "Fixture image failure",
   );
-  await page.getByRole("link", { name: "Choose the visual identity" }).click();
+  await page.getByRole("link", { name: "Start the picture plan" }).click();
   await page
     .getByRole("button", { name: "Create the visual story plan" })
     .click();

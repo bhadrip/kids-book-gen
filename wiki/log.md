@@ -51,3 +51,8 @@
 - Added versioned textual-quality rules, reader profiles, a machine-readable
   output contract, and deterministic input/output validation for repeatable
   single-book and benchmark-corpus evaluation.
+
+## 2026-08-23
+
+- Corrected the Step 3-to-Step 4 handoff so an approved story leads to picture
+  planning and no longer presents duplicate approval or revision controls.
