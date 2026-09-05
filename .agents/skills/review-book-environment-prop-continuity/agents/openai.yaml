@@ -1,0 +1,4 @@
+interface:
+  display_name: "Review Environment & Prop Continuity"
+  short_description: "Check setting and prop continuity across a book"
+  default_prompt: "Use $review-book-environment-prop-continuity to evaluate this generated children’s book for environment and prop continuity."
