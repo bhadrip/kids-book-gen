@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { readerConfigurationSchema } from "@/lib/readers/reader-profile";
 
 export const projectIdSchema = z.string().uuid();
 
@@ -35,6 +36,28 @@ export const narrativeTemplateSchema = z.enum([
   "start_from_scratch",
 ]);
 
+export const storyMoodSchema = z.enum([
+  "warm_cozy",
+  "funny_playful",
+  "exciting_adventurous",
+  "gentle_comforting",
+  "curious_mysterious",
+  "thoughtful_hopeful",
+  "no_preference",
+  "something_else",
+]);
+
+export const storyThemeSchema = z.enum([
+  "asking_for_help",
+  "brave_while_scared",
+  "repairing_friendship",
+  "including_someone",
+  "handling_disappointment",
+  "understanding_viewpoint",
+  "no_particular_message",
+  "something_else",
+]);
+
 export const projectBriefSchema = z.object({
   schemaVersion: z.literal(1),
   projectId: projectIdSchema,
@@ -43,9 +66,14 @@ export const projectBriefSchema = z.object({
   protagonist: optionalText(160),
   characterDesire: optionalText(500),
   desiredFeeling: optionalText(300),
+  storyMood: storyMoodSchema.optional(),
+  customStoryMood: optionalText(300),
   valueOrQuestion: optionalText(500),
+  storyTheme: storyThemeSchema.optional(),
+  customStoryTheme: optionalText(500),
   avoid: optionalText(500),
   mustKeep: optionalText(1_000),
+  readerConfiguration: readerConfigurationSchema.optional(),
   createdAt: z.string().datetime(),
 });
 
@@ -69,6 +97,7 @@ export const storyDirectionsSchema = z
     model: z.string().trim().min(1),
     revision: z.number().int().positive().default(1),
     parentSteering: optionalText(1_000),
+    readerConfiguration: readerConfigurationSchema.optional(),
     directions: z.array(storyDirectionSchema).length(3),
   })
   .superRefine((value, context) => {
@@ -110,6 +139,7 @@ export const storyPackageSchema = z.object({
   revision: z.number().int().positive(),
   sourceDirectionTitle: z.string().trim().min(1),
   parentSteering: optionalText(1_000),
+  readerConfiguration: readerConfigurationSchema.optional(),
   title: z.string().trim().min(1).max(120),
   characters: z
     .array(
@@ -144,12 +174,16 @@ export const storyQualityEvaluationSchema = z.object({
   storyRevision: z.number().int().positive(),
   evaluatedAt: z.string().datetime(),
   model: z.string().trim().min(1),
+  readerConfiguration: readerConfigurationSchema.optional(),
+  readerProfileVersion: z.literal("reader-profiles-v1").optional(),
   verdict: z.enum(["pass", "revise"]),
   checks: z.object({
     fidelity: z.enum(["pass", "revise"]),
     structure: z.enum(["pass", "revise"]),
     ageFit: z.enum(["pass", "revise"]),
     oralFlow: z.enum(["pass", "revise"]),
+    moodFit: z.enum(["pass", "revise"]).optional(),
+    themeFit: z.enum(["pass", "revise"]).optional(),
     safety: z.enum(["pass", "revise"]),
   }),
   revisionBrief: optionalText(1_500),

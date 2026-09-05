@@ -69,6 +69,7 @@ describe("getProjectProgress", () => {
         projectId,
         template: "start_from_scratch",
         originalIdea: "A moon kite flies away.",
+        readerConfiguration: { age: 8, readingMode: "parent_read_aloud" },
         createdAt: timestamp,
       }),
     );
@@ -213,6 +214,7 @@ describe("getProjectProgress", () => {
       projectId,
       template: "start_from_scratch",
       originalIdea: "A moon kite flies away.",
+      readerConfiguration: { age: 8, readingMode: "parent_read_aloud" },
       createdAt: timestamp,
     });
     const directions = await storyService.createDirections(brief);

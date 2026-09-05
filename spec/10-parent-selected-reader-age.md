@@ -1,8 +1,11 @@
 # Parent-selected reader age and age-aware evaluation
 
-Status: proposed for later implementation
-Architecture impact: expected update — this changes intake, artifact lineage,
-generation contracts, evaluator inputs, staleness, and the parent journey.
+Status: partially implemented — intake, prompt profiles, evaluation provenance,
+legacy generation blocking, and checkpoint visibility are implemented. Reader
+configuration successors and dependency staleness remain future work.
+
+Architecture impact: updated — this changes intake, generation contracts,
+evaluator inputs, persisted provenance, and the parent journey.
 
 ## Confirmed product gap
 
@@ -196,9 +199,8 @@ available and visibly labeled as generated under the legacy default.
 
 These decisions must be resolved before implementation planning:
 
-1. **Input shape:** exact child age, age band, or exact age mapped to a displayed
-   band. The current product documents contain both `age` and `age_range`
-   examples and do not settle which the parent controls.
+1. **Resolved input shape:** the parent selects an exact age from 3 through 10;
+   the application maps it to displayed 3–5, 6–7, or 8–10 tuning guidance.
 2. **Initial supported bands:** whether launch exposes only 7–10 plus an
    experimental 3–5 option, or waits until both profiles meet the same
    calibration standard.

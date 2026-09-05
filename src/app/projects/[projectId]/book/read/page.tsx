@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import { BookReader } from "@/components/book-reader";
+import { ReaderConfigurationSummary } from "@/components/reader-configuration-summary";
 import { PdfDownloadButton } from "@/components/pdf-download-button";
 import { PendingForm } from "@/components/pending-form";
 import { readAppConfig } from "@/lib/config/app-config";
@@ -128,15 +129,20 @@ export default async function ReaderPage({
             generations.
           </p>
           {data.brief ? (
-            <aside className="mt-6 rounded-2xl border border-amber-200 bg-amber-50 p-5 text-amber-950">
-              <p className="text-xs font-semibold tracking-wide uppercase">
-                Original must-keep details
-              </p>
-              <p className="mt-2">
-                {data.brief.mustKeep ??
-                  "No additional must-keep details were supplied."}
-              </p>
-            </aside>
+            <>
+              <ReaderConfigurationSummary
+                reader={data.brief.readerConfiguration}
+              />
+              <aside className="mt-4 rounded-2xl border border-amber-200 bg-amber-50 p-5 text-amber-950">
+                <p className="text-xs font-semibold tracking-wide uppercase">
+                  Important family details preserved
+                </p>
+                <p className="mt-2">
+                  {data.brief.mustKeep ??
+                    "No additional family details were supplied."}
+                </p>
+              </aside>
+            </>
           ) : null}
           {result === "feedback_saved" ? (
             <p

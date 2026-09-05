@@ -18,6 +18,9 @@ import {
   visualPlanDraftSchema,
   type VisualPlanDraft,
 } from "@/lib/visuals/visual-narrative-artifacts";
+import { readerProfileGuidance } from "@/lib/readers/reader-profile";
+import { storyMoodInstruction } from "@/lib/stories/story-mood";
+import { storyThemeInstruction } from "@/lib/stories/story-theme";
 
 const directionResponseSchema = z.object({
   directions: z.array(storyDirectionSchema).length(3),
@@ -34,13 +37,14 @@ export class OpenAITextProvider implements TextProvider {
     brief: ProjectBrief,
     options: { revision: number; parentSteering?: string },
   ): Promise<StoryDirections> {
+    if (!brief.readerConfiguration)
+      throw new Error("Reader configuration is required.");
     const response = await new OpenAI({ apiKey: this.apiKey }).responses.parse({
       model: this.model,
       input: [
         {
           role: "developer",
-          content:
-            "Create exactly three child-friendly story directions. Each must use a genuinely different story engine, not a cosmetic variation. Preserve every must-keep detail. Return only the requested structured response.",
+          content: `Create exactly three child-friendly story directions. Each must use a genuinely different story engine, not a cosmetic variation. Preserve every must-keep detail. Tune each direction using this reader profile: ${readerProfileGuidance(brief.readerConfiguration)} ${storyMoodInstruction(brief)} Treat the mood as a required creative constraint, not optional inspiration. ${storyThemeInstruction(brief)} Treat the selected idea as a required dramatic constraint, not optional metadata. Return only the requested structured response.`,
         },
         {
           role: "user",
@@ -67,6 +71,7 @@ export class OpenAITextProvider implements TextProvider {
       model: this.model,
       revision: options.revision,
       parentSteering: options.parentSteering,
+      readerConfiguration: brief.readerConfiguration,
     });
   }
 
@@ -79,6 +84,8 @@ export class OpenAITextProvider implements TextProvider {
       qualityFeedback?: string;
     },
   ): Promise<StoryPackage> {
+    if (!brief.readerConfiguration)
+      throw new Error("Reader configuration is required.");
     const format = storyPackageSchema.pick({
       title: true,
       characters: true,
@@ -91,8 +98,7 @@ export class OpenAITextProvider implements TextProvider {
       input: [
         {
           role: "developer",
-          content:
-            "Write a safe, warm story package for ages 7–10. Preserve must-keep details. Return exactly 13 concise, non-empty read-aloud spreads.",
+          content: `Write a safe story package tuned to this reader profile: ${readerProfileGuidance(brief.readerConfiguration)} ${storyMoodInstruction(brief)} Treat the mood as a required creative constraint in every spread and in the ending; do not silently replace it with a generic warm tone. ${storyThemeInstruction(brief)} Make the selected idea materially shape conflict, choices, consequences, and resolution while avoiding a lecture. Preserve must-keep details. Return exactly 13 concise, non-empty spreads suited to the declared reading mode.`,
         },
         {
           role: "user",
@@ -116,6 +122,7 @@ export class OpenAITextProvider implements TextProvider {
       revision: options.revision,
       sourceDirectionTitle: direction.title,
       parentSteering: options.parentSteering,
+      readerConfiguration: brief.readerConfiguration,
     });
   }
 
@@ -124,6 +131,16 @@ export class OpenAITextProvider implements TextProvider {
     direction: StoryDirection,
     story: StoryPackage,
   ): Promise<StoryQualityEvaluation> {
+    if (!brief.readerConfiguration)
+      throw new Error("Reader configuration is required.");
+    if (!story.readerConfiguration)
+      throw new Error("Story reader configuration is required.");
+    if (
+      story.readerConfiguration.age !== brief.readerConfiguration.age ||
+      story.readerConfiguration.readingMode !==
+        brief.readerConfiguration.readingMode
+    )
+      throw new Error("Story and brief reader configurations do not match.");
     const format = z.object({
       verdict: z.enum(["pass", "revise"]),
       checks: z.object({
@@ -131,6 +148,8 @@ export class OpenAITextProvider implements TextProvider {
         structure: z.enum(["pass", "revise"]),
         ageFit: z.enum(["pass", "revise"]),
         oralFlow: z.enum(["pass", "revise"]),
+        moodFit: z.enum(["pass", "revise"]),
+        themeFit: z.enum(["pass", "revise"]),
         safety: z.enum(["pass", "revise"]),
       }),
       revisionBrief: z.string().trim().min(1).max(1_500).nullable(),
@@ -140,8 +159,7 @@ export class OpenAITextProvider implements TextProvider {
       input: [
         {
           role: "developer",
-          content:
-            "Privately evaluate this children's story for fidelity to the family brief, causal structure, ages 7–10 parent-read-aloud fit, oral flow, and safety. Choose revise only for a material problem. If revision is needed, provide one concise revision brief that preserves strengths and approved details. Return only the structured response.",
+          content: `Privately evaluate this children's story for fidelity to the family brief, causal structure, reader fit, delivery-mode fit, mood fidelity, theme enactment, and safety. Apply this versioned reader profile materially—not as a generic age label: ${readerProfileGuidance(brief.readerConfiguration)} ${storyMoodInstruction(brief)} Mark moodFit revise when the manuscript does not materially sustain the requested tone, pacing, emotional intensity, dialogue, suspense, or closure. ${storyThemeInstruction(brief)} Mark themeFit revise when the selected idea does not materially shape conflict, choices, consequences, recognition, or resolution, or when it appears mainly as a lecture or stated moral. Check causal complexity, inference support, protagonist agency, vocabulary support, text density, referential clarity, participation opportunities, emotional intensity, and oral flow or decoding demand as appropriate. Choose revise only for a material problem. If revision is needed, provide one concise revision brief that preserves strengths and approved details. Return only the structured response.`,
         },
         {
           role: "user",
@@ -160,6 +178,8 @@ export class OpenAITextProvider implements TextProvider {
       storyRevision: story.revision,
       evaluatedAt: this.now().toISOString(),
       model: this.model,
+      readerConfiguration: brief.readerConfiguration,
+      readerProfileVersion: brief.readerConfiguration.profileVersion,
     });
   }
 

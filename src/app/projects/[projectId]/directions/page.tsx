@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { PendingForm } from "@/components/pending-form";
 import { ProjectJourney } from "@/components/project-journey";
+import { ReaderConfigurationSummary } from "@/components/reader-configuration-summary";
 import { readAppConfig } from "@/lib/config/app-config";
 import { FileProjectRepository } from "@/lib/projects/file-project-repository";
 import { getProjectProgress } from "@/lib/projects/project-progress";
@@ -56,9 +57,10 @@ export default async function DirectionsPage({
         Three ways this story could go
       </h1>
       <p className="mt-4 text-stone-700">
-        Must keep:{" "}
-        {brief.mustKeep ?? "No additional must-keep details provided."}
+        Important details to preserve:{" "}
+        {brief.mustKeep ?? "No additional family details were provided."}
       </p>
+      <ReaderConfigurationSummary reader={brief.readerConfiguration} />
       <p className="mt-2 text-sm text-stone-500">
         Direction revision {directions.revision}
       </p>

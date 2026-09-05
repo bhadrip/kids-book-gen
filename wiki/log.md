@@ -51,6 +51,16 @@
 - Added versioned textual-quality rules, reader profiles, a machine-readable
   output contract, and deterministic input/output validation for repeatable
   single-book and benchmark-corpus evaluation.
+- Wired exact ages 3–10 and separate reading modes into studio intake, text
+  generation, hidden evaluation, artifact provenance, checkpoint summaries,
+  and migration-safe generation blocking. Added profile and browser coverage.
+- Replaced ambiguous desired-feeling intake with structured, example-backed
+  story moods plus a custom option. Mood is now an explicit generation
+  constraint and a hidden evaluation check rather than unstructured prompt data.
+- Replaced optional value/question free text with example-backed ideas to
+  explore, a no-message option, and a custom question. Generation must enact the
+  selection through choices and consequences, and hidden evaluation checks for
+  both omission and preachy treatment.
 
 ## 2026-08-23
 
