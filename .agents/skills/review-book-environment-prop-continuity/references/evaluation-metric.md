@@ -12,43 +12,43 @@ Metric ID: `environment-prop-continuity-v1`
 
 ## Environment checks
 
-| ID | Observable test |
-| --- | --- |
-| `ENV-P01` | The page depicts the planned or previously established location. |
-| `ENV-P02` | Stable landmarks and defining background details retain identity. |
-| `ENV-P03` | Relevant entrances, exits, paths, furniture, and fixed features preserve compatible geometry. |
-| `ENV-P04` | Character and prop positions are possible within the established space. |
+| ID        | Observable test                                                                                    |
+| --------- | -------------------------------------------------------------------------------------------------- |
+| `ENV-P01` | The page depicts the planned or previously established location.                                   |
+| `ENV-P02` | Stable landmarks and defining background details retain identity.                                  |
+| `ENV-P03` | Relevant entrances, exits, paths, furniture, and fixed features preserve compatible geometry.      |
+| `ENV-P04` | Character and prop positions are possible within the established space.                            |
 | `ENV-P05` | Viewpoint changes explain which setting features appear, disappear, or reverse on the image plane. |
-| `ENV-P06` | Time of day and elapsed-time cues follow the story sequence. |
-| `ENV-P07` | Weather and seasonal state persist or change with visible or planned cause. |
-| `ENV-P08` | Light direction, intensity, and practical light sources are compatible within the scene. |
-| `ENV-P09` | Persistent world details required by the plan remain present and compatible. |
-| `ENV-P10` | A return to a recurring location remains recognizable while allowing story-caused change. |
+| `ENV-P06` | Time of day and elapsed-time cues follow the story sequence.                                       |
+| `ENV-P07` | Weather and seasonal state persist or change with visible or planned cause.                        |
+| `ENV-P08` | Light direction, intensity, and practical light sources are compatible within the scene.           |
+| `ENV-P09` | Persistent world details required by the plan remain present and compatible.                       |
+| `ENV-P10` | A return to a recurring location remains recognizable while allowing story-caused change.          |
 
 ## Prop checks
 
-| ID | Observable test |
-| --- | --- |
-| `PROP-P01` | Each story-important prop is present when required and absent only when justified. |
-| `PROP-P02` | Defining identity traits such as type, color, markings, material, and relative size persist. |
-| `PROP-P03` | State follows its timeline: intact, open, full, torn, repaired, wet, consumed, assembled, or similar. |
-| `PROP-P04` | Holder, owner, or wearer matches the last established transfer or action. |
-| `PROP-P05` | Location and movement follow visible action or an explicit story transition. |
-| `PROP-P06` | Quantity and component count persist or change with an established cause. |
-| `PROP-P07` | Orientation or handedness remains compatible when it carries story meaning. |
-| `PROP-P08` | Contact and interaction are physically coherent: held, worn, inserted, poured, attached, or used as intended. |
+| ID         | Observable test                                                                                                |
+| ---------- | -------------------------------------------------------------------------------------------------------------- |
+| `PROP-P01` | Each story-important prop is present when required and absent only when justified.                             |
+| `PROP-P02` | Defining identity traits such as type, color, markings, material, and relative size persist.                   |
+| `PROP-P03` | State follows its timeline: intact, open, full, torn, repaired, wet, consumed, assembled, or similar.          |
+| `PROP-P04` | Holder, owner, or wearer matches the last established transfer or action.                                      |
+| `PROP-P05` | Location and movement follow visible action or an explicit story transition.                                   |
+| `PROP-P06` | Quantity and component count persist or change with an established cause.                                      |
+| `PROP-P07` | Orientation or handedness remains compatible when it carries story meaning.                                    |
+| `PROP-P08` | Contact and interaction are physically coherent: held, worn, inserted, poured, attached, or used as intended.  |
 | `PROP-P09` | Damage, repair, transformation, or consumption remains visible after it occurs unless later action changes it. |
-| `PROP-P10` | A recurring prop remains distinguishable from similar incidental objects. |
+| `PROP-P10` | A recurring prop remains distinguishable from similar incidental objects.                                      |
 
 ## Whole-book checks
 
-| ID | Observable test |
-| --- | --- |
-| `CONT-B01` | Every recurring environment has a non-contradictory fact timeline. |
-| `CONT-B02` | Every story-important prop has a complete state, holder, and location timeline. |
-| `CONT-B03` | Changes between nonadjacent appearances have explicit or reasonably visible causes. |
-| `CONT-B04` | No required environment or prop silently disappears from a continuity-critical beat. |
-| `CONT-B05` | Climax and resolution preserve the consequences of earlier environment and prop changes. |
+| ID         | Observable test                                                                                      |
+| ---------- | ---------------------------------------------------------------------------------------------------- |
+| `CONT-B01` | Every recurring environment has a non-contradictory fact timeline.                                   |
+| `CONT-B02` | Every story-important prop has a complete state, holder, and location timeline.                      |
+| `CONT-B03` | Changes between nonadjacent appearances have explicit or reasonably visible causes.                  |
+| `CONT-B04` | No required environment or prop silently disappears from a continuity-critical beat.                 |
+| `CONT-B05` | Climax and resolution preserve the consequences of earlier environment and prop changes.             |
 | `CONT-B06` | Planning artifacts contain enough continuity facts to constrain production without inventing policy. |
 
 ## Scoring guidance

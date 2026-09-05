@@ -53,8 +53,8 @@ Read both files completely before evaluating:
 9. Provide bounded revision advice only for `weak` or `not_evident` results;
    state what to preserve.
 10. Write the report using the exact schema in
-   `references/output-schema.json`. Validate it with
-   `scripts/validate_output.py REPORT_JSON`.
+    `references/output-schema.json`. Validate it with
+    `scripts/validate_output.py REPORT_JSON`.
 
 ## Consistency rules
 
