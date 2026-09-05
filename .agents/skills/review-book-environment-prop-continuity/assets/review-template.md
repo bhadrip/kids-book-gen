@@ -29,17 +29,17 @@
 ## Environment fact ledger
 
 | Entity/location | Established fact | Source | Page timeline |
-| --- | --- | --- | --- |
+| --------------- | ---------------- | ------ | ------------- |
 
 ## Prop fact ledger
 
 | Prop | Defining traits | State/holder/location timeline | Source |
-| --- | --- | --- | --- |
+| ---- | --------------- | ------------------------------ | ------ |
 
 ## Deterministic results
 
 | Page/revision | Entity | Check ID | Score | Confidence | Observable evidence |
-| --- | --- | --- | ---: | --- | --- |
+| ------------- | ------ | -------- | ----: | ---------- | ------------------- |
 
 ## Findings
 
