@@ -324,7 +324,7 @@ export default async function BookPage({
       {!visualApproved ? (
         <section className="mt-10 rounded-3xl border border-stone-200 bg-white p-7 shadow-sm">
           <p className="text-sm font-semibold text-sky-800">
-            Approve the look first
+            Finish planning the pictures first
           </p>
           <h2 className="mt-2 text-2xl font-semibold text-stone-950">
             Full-book artwork stays locked until the current sample is approved.
@@ -337,7 +337,7 @@ export default async function BookPage({
             className="mt-5 inline-block rounded-xl bg-stone-950 px-5 py-3 font-semibold text-white"
             href={`/projects/${projectId}/look`}
           >
-            Review the visual sample
+            Return to picture planning
           </Link>
         </section>
       ) : null}
