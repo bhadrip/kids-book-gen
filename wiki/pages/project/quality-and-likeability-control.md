@@ -46,6 +46,13 @@ Evaluate independently rather than collapsing everything into one score:
 Every finding must cite spread-level evidence, confidence, a bounded repair,
 what to preserve, and which evaluator must rerun.
 
+Textual story evaluation includes an adjacent-transition audit. Every change in
+location, pursued object, plan, or knowledge must have a recoverable textual
+trigger such as a character choice, clue, consequence, or established force.
+For ages 3–5, an unexplained move cannot receive a strong causal-structure or
+inference-fit result merely because a later illustration could supply the
+missing connection.
+
 ### 4. Human expert/parent gates
 
 Use human judgment at intent, story, visual identity, sample spread, and final

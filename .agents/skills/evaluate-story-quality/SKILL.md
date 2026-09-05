@@ -37,17 +37,22 @@ Read both files completely before evaluating:
    supplied spread/page numbers as evidence locators.
 3. Build a concise causal trace: context, disruption, goal, attempts,
    consequences, changed attempt, decisive action, resolution, and reaction.
-4. Evaluate every rubric dimension independently using the selected reader
+4. Audit every adjacent unit transition. For each change in location, pursued
+   object, plan, or knowledge state, record the textual trigger in the earlier
+   or current unit. Distinguish a causal bridge (choice, clue, consequence, or
+   established force) from coincidence. Do not use a planned illustration to
+   supply a bridge missing from the text.
+5. Evaluate every rubric dimension independently using the selected reader
    profile. Do not infer missing illustrations or creator intent.
-5. Assign a result only after citing observable story evidence and the relevant
+6. Assign a result only after citing observable story evidence and the relevant
    rubric rule ID. Use `insufficient_evidence` when the text cannot support a
    judgment.
-6. Separate observation from predicted reader effect. Never claim that a child
+7. Separate observation from predicted reader effect. Never claim that a child
    will like, understand, learn from, or change behavior because of the story.
-7. Apply hard gates exactly as written. Do not average a gate failure away.
-8. Provide bounded revision advice only for `weak` or `not_evident` results;
+8. Apply hard gates exactly as written. Do not average a gate failure away.
+9. Provide bounded revision advice only for `weak` or `not_evident` results;
    state what to preserve.
-9. Write the report using the exact schema in
+10. Write the report using the exact schema in
    `references/output-schema.json`. Validate it with
    `scripts/validate_output.py REPORT_JSON`.
 
@@ -57,6 +62,13 @@ Read both files completely before evaluating:
 - Do not use decimal scores. Numeric exports map categories to 0–4 only.
 - Do not use author reputation, popularity, awards, sales, or prior reviews.
 - Do not compare the book with named titles unless the user explicitly asks.
+- Do not rate `STRUCT-CAUSE-01` as `strong` or `distinctive` when a major
+  adjacent transition lacks a recoverable textual trigger. For ages 3–5, also
+  cap `LANG-INFERENCE-01` at `functional` when recovering that transition
+  requires inventing an unstated clue, choice, or spatial connection.
+- Treat a new clue that merely appears at the next location as coincidence
+  unless the text explains how the protagonist notices it or why they move
+  there. Name the exact source and destination units in revision advice.
 - Keep the same age, reading mode, rubric version, and evaluator model across a
   benchmark corpus.
 - Randomize book order and hide popularity metadata for comparative studies.
