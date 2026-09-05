@@ -48,3 +48,11 @@
 - Wired exact ages 3–10 and separate reading modes into studio intake, text
   generation, hidden evaluation, artifact provenance, checkpoint summaries,
   and migration-safe generation blocking. Added profile and browser coverage.
+
+## 2026-08-23
+
+- Corrected the Step 3-to-Step 4 handoff so an approved story leads to picture
+  planning and no longer presents duplicate approval or revision controls.
+- Strengthened the textual story-quality evaluation workflow with a mandatory
+  adjacent-transition audit and explicit result caps for unexplained causal or
+  spatial bridges, especially for ages 3–5.

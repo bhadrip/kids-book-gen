@@ -22,7 +22,7 @@ const checkpoints = [
   { id: "idea", label: "Shape the idea" },
   { id: "directions", label: "Choose a direction" },
   { id: "story", label: "Approve the story" },
-  { id: "look", label: "Approve the look" },
+  { id: "look", label: "Plan and approve the pictures" },
   { id: "book", label: "Make the book" },
 ] as const;
 
@@ -56,8 +56,11 @@ export function ProjectJourney({
         <ol className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
           {checkpoints.map((checkpoint, index) => {
             const isCurrent = current === checkpoint.id;
+            const savedStatus = statuses[checkpoint.id];
             const status =
-              pending && isCurrent ? "In progress" : statuses[checkpoint.id];
+              isCurrent && (pending || savedStatus === "Not started")
+                ? "In progress"
+                : savedStatus;
             const content = (
               <>
                 <span className="block text-xs font-semibold tracking-wide text-stone-500 uppercase">

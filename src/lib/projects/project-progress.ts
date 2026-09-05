@@ -469,7 +469,7 @@ export async function getProjectProgress(
                   ? "Create the visual story plan"
                   : imageJob?.status === "failed"
                     ? "Retry character designs"
-                    : "Choose the visual identity",
+                    : "Choose an art direction",
         reason: sample
           ? "Review the illustration with its separate, editable text layer."
           : characterDesigns

@@ -210,15 +210,16 @@ export default async function LookPage({
       <div className="mt-10 flex flex-col gap-4 border-b border-stone-200 pb-8 lg:flex-row lg:items-end lg:justify-between">
         <div>
           <p className="text-sm font-semibold tracking-[0.18em] text-rose-700 uppercase">
-            Visual identity
+            Picture-making plan
           </p>
           <h1 className="mt-3 max-w-3xl text-4xl font-semibold tracking-tight text-stone-950 sm:text-5xl">
-            Find the look that belongs to this story.
+            Plan and approve the pictures.
           </h1>
         </div>
         <p className="max-w-md text-sm leading-6 text-stone-600">
-          The artwork is AI-created and remains a draft until you approve the
-          character and this sample spread.
+          First, check what each picture needs to show. Then choose the art
+          style and character, and approve one sample picture. All artwork
+          remains a draft until you approve it.
         </p>
       </div>
 
@@ -326,7 +327,7 @@ export default async function LookPage({
           aria-labelledby="visual-plan-start-heading"
         >
           <p className="text-sm font-semibold text-rose-700">
-            Picture plan · Part 1
+            Plan the pictures · Part 1
           </p>
           <h2
             className="mt-2 text-3xl font-semibold text-stone-950"
@@ -363,7 +364,7 @@ export default async function LookPage({
           <div className="flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
             <div>
               <p className="text-sm font-semibold text-rose-700">
-                Picture plan · Part 1
+                Plan the pictures · Part 1
               </p>
               <h2
                 className="mt-2 text-3xl font-semibold text-stone-950"
@@ -517,7 +518,7 @@ export default async function LookPage({
         <section className="mt-10" aria-labelledby="art-look-heading">
           <div className="max-w-2xl">
             <p className="text-sm font-semibold text-rose-700">
-              Visual identity · Part 2
+              Choose the art style · Part 2
             </p>
             <h2
               className="mt-2 text-3xl font-semibold text-stone-950"
@@ -601,7 +602,7 @@ export default async function LookPage({
       {storyApproved && visualPlanApproved && data.designs && !data.sample ? (
         <section className="mt-10" aria-labelledby="character-heading">
           <p className="text-sm font-semibold text-rose-700">
-            Visual identity · Part 3
+            Choose the character · Part 3
           </p>
           <h2
             className="mt-2 text-3xl font-semibold text-stone-950"
@@ -683,7 +684,7 @@ export default async function LookPage({
       data.visualBible ? (
         <section className="mt-10" aria-labelledby="sample-heading">
           <p className="text-sm font-semibold text-rose-700">
-            Visual identity · Final review
+            Approve a sample picture · Part 4
           </p>
           <div className="mt-2 flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
             <div>

@@ -267,6 +267,15 @@ test("revises directions, generates a story, approves it, and reopens it without
   await expect(
     page.getByText("This story revision is approved."),
   ).toBeVisible();
+  await expect(
+    page.getByRole("link", { name: "Start the picture plan" }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("button", { name: "Approve this story" }),
+  ).toHaveCount(0);
+  await expect(
+    page.getByRole("button", { name: "Revise this story" }),
+  ).toHaveCount(0);
   await page.screenshot({
     path: "test-results/text-story-approved.png",
     fullPage: true,
@@ -331,7 +340,16 @@ test("chooses a curated look, preserves character options, and approves a sample
     "A moon kite flies away before bedtime.",
   );
 
-  await page.getByRole("link", { name: "Choose the visual identity" }).click();
+  await page.getByRole("link", { name: "Start the picture plan" }).click();
+  await expect(
+    page.getByRole("link", {
+      name: "Step 4 Plan and approve the pictures In progress",
+    }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("heading", { name: "Plan and approve the pictures." }),
+  ).toBeVisible();
+  await expect(page.getByText("Plan the pictures · Part 1")).toBeVisible();
   await expect(
     page.getByRole("heading", {
       name: "Check how the story will unfold in pictures",
@@ -370,6 +388,7 @@ test("chooses a curated look, preserves character options, and approves a sample
   await expect(
     page.getByRole("heading", { name: "Choose an art direction" }),
   ).toBeVisible();
+  await expect(page.getByText("Choose the art style · Part 2")).toBeVisible();
   await expect(page.getByLabel("Warm and handmade")).toBeChecked();
   await expect(page.getByLabel("Detailed discovery")).toBeVisible();
   await expect(
@@ -387,17 +406,22 @@ test("chooses a curated look, preserves character options, and approves a sample
     fullPage: true,
   });
 
-  await page
-    .getByRole("button", { name: "Create three character designs" })
-    .click();
-  await expect(
+  const characterDesignsPending = expect(
     page.getByRole("button", { name: "Creating three character designs…" }),
   ).toBeDisabled();
+  await Promise.all([
+    page.waitForURL("**/look?result=designs"),
+    page
+      .getByRole("button", { name: "Create three character designs" })
+      .click(),
+    characterDesignsPending,
+  ]);
   await expect(
     page.getByRole("heading", {
       name: "Choose the character your child will recognize",
     }),
   ).toBeVisible();
+  await expect(page.getByText("Choose the character · Part 3")).toBeVisible();
   await expect(
     page.getByRole("region", { name: "Character design 1" }),
   ).toBeVisible();
@@ -439,6 +463,9 @@ test("chooses a curated look, preserves character options, and approves a sample
   await samplePending;
   await expect(
     page.getByRole("heading", { name: "Review the sample spread" }),
+  ).toBeVisible();
+  await expect(
+    page.getByText("Approve a sample picture · Part 4"),
   ).toBeVisible();
   await expect(page.getByTestId("sample-spread-text")).toHaveText(
     "Spread 7 moves the adventure forward while preserving the family's idea.",
@@ -871,7 +898,7 @@ test("preserves the approved story when visual generation fails", async ({
     "Fixture visual failure",
     "Fixture image failure",
   );
-  await page.getByRole("link", { name: "Choose the visual identity" }).click();
+  await page.getByRole("link", { name: "Start the picture plan" }).click();
   await page
     .getByRole("button", { name: "Create the visual story plan" })
     .click();
