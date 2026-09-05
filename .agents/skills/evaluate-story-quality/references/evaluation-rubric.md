@@ -110,6 +110,19 @@ high-risk interpretation and require human review.
 
 ## Evidence requirements
 
+Before assigning structure or inference results, audit all adjacent-unit
+changes in location, pursued object, plan, or knowledge state. For each change,
+identify its source unit, destination unit, and recoverable textual trigger.
+A clue that first appears at the destination does not by itself explain why the
+protagonist went there. Do not infer a missing bridge from planned or possible
+illustrations.
+
+`STRUCT-CAUSE-01` cannot be `strong` or `distinctive` when any major adjacent
+transition lacks a textual trigger. For ages 3–5, `LANG-INFERENCE-01` cannot be
+above `functional` when understanding a major transition requires inventing an
+unstated clue, choice, or spatial relation. A minor atmospheric cut that does
+not affect the protagonist's pursuit need not lower either result.
+
 For every dimension record:
 
 - one or more exact spread/page/unit locators;
