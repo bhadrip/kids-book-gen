@@ -46,6 +46,7 @@ async function setup(originalIdea = "A moon kite flies away before bedtime.") {
     protagonist: "Milo",
     avoid: "Do not make Milo feel blamed.",
     mustKeep: "Keep Milo's round glasses and the silver moon kite.",
+    readerConfiguration: { age: 8, readingMode: "parent_read_aloud" },
     createdAt: now().toISOString(),
   });
   const directions = await storyService.createDirections(brief);

@@ -23,6 +23,10 @@ export class StoryWorkflowService {
   ) {}
 
   public async createDirections(brief: ProjectBrief): Promise<StoryDirections> {
+    if (!brief.readerConfiguration)
+      throw new Error(
+        "Confirm reader age and reading mode before generating directions.",
+      );
     await this.repository.writeArtifact(brief.projectId, "brief.json", brief);
     return this.runGenerationJob(
       brief.projectId,
@@ -183,6 +187,10 @@ export class StoryWorkflowService {
     revision: number,
     parentSteering?: string,
   ) {
+    if (!brief.readerConfiguration)
+      throw new Error(
+        "Confirm reader age and reading mode before generating directions.",
+      );
     const directions = await this.provider.generateDirections(brief, {
       revision,
       parentSteering,

@@ -105,11 +105,11 @@ Primary schema:
 | Artifact | Purpose | Inputs | Parent interaction | Storage |
 | --- | --- | --- | --- | --- |
 | `Project` | Identifies the local book project. | Parent-entered title | Created and reopened from the project library | `project.json` |
-| `ProjectBrief` | Preserves the original idea, protagonist hints, desire, desired feeling, meaning, avoid list, and must-keep details. | Project and parent intake | Parent-authored | `brief.json` |
-| `StoryDirections` | Offers exactly three materially distinct story engines with promises, openings, and endings. | `ProjectBrief` | Parent reviews or requests another set | `directions-NN.json`; current `directions.json` |
+| `ProjectBrief` | Preserves the original idea, protagonist hints, desire, structured story mood or custom mood, structured idea-to-explore or custom question, avoid list, must-keep details, and confirmed reader age/reading mode. Legacy briefs remain readable without the newer structured fields but cannot start new text generation without reader details. | Project and parent intake | Parent-authored | `brief.json` |
+| `StoryDirections` | Offers exactly three materially distinct, reader-profile-tuned story engines with promises, openings, and endings. | `ProjectBrief` | Parent reviews or requests another set | `directions-NN.json`; current `directions.json` |
 | `SelectedDirection` | Records the selected direction revision and optional steering. | `StoryDirections` | Explicit parent selection | `selected-direction.json` |
-| `StoryPackage` | Holds the title, character summaries, promise, beginning/middle/ending arc, and 13 spreads with beats and manuscript text. | Brief and selected direction | Parent reviews, revises, and approves | `story-NN.json`; current `story.json` |
-| `StoryQualityEvaluation` | Records hidden fidelity, structure, age-fit, oral-flow, and safety checks plus a bounded revision brief. | Exact first-draft story revision | Hidden from the parent in V0 | `story-quality-evaluation-NN.json`; evaluated input in `story-quality-input-NN.json` |
+| `StoryPackage` | Holds the reader configuration provenance, title, character summaries, promise, beginning/middle/ending arc, and 13 spreads with beats and manuscript text. | Brief and selected direction | Parent reviews, revises, and approves | `story-NN.json`; current `story.json` |
+| `StoryQualityEvaluation` | Records reader configuration/profile provenance, hidden fidelity, structure, age-fit, delivery-mode fit, mood fidelity, theme enactment, and safety checks plus a bounded revision brief. | Exact first-draft story revision | Hidden from the parent in V0 | `story-quality-evaluation-NN.json`; evaluated input in `story-quality-input-NN.json` |
 | `StoryDecision` | Approves or requests changes to an exact story revision. | `StoryPackage` | Explicit parent decision | `story-decision-NN.json`; current `story-decision.json` |
 | `TextGenerationJob` | Makes direction/story generation failure and recovery resumable. | Current text-stage inputs | Parent sees progress and recovery state | Stage job records and `text-generation-job.json` |
 

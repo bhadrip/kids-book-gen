@@ -4,7 +4,11 @@ import { ZodError } from "zod";
 import { readAppConfig } from "@/lib/config/app-config";
 import { createStoryWorkflow } from "@/lib/directions/create-story-workflow";
 import { formRedirect } from "@/lib/http/form-response";
-import { projectBriefSchema } from "@/lib/projects/project";
+import {
+  projectBriefSchema,
+  storyMoodSchema,
+  storyThemeSchema,
+} from "@/lib/projects/project";
 
 export const runtime = "nodejs";
 
@@ -17,8 +21,38 @@ export async function POST(
   try {
     const now = () => new Date();
     const fields = Object.fromEntries(await request.formData());
+    const storyMood = storyMoodSchema.parse(fields.storyMood);
+    const storyTheme = storyThemeSchema.parse(fields.storyTheme);
+    if (
+      storyMood === "something_else" &&
+      (typeof fields.customStoryMood !== "string" ||
+        !fields.customStoryMood.trim())
+    )
+      return NextResponse.json(
+        { message: "Describe the mood you want for this story." },
+        { status: 400 },
+      );
+    if (
+      storyTheme === "something_else" &&
+      (typeof fields.customStoryTheme !== "string" ||
+        !fields.customStoryTheme.trim())
+    )
+      return NextResponse.json(
+        {
+          message:
+            "Describe the idea or question you want the story to explore.",
+        },
+        { status: 400 },
+      );
     const brief = projectBriefSchema.parse({
       ...fields,
+      storyMood,
+      storyTheme,
+      readerConfiguration: {
+        age: fields.readerAge,
+        readingMode: fields.readingMode,
+        profileVersion: "reader-profiles-v1",
+      },
       schemaVersion: 1,
       projectId,
       createdAt: now().toISOString(),
