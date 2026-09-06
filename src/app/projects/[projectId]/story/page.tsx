@@ -108,54 +108,62 @@ export default async function StoryPage({
         className="mt-8 rounded-3xl border border-stone-200 bg-white p-6"
         aria-label="Story approval"
       >
-        <h2 className="text-2xl font-semibold">Approve or revise</h2>
         {decision?.status === "approved" &&
         decision.storyRevision === story.revision ? (
-          <div className="mt-2">
+          <div>
+            <h2 className="text-2xl font-semibold">Story approved</h2>
             <p className="font-semibold text-green-800">
               This story revision is approved.
+            </p>
+            <p className="mt-2 max-w-xl leading-7 text-stone-600">
+              Next, we’ll plan how each spread unfolds in pictures before
+              creating any artwork.
             </p>
             <Link
               className="mt-4 inline-block rounded-xl bg-stone-950 px-4 py-2 font-semibold text-white"
               href={`/projects/${projectId}/look`}
             >
-              Choose the visual identity
+              Start the picture plan
             </Link>
           </div>
-        ) : null}
-        <PendingForm
-          action={`/api/projects/${projectId}/story-decision`}
-          className="mt-4"
-          pendingLabel="Saving story approval…"
-          pendingMessage="Saving your approval for this exact story revision locally."
-          submitClassName="rounded-xl bg-stone-950 px-4 py-2 font-semibold text-white"
-          submitLabel="Approve this story"
-        >
-          <input name="status" type="hidden" value="approved" />
-        </PendingForm>
-        <PendingForm
-          action={`/api/projects/${projectId}/story-decision`}
-          className="mt-5"
-          pendingLabel="Revising this story…"
-          pendingMessage="Your current story remains saved while we create a new numbered revision from your feedback."
-          submitClassName="mt-3 rounded-xl border border-stone-950 px-4 py-2 font-semibold"
-          submitLabel={
-            decisionQuery === "failed"
-              ? "Retry story revision"
-              : "Revise this story"
-          }
-        >
-          <input name="status" type="hidden" value="revision_requested" />
-          <label className="block font-semibold" htmlFor="feedback">
-            What should change?
-            <textarea
-              className="mt-2 block w-full rounded-xl border p-3"
-              id="feedback"
-              name="feedback"
-              required
-            />
-          </label>
-        </PendingForm>
+        ) : (
+          <>
+            <h2 className="text-2xl font-semibold">Approve or revise</h2>
+            <PendingForm
+              action={`/api/projects/${projectId}/story-decision`}
+              className="mt-4"
+              pendingLabel="Saving story approval…"
+              pendingMessage="Saving your approval for this exact story revision locally."
+              submitClassName="rounded-xl bg-stone-950 px-4 py-2 font-semibold text-white"
+              submitLabel="Approve this story"
+            >
+              <input name="status" type="hidden" value="approved" />
+            </PendingForm>
+            <PendingForm
+              action={`/api/projects/${projectId}/story-decision`}
+              className="mt-5"
+              pendingLabel="Revising this story…"
+              pendingMessage="Your current story remains saved while we create a new numbered revision from your feedback."
+              submitClassName="mt-3 rounded-xl border border-stone-950 px-4 py-2 font-semibold"
+              submitLabel={
+                decisionQuery === "failed"
+                  ? "Retry story revision"
+                  : "Revise this story"
+              }
+            >
+              <input name="status" type="hidden" value="revision_requested" />
+              <label className="block font-semibold" htmlFor="feedback">
+                What should change?
+                <textarea
+                  className="mt-2 block w-full rounded-xl border p-3"
+                  id="feedback"
+                  name="feedback"
+                  required
+                />
+              </label>
+            </PendingForm>
+          </>
+        )}
       </section>
       <Link
         className="mt-6 inline-block font-semibold text-amber-800 underline"

@@ -61,3 +61,8 @@
   explore, a no-message option, and a custom question. Generation must enact the
   selection through choices and consequences, and hidden evaluation checks for
   both omission and preachy treatment.
+
+## 2026-08-23
+
+- Corrected the Step 3-to-Step 4 handoff so an approved story leads to picture
+  planning and no longer presents duplicate approval or revision controls.
