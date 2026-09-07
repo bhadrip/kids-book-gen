@@ -10,6 +10,7 @@ Persistent project knowledge for research, product design, and implementation.
 - [Reader age configuration gap](pages/project/reader-age-configuration-gap.md)
 - [Preschool behavior story skill](pages/project/preschool-behavior-story-skill.md)
 - [Character performance planning skill](pages/project/character-performance-planning-skill.md)
+- [Visual Bible bridge skill](pages/project/visual-bible-bridge-skill.md)
 - [Printable 12-stage workflow poster](../output/pdf/picture-book-generation-workflow-poster.pdf)
 - [Printable preschool story sheets](../output/pdf/preschool-story-sheets.pdf)
 
