@@ -69,3 +69,8 @@
 - Strengthened the textual story-quality evaluation workflow with a mandatory
   adjacent-transition audit and explicit result caps for unexplained causal or
   spatial bridges, especially for ages 3–5.
+
+## 2026-09-06
+
+- Added a four-page printable preschool story collection, with one complete
+  age-four read-aloud story per US Letter sheet, and indexed the PDF.

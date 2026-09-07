@@ -9,6 +9,7 @@ Persistent project knowledge for research, product design, and implementation.
 - [Quality and likeability control](pages/project/quality-and-likeability-control.md)
 - [Reader age configuration gap](pages/project/reader-age-configuration-gap.md)
 - [Printable 12-stage workflow poster](../output/pdf/picture-book-generation-workflow-poster.pdf)
+- [Printable preschool story sheets](../output/pdf/preschool-story-sheets.pdf)
 
 ## Sources
 
