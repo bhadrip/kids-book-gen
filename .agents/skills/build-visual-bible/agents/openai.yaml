@@ -1,0 +1,4 @@
+interface:
+  display_name: "Build Visual Bible"
+  short_description: "Lock characters, locations, props, and continuity"
+  default_prompt: "Use $build-visual-bible to turn my approved story into a production-ready visual bible and reference package."

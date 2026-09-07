@@ -72,6 +72,11 @@
 
 ## 2026-09-06
 
+- Added the reusable `build-visual-bible` bridge skill to convert an approved
+  performance plan, Studio preset, and character reference into the runtime
+  VisualBible, a continuity ledger, and reference briefs.
+- Added a readiness gate for character, environment, prop, temporal, and
+  adjacent-spread continuity before illustration begins.
 - Added the reusable `build-character-performance-plan` skill to translate an
   approved story into the runtime EmotionalArc and a detailed spread-by-spread
   acting sheet with cause-before-reaction and transition checks.
