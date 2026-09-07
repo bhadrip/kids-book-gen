@@ -1,6 +1,6 @@
 # Story-quality text rubric
 
-Version: `story-quality-text-v1`
+Version: `story-quality-text-v2`
 
 ## Result vocabulary
 
@@ -34,6 +34,10 @@ multiple pieces of story-specific evidence.
 - `STRUCT-RESOLUTION-01` — The outcome follows from earlier setup and action.
 - `STRUCT-CLOSURE-01` — The central question and emotional reaction resolve
   without unnecessary explanation or false permanence.
+- `STRUCT-THROUGHLINE-01` — One dominant dramatic question organizes the story
+  through its climax; secondary behaviors deepen that pursuit or arise as its
+  consequence rather than starting a new lesson, goal, or problem after the
+  primary question resolves.
 
 ### Predicted engagement
 
@@ -101,6 +105,7 @@ Fail a gate when its named dimension is `not_evident` or `weak`:
 - `GATE-CAUSE` → `STRUCT-CAUSE-01`
 - `GATE-ESCALATION` → `STRUCT-ESCALATION-01`
 - `GATE-RESOLUTION` → `STRUCT-RESOLUTION-01`
+- `GATE-THROUGHLINE` → `STRUCT-THROUGHLINE-01`
 - `GATE-AGENCY` → `STRUCT-CHOICE-01`
 - `GATE-COMPREHENSION` → `LANG-REFERENTS-01` and `LANG-INFERENCE-01`
 
@@ -122,6 +127,14 @@ transition lacks a textual trigger. For ages 3–5, `LANG-INFERENCE-01` cannot b
 above `functional` when understanding a major transition requires inventing an
 unstated clue, choice, or spatial relation. A minor atmospheric cut that does
 not affect the protagonist's pursuit need not lower either result.
+
+For `STRUCT-THROUGHLINE-01`, state the primary dramatic question, its answer
+unit, and the job of every later unit. A late sequence is not unified merely
+because it repeats the theme or teaches another requested behavior. If removing
+that sequence leaves the original climax and resolution substantially intact,
+treat it as competing structure. A brief consequence or settling ritual may
+remain when it directly results from the decisive action and does not require a
+new goal-choice-completion arc.
 
 For every dimension record:
 

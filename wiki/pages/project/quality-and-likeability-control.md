@@ -41,6 +41,8 @@ Evaluate independently rather than collapsing everything into one score:
 - meaning and non-preachiness;
 - visual storytelling and text-image relation;
 - character, object, world, and knowledge-state continuity;
+- a single dramatic throughline, with no new goal-choice-completion sequence
+  beginning after the primary climax;
 - typography, layout, and production fitness.
 
 Every finding must cite spread-level evidence, confidence, a bounded repair,

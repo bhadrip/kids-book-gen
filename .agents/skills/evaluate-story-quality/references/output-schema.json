@@ -14,7 +14,7 @@
   ],
   "properties": {
     "schemaVersion": { "const": 1 },
-    "rubricVersion": { "const": "story-quality-text-v1" },
+    "rubricVersion": { "const": "story-quality-text-v2" },
     "readerProfileVersion": { "const": "reader-profiles-v1" },
     "evaluatorModel": { "type": ["string", "null"] },
     "artifact": {

@@ -37,28 +37,36 @@ Read both files completely before evaluating:
    supplied spread/page numbers as evidence locators.
 3. Build a concise causal trace: context, disruption, goal, attempts,
    consequences, changed attempt, decisive action, resolution, and reaction.
-4. Audit every adjacent unit transition. For each change in location, pursued
+4. State one primary dramatic question and identify the exact unit where it is
+   answered. Test every subsequent unit as consequence, reaction, or closure.
+   Flag a new goal, checklist, lesson, or problem after that point unless it was
+   established earlier and directly completes the same dramatic question.
+5. Audit every adjacent unit transition. For each change in location, pursued
    object, plan, or knowledge state, record the textual trigger in the earlier
    or current unit. Distinguish a causal bridge (choice, clue, consequence, or
    established force) from coincidence. Do not use a planned illustration to
    supply a bridge missing from the text.
-5. Evaluate every rubric dimension independently using the selected reader
+6. Run a spread-necessity counterfactual: for each unit, ask whether removing it
+   would leave the main causal and emotional path intact. Treat a removable
+   late teaching sequence as evidence of a split throughline even when its
+   individual language, participation, or educational value is strong.
+7. Evaluate every rubric dimension independently using the selected reader
    profile. Do not infer missing illustrations or creator intent.
-6. Assign a result only after citing observable story evidence and the relevant
+8. Assign a result only after citing observable story evidence and the relevant
    rubric rule ID. Use `insufficient_evidence` when the text cannot support a
    judgment.
-7. Separate observation from predicted reader effect. Never claim that a child
+9. Separate observation from predicted reader effect. Never claim that a child
    will like, understand, learn from, or change behavior because of the story.
-8. Apply hard gates exactly as written. Do not average a gate failure away.
-9. Provide bounded revision advice only for `weak` or `not_evident` results;
+10. Apply hard gates exactly as written. Do not average a gate failure away.
+11. Provide bounded revision advice only for `weak` or `not_evident` results;
    state what to preserve.
-10. Write the report using the exact schema in
+12. Write the report using the exact schema in
     `references/output-schema.json`. Validate it with
     `scripts/validate_output.py REPORT_JSON`.
 
 ## Consistency rules
 
-- Use rubric version `story-quality-text-v1` and the result vocabulary exactly.
+- Use rubric version `story-quality-text-v2` and the result vocabulary exactly.
 - Do not use decimal scores. Numeric exports map categories to 0–4 only.
 - Do not use author reputation, popularity, awards, sales, or prior reviews.
 - Do not compare the book with named titles unless the user explicitly asks.
@@ -69,6 +77,13 @@ Read both files completely before evaluating:
 - Treat a new clue that merely appears at the next location as coincidence
   unless the text explains how the protagonist notices it or why they move
   there. Name the exact source and destination units in revision advice.
+- Do not accept a late goal merely because it is valuable, participatory, or
+  thematically related. The manuscript must establish how it follows from and
+  completes the primary dramatic question.
+- `STRUCT-THROUGHLINE-01` cannot exceed `functional` when the primary dramatic
+  question resolves and a new goal then requires its own decision-and-action
+  sequence. Rate it `weak` when that sequence materially delays or displaces
+  consequence and emotional resolution.
 - Keep the same age, reading mode, rubric version, and evaluator model across a
   benchmark corpus.
 - Randomize book order and hide popularity metadata for comparative studies.
