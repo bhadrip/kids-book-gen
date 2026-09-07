@@ -72,6 +72,11 @@
 
 ## 2026-09-06
 
+- Added the reusable `illustrate-preschool-story` skill for illustration briefs,
+  continuity locks, tweakable art direction, image generation, and validation.
+- Constrained automatic illustration routing to the Studio's Bold and funny,
+  Detailed discovery, or Warm and handmade presets, with Warm and handmade as
+  fallback and approved preset IDs taking precedence.
 - Added the reusable `build-visual-bible` bridge skill to convert an approved
   performance plan, Studio preset, and character reference into the runtime
   VisualBible, a continuity ledger, and reference briefs.

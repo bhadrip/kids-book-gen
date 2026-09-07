@@ -8,6 +8,7 @@ Persistent project knowledge for research, product design, and implementation.
 - [Book generation stages](pages/project/book-generation-stages.md)
 - [Quality and likeability control](pages/project/quality-and-likeability-control.md)
 - [Reader age configuration gap](pages/project/reader-age-configuration-gap.md)
+- [Preschool story illustration skill](pages/project/preschool-story-illustration-skill.md)
 - [Preschool behavior story skill](pages/project/preschool-behavior-story-skill.md)
 - [Character performance planning skill](pages/project/character-performance-planning-skill.md)
 - [Visual Bible bridge skill](pages/project/visual-bible-bridge-skill.md)
