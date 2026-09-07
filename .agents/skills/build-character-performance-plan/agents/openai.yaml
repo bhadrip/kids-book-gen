@@ -1,0 +1,4 @@
+interface:
+  display_name: "Build Character Performance Plan"
+  short_description: "Turn story emotions into drawable character acting"
+  default_prompt: "Use $build-character-performance-plan to turn my approved story into an EmotionalArc and spread-by-spread character acting plan."

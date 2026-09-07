@@ -12,3 +12,4 @@ become a new lesson after the climax.
 ## Related artifact
 
 - [`preschool-behavior-story` skill](../../../.agents/skills/preschool-behavior-story/SKILL.md)
+- [Character performance planning skill](character-performance-planning-skill.md)
