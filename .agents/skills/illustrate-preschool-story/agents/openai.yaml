@@ -1,0 +1,4 @@
+interface:
+  display_name: "Illustrate Preschool Story"
+  short_description: "Plan and generate consistent preschool story illustrations"
+  default_prompt: "Create an illustration plan and generate story artwork from an approved preschool manuscript while preserving character, prop, emotional, and environmental continuity."
