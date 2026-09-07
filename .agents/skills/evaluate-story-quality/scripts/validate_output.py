@@ -27,7 +27,7 @@ def main() -> None:
     try:
         require(isinstance(report, dict), "root must be an object")
         require(report.get("schemaVersion") == 1, "schemaVersion must be 1")
-        require(report.get("rubricVersion") == "story-quality-text-v1", "invalid rubricVersion")
+        require(report.get("rubricVersion") == "story-quality-text-v2", "invalid rubricVersion")
         require(report.get("readerProfileVersion") == "reader-profiles-v1", "invalid readerProfileVersion")
         artifact = report.get("artifact")
         require(isinstance(artifact, dict), "artifact must be an object")
@@ -42,12 +42,14 @@ def main() -> None:
         dimensions = report.get("dimensions")
         require(isinstance(dimensions, list) and dimensions, "dimensions must be non-empty")
         seen = set()
+        results_by_rule = {}
         for index, item in enumerate(dimensions, 1):
             require(isinstance(item, dict), f"dimension {index} must be an object")
             rule = item.get("ruleId")
             require(isinstance(rule, str) and rule and rule not in seen, f"dimension {index} has invalid or duplicate ruleId")
             seen.add(rule)
             require(item.get("result") in RESULTS, f"{rule} has invalid result")
+            results_by_rule[rule] = item.get("result")
             require(item.get("confidence") in CONFIDENCE, f"{rule} has invalid confidence")
             evidence = item.get("evidence")
             require(isinstance(evidence, list) and evidence, f"{rule} requires evidence")
@@ -57,9 +59,19 @@ def main() -> None:
                 require(isinstance(evidence_item.get("observation"), str) and evidence_item["observation"].strip(), f"{rule} evidence requires an observation")
             require(isinstance(item.get("observation"), str) and item["observation"].strip(), f"{rule} requires an observation")
             require(isinstance(item.get("preserve"), list), f"{rule}.preserve must be an array")
+        require(
+            "STRUCT-THROUGHLINE-01" in seen,
+            "dimensions must include STRUCT-THROUGHLINE-01",
+        )
         gates = report.get("hardGates")
         require(isinstance(gates, dict) and gates.get("status") in {"pass", "fail", "human_review"}, "invalid hardGates")
         require(isinstance(gates.get("failures"), list), "hardGates.failures must be an array")
+        if results_by_rule["STRUCT-THROUGHLINE-01"] in {"not_evident", "weak"}:
+            require(
+                gates["status"] == "fail"
+                and "GATE-THROUGHLINE" in gates["failures"],
+                "weak or not_evident throughline must fail GATE-THROUGHLINE",
+            )
         summary = report.get("summary")
         require(isinstance(summary, dict), "summary must be an object")
         require(summary.get("recommendedAction") in {"ready", "light_revision", "substantive_revision", "human_review"}, "invalid summary.recommendedAction")

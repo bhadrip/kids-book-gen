@@ -72,6 +72,9 @@
 
 ## 2026-09-06
 
+- Versioned the story-quality rubric to `story-quality-text-v2` and added a
+  hard-gated single-throughline check for late goal switches, removable teaching
+  sequences, and climax displacement.
 - Added the reusable `preschool-behavior-story` authoring skill with staged
   behavior-to-manuscript development, child-agency safeguards, a single
   dramatic-throughline check, and production handoff metadata.
