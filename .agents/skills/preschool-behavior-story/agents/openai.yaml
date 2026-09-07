@@ -1,0 +1,4 @@
+interface:
+  display_name: "Preschool Behavior Story"
+  short_description: "Create engaging behavior-centered stories for ages 3–5"
+  default_prompt: "Create a preschool picture-book story that teaches the requested behavior through emotion, agency, and natural consequences."
