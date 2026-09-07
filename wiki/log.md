@@ -72,6 +72,9 @@
 
 ## 2026-09-06
 
+- Added the reusable `build-character-performance-plan` skill to translate an
+  approved story into the runtime EmotionalArc and a detailed spread-by-spread
+  acting sheet with cause-before-reaction and transition checks.
 - Added the reusable `preschool-behavior-story` authoring skill with staged
   behavior-to-manuscript development, child-agency safeguards, a single
   dramatic-throughline check, and production handoff metadata.
