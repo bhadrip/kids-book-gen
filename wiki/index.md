@@ -8,6 +8,7 @@ Persistent project knowledge for research, product design, and implementation.
 - [Book generation stages](pages/project/book-generation-stages.md)
 - [Quality and likeability control](pages/project/quality-and-likeability-control.md)
 - [Reader age configuration gap](pages/project/reader-age-configuration-gap.md)
+- [Preschool behavior story skill](pages/project/preschool-behavior-story-skill.md)
 - [Printable 12-stage workflow poster](../output/pdf/picture-book-generation-workflow-poster.pdf)
 - [Printable preschool story sheets](../output/pdf/preschool-story-sheets.pdf)
 

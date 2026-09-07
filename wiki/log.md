@@ -72,5 +72,8 @@
 
 ## 2026-09-06
 
+- Added the reusable `preschool-behavior-story` authoring skill with staged
+  behavior-to-manuscript development, child-agency safeguards, a single
+  dramatic-throughline check, and production handoff metadata.
 - Added a four-page printable preschool story collection, with one complete
   age-four read-aloud story per US Letter sheet, and indexed the PDF.
