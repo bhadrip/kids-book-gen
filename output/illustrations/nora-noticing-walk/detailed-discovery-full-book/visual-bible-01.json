@@ -1,0 +1,48 @@
+{
+  "schemaVersion": 1,
+  "projectId": "2d5fb544-4f95-4d3c-a284-33fc959f1162",
+  "sourceStoryRevision": 3,
+  "presetId": "detailed_discovery_v1",
+  "characterReference": "nora-character-reference-v1.png",
+  "createdAt": "2026-09-10T15:00:00.000Z",
+  "mainCharacter": {
+    "name": "Nora",
+    "description": "An energetic four-year-old South Asian girl with warm medium-brown skin, large dark-brown eyes, a round face, and black wavy hair in two low puff ponytails; she wears a teal rain jacket over a clay-red shirt, ochre shorts, navy rain boots, and a small cream cross-body notebook pouch.",
+    "identityInvariants": [
+      "four-year-old child proportions with a round face",
+      "warm medium-brown skin and large dark-brown eyes",
+      "black wavy hair in two low puff ponytails with teal ties",
+      "teal rain jacket over clay-red shirt",
+      "ochre shorts and navy rain boots",
+      "cream cross-body notebook pouch; no glasses or hat"
+    ]
+  },
+  "signatureProps": [
+    "Nora's palm-sized cream notebook with exactly four large outlined boxes on each active page, held by Nora unless explicitly shared for viewing",
+    "short moss-green pencil attached to notebook by a cream cord",
+    "Jo's tiny lake-blue backpack with one round clay-red patch"
+  ],
+  "locations": [
+    "home entry at left opens to a garden path traveling consistently left-to-right past a blue watering can, three flower beds, and a low wooden sparrow fence",
+    "the same garden path curves downhill into the creek path; the blue watering can remains behind and a forked birch marks the curve",
+    "creek path runs left-to-right with wet stone at near edge, fallen log just beyond it, ant crack in path farther right, creek always on upper/far side",
+    "home window faces the garden; low sill places both children at butterfly-view height and the garden path runs beyond it"
+  ],
+  "palette": [
+    "#677a52",
+    "#b66a50",
+    "#4e8098"
+  ],
+  "textSafeArea": "upper_left",
+  "avoid": [
+    "photorealism",
+    "random clutter or hidden focal point",
+    "character age or wardrobe drift",
+    "extra notebook boxes or premature marks",
+    "butterfly before spread 12",
+    "touching or collecting wildlife",
+    "Mama directing the solution",
+    "Jo portrayed as foolish",
+    "accidental text, letters, logos, or watermark"
+  ]
+}

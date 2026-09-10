@@ -1,0 +1,962 @@
+{
+  "schemaVersion": 1,
+  "rubricVersion": "story-quality-text-v2",
+  "readerProfileVersion": "reader-profiles-v1",
+  "evaluatorModel": "GPT-5",
+  "artifact": {
+    "path": "/Users/padmaja/Documents/kids-book-gen/output/stories/preschool-category-collection/nora-noticing-walk/story-03.json",
+    "sha256": "9aa6b56b98772fe0c37e469bab2dd156f6bb94a1f899f032115162bed0b59785",
+    "title": "Nora's Noticing Walk",
+    "revision": 3,
+    "unitCount": 12
+  },
+  "reader": {
+    "age": 4,
+    "ageBand": "ages_3_5",
+    "readingMode": "parent_read_aloud"
+  },
+  "dimensions": [
+    {
+      "ruleId": "STRUCT-PROMISE-01",
+      "result": "strong",
+      "confidence": "high",
+      "evidence": [
+        {
+          "unit": 1,
+          "observation": "Spread 1: Nora drew four empty boxes in her notebook. \"One is for a blue butterfly,\" she said. \"The other three can surprise me.\" Mama and little cousin Jo came too."
+        },
+        {
+          "unit": 2,
+          "observation": "Spread 2: Along the garden path, Nora looked high and low. Red flower, yellow flower, white flower—but no blue butterfly. Can you point to something blue?"
+        },
+        {
+          "unit": 3,
+          "observation": "Spread 3: \"BIRD!\" shouted Jo. A sparrow fluttered from the fence. Nora frowned. \"Now we'll never see anything.\" Jo's shoulders drooped."
+        }
+      ],
+      "observation": "Nora's four-box walk promise meets pressure when the expected butterfly is absent and her reaction hurts Jo.",
+      "predictedReaderEffect": "Prediction: this feature is likely to support comprehension, participation, or emotional engagement for many age-four listeners; individual response may vary.",
+      "revision": null,
+      "preserve": [
+        "Nora's four-box walk promise meets pressure when the expected butterfly is absent and her reaction hurts Jo."
+      ]
+    },
+    {
+      "ruleId": "STRUCT-GOAL-01",
+      "result": "strong",
+      "confidence": "high",
+      "evidence": [
+        {
+          "unit": 1,
+          "observation": "Spread 1: Nora drew four empty boxes in her notebook. \"One is for a blue butterfly,\" she said. \"The other three can surprise me.\" Mama and little cousin Jo came too."
+        },
+        {
+          "unit": 2,
+          "observation": "Spread 2: Along the garden path, Nora looked high and low. Red flower, yellow flower, white flower—but no blue butterfly. Can you point to something blue?"
+        }
+      ],
+      "observation": "Filling four boxes, with one reserved for a blue butterfly, is immediate, visible, and emotionally specific.",
+      "predictedReaderEffect": "Prediction: this feature is likely to support comprehension, participation, or emotional engagement for many age-four listeners; individual response may vary.",
+      "revision": null,
+      "preserve": [
+        "Filling four boxes, with one reserved for a blue butterfly, is immediate, visible, and emotionally specific."
+      ]
+    },
+    {
+      "ruleId": "STRUCT-CAUSE-01",
+      "result": "strong",
+      "confidence": "high",
+      "evidence": [
+        {
+          "unit": 3,
+          "observation": "Spread 3: \"BIRD!\" shouted Jo. A sparrow fluttered from the fence. Nora frowned. \"Now we'll never see anything.\" Jo's shoulders drooped."
+        },
+        {
+          "unit": 4,
+          "observation": "Spread 4: Mama said, \"You hoped for a butterfly. Jo hoped to help. That's two big hopes.\" Nora's tight hands opened a little."
+        },
+        {
+          "unit": 5,
+          "observation": "Spread 5: The garden path curved toward the creek. Mama whispered, \"What can we notice without chasing or touching?\" Nora made up a rule: \"Eyes look, ears hear, gentle hands stay near.\""
+        },
+        {
+          "unit": 7,
+          "observation": "Spread 7: Scritch-scratch came from a fallen log beside the stone. A pill bug curled into a tiny gray ball when the log trembled. Nora and Jo stepped back. Soon it uncurled. Box two got a dotty circle."
+        },
+        {
+          "unit": 8,
+          "observation": "Spread 8: \"My turn to notice?\" Jo whispered. Nora remembered his droopy shoulders. She scooted over. \"Your turn.\" Together they said, \"Eyes look, ears hear, gentle hands stay near.\" Jo pointed—not too close—to three ants carrying crumbs."
+        },
+        {
+          "unit": 10,
+          "observation": "Spread 10: One box was still empty. \"What else can we notice?\" Nora asked Jo. The sky turned from bright to dim. A cool puff brushed their cheeks. Leaves flipped their pale undersides."
+        },
+        {
+          "unit": 11,
+          "observation": "Spread 11: \"Rain is coming!\" Jo said. Plink! One drop landed inside box four. Plink-plink! Nora laughed. \"The rain noticed my notebook!\" They hurried home together—no butterfly, but four true surprises."
+        }
+      ],
+      "observation": "Jo's shout prompts conflict; Mama's framing helps Nora invent a new method; nearby sound, Jo's request, and Nora's final question explicitly bridge later discoveries.",
+      "predictedReaderEffect": "Prediction: this feature is likely to support comprehension, participation, or emotional engagement for many age-four listeners; individual response may vary.",
+      "revision": null,
+      "preserve": [
+        "Jo's shout prompts conflict; Mama's framing helps Nora invent a new method; nearby sound, Jo's request, and Nora's final question explicitly bridge later discoveries."
+      ]
+    },
+    {
+      "ruleId": "STRUCT-ESCALATION-01",
+      "result": "strong",
+      "confidence": "high",
+      "evidence": [
+        {
+          "unit": 2,
+          "observation": "Spread 2: Along the garden path, Nora looked high and low. Red flower, yellow flower, white flower—but no blue butterfly. Can you point to something blue?"
+        },
+        {
+          "unit": 3,
+          "observation": "Spread 3: \"BIRD!\" shouted Jo. A sparrow fluttered from the fence. Nora frowned. \"Now we'll never see anything.\" Jo's shoulders drooped."
+        },
+        {
+          "unit": 8,
+          "observation": "Spread 8: \"My turn to notice?\" Jo whispered. Nora remembered his droopy shoulders. She scooted over. \"Your turn.\" Together they said, \"Eyes look, ears hear, gentle hands stay near.\" Jo pointed—not too close—to three ants carrying crumbs."
+        },
+        {
+          "unit": 10,
+          "observation": "Spread 10: One box was still empty. \"What else can we notice?\" Nora asked Jo. The sky turned from bright to dim. A cool puff brushed their cheeks. Leaves flipped their pale undersides."
+        }
+      ],
+      "observation": "An absent butterfly becomes relationship strain, then a repaired partnership faces one remaining box and approaching rain.",
+      "predictedReaderEffect": "Prediction: this feature is likely to support comprehension, participation, or emotional engagement for many age-four listeners; individual response may vary.",
+      "revision": null,
+      "preserve": [
+        "An absent butterfly becomes relationship strain, then a repaired partnership faces one remaining box and approaching rain."
+      ]
+    },
+    {
+      "ruleId": "STRUCT-CHOICE-01",
+      "result": "strong",
+      "confidence": "high",
+      "evidence": [
+        {
+          "unit": 5,
+          "observation": "Spread 5: The garden path curved toward the creek. Mama whispered, \"What can we notice without chasing or touching?\" Nora made up a rule: \"Eyes look, ears hear, gentle hands stay near.\""
+        },
+        {
+          "unit": 8,
+          "observation": "Spread 8: \"My turn to notice?\" Jo whispered. Nora remembered his droopy shoulders. She scooted over. \"Your turn.\" Together they said, \"Eyes look, ears hear, gentle hands stay near.\" Jo pointed—not too close—to three ants carrying crumbs."
+        },
+        {
+          "unit": 10,
+          "observation": "Spread 10: One box was still empty. \"What else can we notice?\" Nora asked Jo. The sky turned from bright to dim. A cool puff brushed their cheeks. Leaves flipped their pale undersides."
+        }
+      ],
+      "observation": "Nora creates the safe rule, chooses to include Jo, and asks him to join the final search.",
+      "predictedReaderEffect": "Prediction: this feature is likely to support comprehension, participation, or emotional engagement for many age-four listeners; individual response may vary.",
+      "revision": null,
+      "preserve": [
+        "Nora creates the safe rule, chooses to include Jo, and asks him to join the final search."
+      ]
+    },
+    {
+      "ruleId": "STRUCT-RESOLUTION-01",
+      "result": "strong",
+      "confidence": "high",
+      "evidence": [
+        {
+          "unit": 8,
+          "observation": "Spread 8: \"My turn to notice?\" Jo whispered. Nora remembered his droopy shoulders. She scooted over. \"Your turn.\" Together they said, \"Eyes look, ears hear, gentle hands stay near.\" Jo pointed—not too close—to three ants carrying crumbs."
+        },
+        {
+          "unit": 9,
+          "observation": "Spread 9: The ants followed one another toward a crack in the path. Nora drew three dashes in box three. \"They found a way home,\" Jo said. Nora smiled at her noticing partner."
+        },
+        {
+          "unit": 10,
+          "observation": "Spread 10: One box was still empty. \"What else can we notice?\" Nora asked Jo. The sky turned from bright to dim. A cool puff brushed their cheeks. Leaves flipped their pale undersides."
+        },
+        {
+          "unit": 11,
+          "observation": "Spread 11: \"Rain is coming!\" Jo said. Plink! One drop landed inside box four. Plink-plink! Nora laughed. \"The rain noticed my notebook!\" They hurried home together—no butterfly, but four true surprises."
+        }
+      ],
+      "observation": "Nora's choice to notice with Jo produces the third find and lets Jo read the weather signs that complete the notebook.",
+      "predictedReaderEffect": "Prediction: this feature is likely to support comprehension, participation, or emotional engagement for many age-four listeners; individual response may vary.",
+      "revision": null,
+      "preserve": [
+        "Nora's choice to notice with Jo produces the third find and lets Jo read the weather signs that complete the notebook."
+      ]
+    },
+    {
+      "ruleId": "STRUCT-CLOSURE-01",
+      "result": "distinctive",
+      "confidence": "high",
+      "evidence": [
+        {
+          "unit": 11,
+          "observation": "Spread 11: \"Rain is coming!\" Jo said. Plink! One drop landed inside box four. Plink-plink! Nora laughed. \"The rain noticed my notebook!\" They hurried home together—no butterfly, but four true surprises."
+        },
+        {
+          "unit": 12,
+          "observation": "Spread 12: By the window, Nora showed Jo every mark: one swirl, one circle, three dashes, and one raindrop. Then a blue butterfly crossed the garden—and kept flying. Nora smiled. \"I noticed.\""
+        }
+      ],
+      "observation": "The boxes fill before the butterfly appears; Nora's quiet 'I noticed' shows contentment without capture or a permanent claim.",
+      "predictedReaderEffect": "Prediction: this feature is likely to support comprehension, participation, or emotional engagement for many age-four listeners; individual response may vary.",
+      "revision": null,
+      "preserve": [
+        "The boxes fill before the butterfly appears; Nora's quiet 'I noticed' shows contentment without capture or a permanent claim."
+      ]
+    },
+    {
+      "ruleId": "STRUCT-THROUGHLINE-01",
+      "result": "strong",
+      "confidence": "high",
+      "evidence": [
+        {
+          "unit": 1,
+          "observation": "Spread 1: Nora drew four empty boxes in her notebook. \"One is for a blue butterfly,\" she said. \"The other three can surprise me.\" Mama and little cousin Jo came too."
+        },
+        {
+          "unit": 8,
+          "observation": "Spread 8: \"My turn to notice?\" Jo whispered. Nora remembered his droopy shoulders. She scooted over. \"Your turn.\" Together they said, \"Eyes look, ears hear, gentle hands stay near.\" Jo pointed—not too close—to three ants carrying crumbs."
+        },
+        {
+          "unit": 11,
+          "observation": "Spread 11: \"Rain is coming!\" Jo said. Plink! One drop landed inside box four. Plink-plink! Nora laughed. \"The rain noticed my notebook!\" They hurried home together—no butterfly, but four true surprises."
+        },
+        {
+          "unit": 12,
+          "observation": "Spread 12: By the window, Nora showed Jo every mark: one swirl, one circle, three dashes, and one raindrop. Then a blue butterfly crossed the garden—and kept flying. Nora smiled. \"I noticed.\""
+        }
+      ],
+      "observation": "One question—whether Nora can fill the boxes and restore the walk—runs through the spread-11 climax; spread 12 is reaction and closure only.",
+      "predictedReaderEffect": "Prediction: this feature is likely to support comprehension, participation, or emotional engagement for many age-four listeners; individual response may vary.",
+      "revision": null,
+      "preserve": [
+        "One question—whether Nora can fill the boxes and restore the walk—runs through the spread-11 climax; spread 12 is reaction and closure only."
+      ]
+    },
+    {
+      "ruleId": "ENGAGE-HOOK-01",
+      "result": "strong",
+      "confidence": "high",
+      "evidence": [
+        {
+          "unit": 1,
+          "observation": "Spread 1: Nora drew four empty boxes in her notebook. \"One is for a blue butterfly,\" she said. \"The other three can surprise me.\" Mama and little cousin Jo came too."
+        },
+        {
+          "unit": 2,
+          "observation": "Spread 2: Along the garden path, Nora looked high and low. Red flower, yellow flower, white flower—but no blue butterfly. Can you point to something blue?"
+        }
+      ],
+      "observation": "The four empty boxes create a countable promise, while the special butterfly box introduces uncertainty.",
+      "predictedReaderEffect": "Prediction: this feature is likely to support comprehension, participation, or emotional engagement for many age-four listeners; individual response may vary.",
+      "revision": null,
+      "preserve": [
+        "The four empty boxes create a countable promise, while the special butterfly box introduces uncertainty."
+      ]
+    },
+    {
+      "ruleId": "ENGAGE-CONNECTION-01",
+      "result": "strong",
+      "confidence": "high",
+      "evidence": [
+        {
+          "unit": 3,
+          "observation": "Spread 3: \"BIRD!\" shouted Jo. A sparrow fluttered from the fence. Nora frowned. \"Now we'll never see anything.\" Jo's shoulders drooped."
+        },
+        {
+          "unit": 4,
+          "observation": "Spread 4: Mama said, \"You hoped for a butterfly. Jo hoped to help. That's two big hopes.\" Nora's tight hands opened a little."
+        },
+        {
+          "unit": 8,
+          "observation": "Spread 8: \"My turn to notice?\" Jo whispered. Nora remembered his droopy shoulders. She scooted over. \"Your turn.\" Together they said, \"Eyes look, ears hear, gentle hands stay near.\" Jo pointed—not too close—to three ants carrying crumbs."
+        }
+      ],
+      "observation": "Nora's recognizable disappointment, physical softening, and voluntary repair combine vulnerability with growing competence.",
+      "predictedReaderEffect": "Prediction: this feature is likely to support comprehension, participation, or emotional engagement for many age-four listeners; individual response may vary.",
+      "revision": null,
+      "preserve": [
+        "Nora's recognizable disappointment, physical softening, and voluntary repair combine vulnerability with growing competence."
+      ]
+    },
+    {
+      "ruleId": "ENGAGE-MOMENTUM-01",
+      "result": "strong",
+      "confidence": "high",
+      "evidence": [
+        {
+          "unit": 2,
+          "observation": "Spread 2: Along the garden path, Nora looked high and low. Red flower, yellow flower, white flower—but no blue butterfly. Can you point to something blue?"
+        },
+        {
+          "unit": 3,
+          "observation": "Spread 3: \"BIRD!\" shouted Jo. A sparrow fluttered from the fence. Nora frowned. \"Now we'll never see anything.\" Jo's shoulders drooped."
+        },
+        {
+          "unit": 5,
+          "observation": "Spread 5: The garden path curved toward the creek. Mama whispered, \"What can we notice without chasing or touching?\" Nora made up a rule: \"Eyes look, ears hear, gentle hands stay near.\""
+        },
+        {
+          "unit": 6,
+          "observation": "Spread 6: A silver snail slid across a wet stone. Its soft body rode beneath a hard shell. Slowly, slowly—a shiny trail appeared. Nora marked box one with a swirl."
+        },
+        {
+          "unit": 7,
+          "observation": "Spread 7: Scritch-scratch came from a fallen log beside the stone. A pill bug curled into a tiny gray ball when the log trembled. Nora and Jo stepped back. Soon it uncurled. Box two got a dotty circle."
+        },
+        {
+          "unit": 8,
+          "observation": "Spread 8: \"My turn to notice?\" Jo whispered. Nora remembered his droopy shoulders. She scooted over. \"Your turn.\" Together they said, \"Eyes look, ears hear, gentle hands stay near.\" Jo pointed—not too close—to three ants carrying crumbs."
+        },
+        {
+          "unit": 10,
+          "observation": "Spread 10: One box was still empty. \"What else can we notice?\" Nora asked Jo. The sky turned from bright to dim. A cool puff brushed their cheeks. Leaves flipped their pale undersides."
+        }
+      ],
+      "observation": "Each turn changes the search, relationship, method, discovery count, or remaining pressure.",
+      "predictedReaderEffect": "Prediction: this feature is likely to support comprehension, participation, or emotional engagement for many age-four listeners; individual response may vary.",
+      "revision": null,
+      "preserve": [
+        "Each turn changes the search, relationship, method, discovery count, or remaining pressure."
+      ]
+    },
+    {
+      "ruleId": "ENGAGE-RHYTHM-01",
+      "result": "strong",
+      "confidence": "high",
+      "evidence": [
+        {
+          "unit": 3,
+          "observation": "Spread 3: \"BIRD!\" shouted Jo. A sparrow fluttered from the fence. Nora frowned. \"Now we'll never see anything.\" Jo's shoulders drooped."
+        },
+        {
+          "unit": 4,
+          "observation": "Spread 4: Mama said, \"You hoped for a butterfly. Jo hoped to help. That's two big hopes.\" Nora's tight hands opened a little."
+        },
+        {
+          "unit": 6,
+          "observation": "Spread 6: A silver snail slid across a wet stone. Its soft body rode beneath a hard shell. Slowly, slowly—a shiny trail appeared. Nora marked box one with a swirl."
+        },
+        {
+          "unit": 8,
+          "observation": "Spread 8: \"My turn to notice?\" Jo whispered. Nora remembered his droopy shoulders. She scooted over. \"Your turn.\" Together they said, \"Eyes look, ears hear, gentle hands stay near.\" Jo pointed—not too close—to three ants carrying crumbs."
+        },
+        {
+          "unit": 11,
+          "observation": "Spread 11: \"Rain is coming!\" Jo said. Plink! One drop landed inside box four. Plink-plink! Nora laughed. \"The rain noticed my notebook!\" They hurried home together—no butterfly, but four true surprises."
+        },
+        {
+          "unit": 12,
+          "observation": "Spread 12: By the window, Nora showed Jo every mark: one swirl, one circle, three dashes, and one raindrop. Then a blue butterfly crossed the garden—and kept flying. Nora smiled. \"I noticed.\""
+        }
+      ],
+      "observation": "A sharp rupture gives way to calm, close observation, warm repair, rainy delight, and quiet wonder.",
+      "predictedReaderEffect": "Prediction: this feature is likely to support comprehension, participation, or emotional engagement for many age-four listeners; individual response may vary.",
+      "revision": null,
+      "preserve": [
+        "A sharp rupture gives way to calm, close observation, warm repair, rainy delight, and quiet wonder."
+      ]
+    },
+    {
+      "ruleId": "ENGAGE-PATTERN-01",
+      "result": "distinctive",
+      "confidence": "high",
+      "evidence": [
+        {
+          "unit": 1,
+          "observation": "Spread 1: Nora drew four empty boxes in her notebook. \"One is for a blue butterfly,\" she said. \"The other three can surprise me.\" Mama and little cousin Jo came too."
+        },
+        {
+          "unit": 5,
+          "observation": "Spread 5: The garden path curved toward the creek. Mama whispered, \"What can we notice without chasing or touching?\" Nora made up a rule: \"Eyes look, ears hear, gentle hands stay near.\""
+        },
+        {
+          "unit": 8,
+          "observation": "Spread 8: \"My turn to notice?\" Jo whispered. Nora remembered his droopy shoulders. She scooted over. \"Your turn.\" Together they said, \"Eyes look, ears hear, gentle hands stay near.\" Jo pointed—not too close—to three ants carrying crumbs."
+        },
+        {
+          "unit": 12,
+          "observation": "Spread 12: By the window, Nora showed Jo every mark: one swirl, one circle, three dashes, and one raindrop. Then a blue butterfly crossed the garden—and kept flying. Nora smiled. \"I noticed.\""
+        }
+      ],
+      "observation": "The refrain moves from Nora's invention to a shared practice, while four different marks visibly accumulate.",
+      "predictedReaderEffect": "Prediction: this feature is likely to support comprehension, participation, or emotional engagement for many age-four listeners; individual response may vary.",
+      "revision": null,
+      "preserve": [
+        "The refrain moves from Nora's invention to a shared practice, while four different marks visibly accumulate."
+      ]
+    },
+    {
+      "ruleId": "ENGAGE-PARTICIPATION-01",
+      "result": "strong",
+      "confidence": "high",
+      "evidence": [
+        {
+          "unit": 2,
+          "observation": "Spread 2: Along the garden path, Nora looked high and low. Red flower, yellow flower, white flower—but no blue butterfly. Can you point to something blue?"
+        },
+        {
+          "unit": 8,
+          "observation": "Spread 8: \"My turn to notice?\" Jo whispered. Nora remembered his droopy shoulders. She scooted over. \"Your turn.\" Together they said, \"Eyes look, ears hear, gentle hands stay near.\" Jo pointed—not too close—to three ants carrying crumbs."
+        },
+        {
+          "unit": 10,
+          "observation": "Spread 10: One box was still empty. \"What else can we notice?\" Nora asked Jo. The sky turned from bright to dim. A cool puff brushed their cheeks. Leaves flipped their pale undersides."
+        },
+        {
+          "unit": 12,
+          "observation": "Spread 12: By the window, Nora showed Jo every mark: one swirl, one circle, three dashes, and one raindrop. Then a blue butterfly crossed the garden—and kept flying. Nora smiled. \"I noticed.\""
+        }
+      ],
+      "observation": "Pointing, joining the refrain, reading weather clues, and the final noticing invitation remain embedded in the story.",
+      "predictedReaderEffect": "Prediction: this feature is likely to support comprehension, participation, or emotional engagement for many age-four listeners; individual response may vary.",
+      "revision": null,
+      "preserve": [
+        "Pointing, joining the refrain, reading weather clues, and the final noticing invitation remain embedded in the story."
+      ]
+    },
+    {
+      "ruleId": "ENGAGE-PAYOFF-01",
+      "result": "distinctive",
+      "confidence": "high",
+      "evidence": [
+        {
+          "unit": 11,
+          "observation": "Spread 11: \"Rain is coming!\" Jo said. Plink! One drop landed inside box four. Plink-plink! Nora laughed. \"The rain noticed my notebook!\" They hurried home together—no butterfly, but four true surprises."
+        },
+        {
+          "unit": 12,
+          "observation": "Spread 12: By the window, Nora showed Jo every mark: one swirl, one circle, three dashes, and one raindrop. Then a blue butterfly crossed the garden—and kept flying. Nora smiled. \"I noticed.\""
+        }
+      ],
+      "observation": "Rain unexpectedly completes the notebook, and the later butterfly pays off the original hope by being noticed rather than possessed.",
+      "predictedReaderEffect": "Prediction: this feature is likely to support comprehension, participation, or emotional engagement for many age-four listeners; individual response may vary.",
+      "revision": null,
+      "preserve": [
+        "Rain unexpectedly completes the notebook, and the later butterfly pays off the original hope by being noticed rather than possessed."
+      ]
+    },
+    {
+      "ruleId": "LANG-MODE-01",
+      "result": "strong",
+      "confidence": "high",
+      "evidence": [
+        {
+          "unit": 2,
+          "observation": "Spread 2: Along the garden path, Nora looked high and low. Red flower, yellow flower, white flower—but no blue butterfly. Can you point to something blue?"
+        },
+        {
+          "unit": 5,
+          "observation": "Spread 5: The garden path curved toward the creek. Mama whispered, \"What can we notice without chasing or touching?\" Nora made up a rule: \"Eyes look, ears hear, gentle hands stay near.\""
+        },
+        {
+          "unit": 8,
+          "observation": "Spread 8: \"My turn to notice?\" Jo whispered. Nora remembered his droopy shoulders. She scooted over. \"Your turn.\" Together they said, \"Eyes look, ears hear, gentle hands stay near.\" Jo pointed—not too close—to three ants carrying crumbs."
+        },
+        {
+          "unit": 11,
+          "observation": "Spread 11: \"Rain is coming!\" Jo said. Plink! One drop landed inside box four. Plink-plink! Nora laughed. \"The rain noticed my notebook!\" They hurried home together—no butterfly, but four true surprises."
+        }
+      ],
+      "observation": "Short dialogue, sensory actions, and joinable phrases suit an age-four parent read-aloud.",
+      "predictedReaderEffect": "Prediction: this feature is likely to support comprehension, participation, or emotional engagement for many age-four listeners; individual response may vary.",
+      "revision": null,
+      "preserve": [
+        "Short dialogue, sensory actions, and joinable phrases suit an age-four parent read-aloud."
+      ]
+    },
+    {
+      "ruleId": "LANG-ORAL-01",
+      "result": "strong",
+      "confidence": "high",
+      "evidence": [
+        {
+          "unit": 2,
+          "observation": "Spread 2: Along the garden path, Nora looked high and low. Red flower, yellow flower, white flower—but no blue butterfly. Can you point to something blue?"
+        },
+        {
+          "unit": 5,
+          "observation": "Spread 5: The garden path curved toward the creek. Mama whispered, \"What can we notice without chasing or touching?\" Nora made up a rule: \"Eyes look, ears hear, gentle hands stay near.\""
+        },
+        {
+          "unit": 7,
+          "observation": "Spread 7: Scritch-scratch came from a fallen log beside the stone. A pill bug curled into a tiny gray ball when the log trembled. Nora and Jo stepped back. Soon it uncurled. Box two got a dotty circle."
+        },
+        {
+          "unit": 11,
+          "observation": "Spread 11: \"Rain is coming!\" Jo said. Plink! One drop landed inside box four. Plink-plink! Nora laughed. \"The rain noticed my notebook!\" They hurried home together—no butterfly, but four true surprises."
+        }
+      ],
+      "observation": "Color lists, balanced refrain, Scritch-scratch, and Plink-plink create comfortable oral rhythm.",
+      "predictedReaderEffect": "Prediction: this feature is likely to support comprehension, participation, or emotional engagement for many age-four listeners; individual response may vary.",
+      "revision": null,
+      "preserve": [
+        "Color lists, balanced refrain, Scritch-scratch, and Plink-plink create comfortable oral rhythm."
+      ]
+    },
+    {
+      "ruleId": "LANG-DECODING-01",
+      "result": "not_applicable",
+      "confidence": "high",
+      "evidence": [
+        {
+          "unit": 1,
+          "observation": "Spread 1: Nora drew four empty boxes in her notebook. \"One is for a blue butterfly,\" she said. \"The other three can surprise me.\" Mama and little cousin Jo came too."
+        }
+      ],
+      "observation": "Independent decoding is outside the declared parent-read-aloud mode.",
+      "predictedReaderEffect": null,
+      "revision": null,
+      "preserve": [
+        "Independent decoding is outside the declared parent-read-aloud mode."
+      ]
+    },
+    {
+      "ruleId": "LANG-REFERENTS-01",
+      "result": "strong",
+      "confidence": "high",
+      "evidence": [
+        {
+          "unit": 3,
+          "observation": "Spread 3: \"BIRD!\" shouted Jo. A sparrow fluttered from the fence. Nora frowned. \"Now we'll never see anything.\" Jo's shoulders drooped."
+        },
+        {
+          "unit": 4,
+          "observation": "Spread 4: Mama said, \"You hoped for a butterfly. Jo hoped to help. That's two big hopes.\" Nora's tight hands opened a little."
+        },
+        {
+          "unit": 8,
+          "observation": "Spread 8: \"My turn to notice?\" Jo whispered. Nora remembered his droopy shoulders. She scooted over. \"Your turn.\" Together they said, \"Eyes look, ears hear, gentle hands stay near.\" Jo pointed—not too close—to three ants carrying crumbs."
+        },
+        {
+          "unit": 10,
+          "observation": "Spread 10: One box was still empty. \"What else can we notice?\" Nora asked Jo. The sky turned from bright to dim. A cool puff brushed their cheeks. Leaves flipped their pale undersides."
+        },
+        {
+          "unit": 11,
+          "observation": "Spread 11: \"Rain is coming!\" Jo said. Plink! One drop landed inside box four. Plink-plink! Nora laughed. \"The rain noticed my notebook!\" They hurried home together—no butterfly, but four true surprises."
+        }
+      ],
+      "observation": "Named speakers, chronological actions, and explicit questions keep motives and turns recoverable.",
+      "predictedReaderEffect": "Prediction: this feature is likely to support comprehension, participation, or emotional engagement for many age-four listeners; individual response may vary.",
+      "revision": null,
+      "preserve": [
+        "Named speakers, chronological actions, and explicit questions keep motives and turns recoverable."
+      ]
+    },
+    {
+      "ruleId": "LANG-VOCAB-01",
+      "result": "strong",
+      "confidence": "high",
+      "evidence": [
+        {
+          "unit": 6,
+          "observation": "Spread 6: A silver snail slid across a wet stone. Its soft body rode beneath a hard shell. Slowly, slowly—a shiny trail appeared. Nora marked box one with a swirl."
+        },
+        {
+          "unit": 7,
+          "observation": "Spread 7: Scritch-scratch came from a fallen log beside the stone. A pill bug curled into a tiny gray ball when the log trembled. Nora and Jo stepped back. Soon it uncurled. Box two got a dotty circle."
+        },
+        {
+          "unit": 10,
+          "observation": "Spread 10: One box was still empty. \"What else can we notice?\" Nora asked Jo. The sky turned from bright to dim. A cool puff brushed their cheeks. Leaves flipped their pale undersides."
+        }
+      ],
+      "observation": "Words such as silver, trembled, uncurled, and undersides are grounded in visible action and contrast.",
+      "predictedReaderEffect": "Prediction: this feature is likely to support comprehension, participation, or emotional engagement for many age-four listeners; individual response may vary.",
+      "revision": null,
+      "preserve": [
+        "Words such as silver, trembled, uncurled, and undersides are grounded in visible action and contrast."
+      ]
+    },
+    {
+      "ruleId": "LANG-INFERENCE-01",
+      "result": "strong",
+      "confidence": "high",
+      "evidence": [
+        {
+          "unit": 4,
+          "observation": "Spread 4: Mama said, \"You hoped for a butterfly. Jo hoped to help. That's two big hopes.\" Nora's tight hands opened a little."
+        },
+        {
+          "unit": 5,
+          "observation": "Spread 5: The garden path curved toward the creek. Mama whispered, \"What can we notice without chasing or touching?\" Nora made up a rule: \"Eyes look, ears hear, gentle hands stay near.\""
+        },
+        {
+          "unit": 7,
+          "observation": "Spread 7: Scritch-scratch came from a fallen log beside the stone. A pill bug curled into a tiny gray ball when the log trembled. Nora and Jo stepped back. Soon it uncurled. Box two got a dotty circle."
+        },
+        {
+          "unit": 8,
+          "observation": "Spread 8: \"My turn to notice?\" Jo whispered. Nora remembered his droopy shoulders. She scooted over. \"Your turn.\" Together they said, \"Eyes look, ears hear, gentle hands stay near.\" Jo pointed—not too close—to three ants carrying crumbs."
+        },
+        {
+          "unit": 10,
+          "observation": "Spread 10: One box was still empty. \"What else can we notice?\" Nora asked Jo. The sky turned from bright to dim. A cool puff brushed their cheeks. Leaves flipped their pale undersides."
+        },
+        {
+          "unit": 11,
+          "observation": "Spread 11: \"Rain is coming!\" Jo said. Plink! One drop landed inside box four. Plink-plink! Nora laughed. \"The rain noticed my notebook!\" They hurried home together—no butterfly, but four true surprises."
+        }
+      ],
+      "observation": "The text states the route, nearby sound, remembered hurt, final question, weather signs, and Jo's prediction needed for major inferences.",
+      "predictedReaderEffect": "Prediction: this feature is likely to support comprehension, participation, or emotional engagement for many age-four listeners; individual response may vary.",
+      "revision": null,
+      "preserve": [
+        "The text states the route, nearby sound, remembered hurt, final question, weather signs, and Jo's prediction needed for major inferences."
+      ]
+    },
+    {
+      "ruleId": "LANG-VOICE-01",
+      "result": "distinctive",
+      "confidence": "high",
+      "evidence": [
+        {
+          "unit": 2,
+          "observation": "Spread 2: Along the garden path, Nora looked high and low. Red flower, yellow flower, white flower—but no blue butterfly. Can you point to something blue?"
+        },
+        {
+          "unit": 5,
+          "observation": "Spread 5: The garden path curved toward the creek. Mama whispered, \"What can we notice without chasing or touching?\" Nora made up a rule: \"Eyes look, ears hear, gentle hands stay near.\""
+        },
+        {
+          "unit": 7,
+          "observation": "Spread 7: Scritch-scratch came from a fallen log beside the stone. A pill bug curled into a tiny gray ball when the log trembled. Nora and Jo stepped back. Soon it uncurled. Box two got a dotty circle."
+        },
+        {
+          "unit": 11,
+          "observation": "Spread 11: \"Rain is coming!\" Jo said. Plink! One drop landed inside box four. Plink-plink! Nora laughed. \"The rain noticed my notebook!\" They hurried home together—no butterfly, but four true surprises."
+        },
+        {
+          "unit": 12,
+          "observation": "Spread 12: By the window, Nora showed Jo every mark: one swirl, one circle, three dashes, and one raindrop. Then a blue butterfly crossed the garden—and kept flying. Nora smiled. \"I noticed.\""
+        }
+      ],
+      "observation": "Compact sound play, the gentle refrain, and 'The rain noticed my notebook' create story-specific pleasure.",
+      "predictedReaderEffect": "Prediction: this feature is likely to support comprehension, participation, or emotional engagement for many age-four listeners; individual response may vary.",
+      "revision": null,
+      "preserve": [
+        "Compact sound play, the gentle refrain, and 'The rain noticed my notebook' create story-specific pleasure."
+      ]
+    },
+    {
+      "ruleId": "MEANING-INTEGRATION-01",
+      "result": "strong",
+      "confidence": "high",
+      "evidence": [
+        {
+          "unit": 3,
+          "observation": "Spread 3: \"BIRD!\" shouted Jo. A sparrow fluttered from the fence. Nora frowned. \"Now we'll never see anything.\" Jo's shoulders drooped."
+        },
+        {
+          "unit": 5,
+          "observation": "Spread 5: The garden path curved toward the creek. Mama whispered, \"What can we notice without chasing or touching?\" Nora made up a rule: \"Eyes look, ears hear, gentle hands stay near.\""
+        },
+        {
+          "unit": 8,
+          "observation": "Spread 8: \"My turn to notice?\" Jo whispered. Nora remembered his droopy shoulders. She scooted over. \"Your turn.\" Together they said, \"Eyes look, ears hear, gentle hands stay near.\" Jo pointed—not too close—to three ants carrying crumbs."
+        },
+        {
+          "unit": 11,
+          "observation": "Spread 11: \"Rain is coming!\" Jo said. Plink! One drop landed inside box four. Plink-plink! Nora laughed. \"The rain noticed my notebook!\" They hurried home together—no butterfly, but four true surprises."
+        }
+      ],
+      "observation": "Patience and kindness change the search method, repair the relationship, and enable the shared payoff.",
+      "predictedReaderEffect": "Prediction: this feature is likely to support comprehension, participation, or emotional engagement for many age-four listeners; individual response may vary.",
+      "revision": null,
+      "preserve": [
+        "Patience and kindness change the search method, repair the relationship, and enable the shared payoff."
+      ]
+    },
+    {
+      "ruleId": "MEANING-CONSEQUENCE-01",
+      "result": "strong",
+      "confidence": "high",
+      "evidence": [
+        {
+          "unit": 3,
+          "observation": "Spread 3: \"BIRD!\" shouted Jo. A sparrow fluttered from the fence. Nora frowned. \"Now we'll never see anything.\" Jo's shoulders drooped."
+        },
+        {
+          "unit": 4,
+          "observation": "Spread 4: Mama said, \"You hoped for a butterfly. Jo hoped to help. That's two big hopes.\" Nora's tight hands opened a little."
+        },
+        {
+          "unit": 8,
+          "observation": "Spread 8: \"My turn to notice?\" Jo whispered. Nora remembered his droopy shoulders. She scooted over. \"Your turn.\" Together they said, \"Eyes look, ears hear, gentle hands stay near.\" Jo pointed—not too close—to three ants carrying crumbs."
+        },
+        {
+          "unit": 9,
+          "observation": "Spread 9: The ants followed one another toward a crack in the path. Nora drew three dashes in box three. \"They found a way home,\" Jo said. Nora smiled at her noticing partner."
+        },
+        {
+          "unit": 11,
+          "observation": "Spread 11: \"Rain is coming!\" Jo said. Plink! One drop landed inside box four. Plink-plink! Nora laughed. \"The rain noticed my notebook!\" They hurried home together—no butterfly, but four true surprises."
+        }
+      ],
+      "observation": "Nora's blame hurts Jo; making room restores participation and directly contributes to the discoveries.",
+      "predictedReaderEffect": "Prediction: this feature is likely to support comprehension, participation, or emotional engagement for many age-four listeners; individual response may vary.",
+      "revision": null,
+      "preserve": [
+        "Nora's blame hurts Jo; making room restores participation and directly contributes to the discoveries."
+      ]
+    },
+    {
+      "ruleId": "MEANING-PERSPECTIVE-01",
+      "result": "strong",
+      "confidence": "high",
+      "evidence": [
+        {
+          "unit": 3,
+          "observation": "Spread 3: \"BIRD!\" shouted Jo. A sparrow fluttered from the fence. Nora frowned. \"Now we'll never see anything.\" Jo's shoulders drooped."
+        },
+        {
+          "unit": 4,
+          "observation": "Spread 4: Mama said, \"You hoped for a butterfly. Jo hoped to help. That's two big hopes.\" Nora's tight hands opened a little."
+        },
+        {
+          "unit": 8,
+          "observation": "Spread 8: \"My turn to notice?\" Jo whispered. Nora remembered his droopy shoulders. She scooted over. \"Your turn.\" Together they said, \"Eyes look, ears hear, gentle hands stay near.\" Jo pointed—not too close—to three ants carrying crumbs."
+        }
+      ],
+      "observation": "Mama names Nora's and Jo's competing hopes, and Nora later acts on her understanding of Jo's hurt.",
+      "predictedReaderEffect": "Prediction: this feature is likely to support comprehension, participation, or emotional engagement for many age-four listeners; individual response may vary.",
+      "revision": null,
+      "preserve": [
+        "Mama names Nora's and Jo's competing hopes, and Nora later acts on her understanding of Jo's hurt."
+      ]
+    },
+    {
+      "ruleId": "MEANING-ENACTMENT-01",
+      "result": "strong",
+      "confidence": "high",
+      "evidence": [
+        {
+          "unit": 5,
+          "observation": "Spread 5: The garden path curved toward the creek. Mama whispered, \"What can we notice without chasing or touching?\" Nora made up a rule: \"Eyes look, ears hear, gentle hands stay near.\""
+        },
+        {
+          "unit": 7,
+          "observation": "Spread 7: Scritch-scratch came from a fallen log beside the stone. A pill bug curled into a tiny gray ball when the log trembled. Nora and Jo stepped back. Soon it uncurled. Box two got a dotty circle."
+        },
+        {
+          "unit": 8,
+          "observation": "Spread 8: \"My turn to notice?\" Jo whispered. Nora remembered his droopy shoulders. She scooted over. \"Your turn.\" Together they said, \"Eyes look, ears hear, gentle hands stay near.\" Jo pointed—not too close—to three ants carrying crumbs."
+        },
+        {
+          "unit": 10,
+          "observation": "Spread 10: One box was still empty. \"What else can we notice?\" Nora asked Jo. The sky turned from bright to dim. A cool puff brushed their cheeks. Leaves flipped their pale undersides."
+        }
+      ],
+      "observation": "The children demonstrate gentle observation, distance, turn-taking, and shared inquiry without a narrated moral.",
+      "predictedReaderEffect": "Prediction: this feature is likely to support comprehension, participation, or emotional engagement for many age-four listeners; individual response may vary.",
+      "revision": null,
+      "preserve": [
+        "The children demonstrate gentle observation, distance, turn-taking, and shared inquiry without a narrated moral."
+      ]
+    },
+    {
+      "ruleId": "MEANING-NONPREACHY-01",
+      "result": "strong",
+      "confidence": "high",
+      "evidence": [
+        {
+          "unit": 4,
+          "observation": "Spread 4: Mama said, \"You hoped for a butterfly. Jo hoped to help. That's two big hopes.\" Nora's tight hands opened a little."
+        },
+        {
+          "unit": 5,
+          "observation": "Spread 5: The garden path curved toward the creek. Mama whispered, \"What can we notice without chasing or touching?\" Nora made up a rule: \"Eyes look, ears hear, gentle hands stay near.\""
+        },
+        {
+          "unit": 12,
+          "observation": "Spread 12: By the window, Nora showed Jo every mark: one swirl, one circle, three dashes, and one raindrop. Then a blue butterfly crossed the garden—and kept flying. Nora smiled. \"I noticed.\""
+        }
+      ],
+      "observation": "Mama wonders once, the refrain functions as a chosen game rule, and the ending trusts Nora's small response.",
+      "predictedReaderEffect": "Prediction: this feature is likely to support comprehension, participation, or emotional engagement for many age-four listeners; individual response may vary.",
+      "revision": null,
+      "preserve": [
+        "Mama wonders once, the refrain functions as a chosen game rule, and the ending trusts Nora's small response."
+      ]
+    },
+    {
+      "ruleId": "MEANING-DISCUSSION-01",
+      "result": "strong",
+      "confidence": "high",
+      "evidence": [
+        {
+          "unit": 2,
+          "observation": "Spread 2: Along the garden path, Nora looked high and low. Red flower, yellow flower, white flower—but no blue butterfly. Can you point to something blue?"
+        },
+        {
+          "unit": 7,
+          "observation": "Spread 7: Scritch-scratch came from a fallen log beside the stone. A pill bug curled into a tiny gray ball when the log trembled. Nora and Jo stepped back. Soon it uncurled. Box two got a dotty circle."
+        },
+        {
+          "unit": 12,
+          "observation": "Spread 12: By the window, Nora showed Jo every mark: one swirl, one circle, three dashes, and one raindrop. Then a blue butterfly crossed the garden—and kept flying. Nora smiled. \"I noticed.\""
+        }
+      ],
+      "observation": "The story naturally opens conversation about color, animal responses, and what a listener might notice.",
+      "predictedReaderEffect": "Prediction: this feature is likely to support comprehension, participation, or emotional engagement for many age-four listeners; individual response may vary.",
+      "revision": null,
+      "preserve": [
+        "The story naturally opens conversation about color, animal responses, and what a listener might notice."
+      ]
+    },
+    {
+      "ruleId": "SAFE-AGE-01",
+      "result": "strong",
+      "confidence": "high",
+      "evidence": [
+        {
+          "unit": 3,
+          "observation": "Spread 3: \"BIRD!\" shouted Jo. A sparrow fluttered from the fence. Nora frowned. \"Now we'll never see anything.\" Jo's shoulders drooped."
+        },
+        {
+          "unit": 4,
+          "observation": "Spread 4: Mama said, \"You hoped for a butterfly. Jo hoped to help. That's two big hopes.\" Nora's tight hands opened a little."
+        },
+        {
+          "unit": 7,
+          "observation": "Spread 7: Scritch-scratch came from a fallen log beside the stone. A pill bug curled into a tiny gray ball when the log trembled. Nora and Jo stepped back. Soon it uncurled. Box two got a dotty circle."
+        },
+        {
+          "unit": 11,
+          "observation": "Spread 11: \"Rain is coming!\" Jo said. Plink! One drop landed inside box four. Plink-plink! Nora laughed. \"The rain noticed my notebook!\" They hurried home together—no butterfly, but four true surprises."
+        }
+      ],
+      "observation": "The conflict is brief and familiar; emotional repair and nature encounters remain low-intensity and reassuring.",
+      "predictedReaderEffect": "Prediction: this feature is likely to support comprehension, participation, or emotional engagement for many age-four listeners; individual response may vary.",
+      "revision": null,
+      "preserve": [
+        "The conflict is brief and familiar; emotional repair and nature encounters remain low-intensity and reassuring."
+      ]
+    },
+    {
+      "ruleId": "SAFE-AGENCY-01",
+      "result": "strong",
+      "confidence": "high",
+      "evidence": [
+        {
+          "unit": 4,
+          "observation": "Spread 4: Mama said, \"You hoped for a butterfly. Jo hoped to help. That's two big hopes.\" Nora's tight hands opened a little."
+        },
+        {
+          "unit": 5,
+          "observation": "Spread 5: The garden path curved toward the creek. Mama whispered, \"What can we notice without chasing or touching?\" Nora made up a rule: \"Eyes look, ears hear, gentle hands stay near.\""
+        },
+        {
+          "unit": 8,
+          "observation": "Spread 8: \"My turn to notice?\" Jo whispered. Nora remembered his droopy shoulders. She scooted over. \"Your turn.\" Together they said, \"Eyes look, ears hear, gentle hands stay near.\" Jo pointed—not too close—to three ants carrying crumbs."
+        },
+        {
+          "unit": 10,
+          "observation": "Spread 10: One box was still empty. \"What else can we notice?\" Nora asked Jo. The sky turned from bright to dim. A cool puff brushed their cheeks. Leaves flipped their pale undersides."
+        }
+      ],
+      "observation": "Mama validates and asks; Nora invents the rule, repairs with Jo, and drives the changed attempt.",
+      "predictedReaderEffect": "Prediction: this feature is likely to support comprehension, participation, or emotional engagement for many age-four listeners; individual response may vary.",
+      "revision": null,
+      "preserve": [
+        "Mama validates and asks; Nora invents the rule, repairs with Jo, and drives the changed attempt."
+      ]
+    },
+    {
+      "ruleId": "SAFE-REPRESENTATION-01",
+      "result": "strong",
+      "confidence": "high",
+      "evidence": [
+        {
+          "unit": 1,
+          "observation": "Spread 1: Nora drew four empty boxes in her notebook. \"One is for a blue butterfly,\" she said. \"The other three can surprise me.\" Mama and little cousin Jo came too."
+        },
+        {
+          "unit": 4,
+          "observation": "Spread 4: Mama said, \"You hoped for a butterfly. Jo hoped to help. That's two big hopes.\" Nora's tight hands opened a little."
+        },
+        {
+          "unit": 8,
+          "observation": "Spread 8: \"My turn to notice?\" Jo whispered. Nora remembered his droopy shoulders. She scooted over. \"Your turn.\" Together they said, \"Eyes look, ears hear, gentle hands stay near.\" Jo pointed—not too close—to three ants carrying crumbs."
+        }
+      ],
+      "observation": "No identity group is connected to failure, and the younger child's perspective is treated with dignity.",
+      "predictedReaderEffect": "Prediction: this feature is likely to support comprehension, participation, or emotional engagement for many age-four listeners; individual response may vary.",
+      "revision": null,
+      "preserve": [
+        "No identity group is connected to failure, and the younger child's perspective is treated with dignity."
+      ]
+    },
+    {
+      "ruleId": "SAFE-PUNISHMENT-01",
+      "result": "strong",
+      "confidence": "high",
+      "evidence": [
+        {
+          "unit": 3,
+          "observation": "Spread 3: \"BIRD!\" shouted Jo. A sparrow fluttered from the fence. Nora frowned. \"Now we'll never see anything.\" Jo's shoulders drooped."
+        },
+        {
+          "unit": 4,
+          "observation": "Spread 4: Mama said, \"You hoped for a butterfly. Jo hoped to help. That's two big hopes.\" Nora's tight hands opened a little."
+        }
+      ],
+      "observation": "Jo is neither punished nor humiliated; Mama responds to the rupture with calm perspective-taking.",
+      "predictedReaderEffect": "Prediction: this feature is likely to support comprehension, participation, or emotional engagement for many age-four listeners; individual response may vary.",
+      "revision": null,
+      "preserve": [
+        "Jo is neither punished nor humiliated; Mama responds to the rupture with calm perspective-taking."
+      ]
+    },
+    {
+      "ruleId": "SAFE-BOUNDARY-01",
+      "result": "strong",
+      "confidence": "high",
+      "evidence": [
+        {
+          "unit": 5,
+          "observation": "Spread 5: The garden path curved toward the creek. Mama whispered, \"What can we notice without chasing or touching?\" Nora made up a rule: \"Eyes look, ears hear, gentle hands stay near.\""
+        },
+        {
+          "unit": 7,
+          "observation": "Spread 7: Scritch-scratch came from a fallen log beside the stone. A pill bug curled into a tiny gray ball when the log trembled. Nora and Jo stepped back. Soon it uncurled. Box two got a dotty circle."
+        },
+        {
+          "unit": 8,
+          "observation": "Spread 8: \"My turn to notice?\" Jo whispered. Nora remembered his droopy shoulders. She scooted over. \"Your turn.\" Together they said, \"Eyes look, ears hear, gentle hands stay near.\" Jo pointed—not too close—to three ants carrying crumbs."
+        },
+        {
+          "unit": 12,
+          "observation": "Spread 12: By the window, Nora showed Jo every mark: one swirl, one circle, three dashes, and one raindrop. Then a blue butterfly crossed the garden—and kept flying. Nora smiled. \"I noticed.\""
+        }
+      ],
+      "observation": "The resolution consistently rewards observation at a distance and never celebrates chasing, touching, or collecting wildlife.",
+      "predictedReaderEffect": "Prediction: this feature is likely to support comprehension, participation, or emotional engagement for many age-four listeners; individual response may vary.",
+      "revision": null,
+      "preserve": [
+        "The resolution consistently rewards observation at a distance and never celebrates chasing, touching, or collecting wildlife."
+      ]
+    }
+  ],
+  "hardGates": {
+    "status": "pass",
+    "failures": []
+  },
+  "summary": {
+    "overallProfile": "A strong, cohesive age-four read-aloud whose countable nature quest, relationship repair, and wildlife boundaries all serve one dramatic throughline.",
+    "strongestQualities": [
+      "Explicit causal bridges support every major transition.",
+      "Nora's voluntary inclusion of Jo drives both emotional repair and the plot payoff.",
+      "The final butterfly appearance transforms the original expectation without rewarding pursuit or possession."
+    ],
+    "limitingQualities": [
+      "Text-only evaluation cannot establish illustration quality or predict an individual child's response."
+    ],
+    "recommendedAction": "ready",
+    "highestValueRevision": null
+  }
+}

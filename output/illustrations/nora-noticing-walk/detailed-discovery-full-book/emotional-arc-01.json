@@ -1,0 +1,363 @@
+{
+  "schemaVersion": 1,
+  "projectId": "2d5fb544-4f95-4d3c-a284-33fc959f1162",
+  "revision": 1,
+  "sourceStoryRevision": 3,
+  "generatedAt": "2026-09-10T15:00:00.000Z",
+  "model": "GPT-5",
+  "characters": [
+    {
+      "characterName": "Nora",
+      "beats": [
+        {
+          "spreadNumber": 1,
+          "enteringState": "eager and directive",
+          "trigger": "four blank notebook boxes",
+          "outwardExpression": "upright bounce, bright focused eyes, notebook held forward",
+          "leavingState": "intent on the butterfly",
+          "intensity": "medium",
+          "avoidSignals": [
+            "generic front-facing grin",
+            "touching wildlife",
+            "adult-like authority"
+          ]
+        },
+        {
+          "spreadNumber": 2,
+          "enteringState": "intent on the butterfly",
+          "trigger": "three flowers but no butterfly",
+          "outwardExpression": "long scanning gaze, slight forward lean, one finger tracking the path",
+          "leavingState": "puzzled and narrowing",
+          "intensity": "low",
+          "avoidSignals": [
+            "generic front-facing grin",
+            "touching wildlife",
+            "adult-like authority"
+          ]
+        },
+        {
+          "spreadNumber": 3,
+          "enteringState": "puzzled and narrowing",
+          "trigger": "Jo's shout and sparrow flight",
+          "outwardExpression": "brows pinched, mouth tight, shoulders forward, gaze turned sharply to Jo",
+          "leavingState": "irritated",
+          "intensity": "high",
+          "avoidSignals": [
+            "generic front-facing grin",
+            "touching wildlife",
+            "adult-like authority"
+          ]
+        },
+        {
+          "spreadNumber": 4,
+          "enteringState": "irritated",
+          "trigger": "Mama names both hopes",
+          "outwardExpression": "hands visibly uncurl, shoulders lower, sideways glance toward Jo",
+          "leavingState": "softening",
+          "intensity": "medium",
+          "avoidSignals": [
+            "generic front-facing grin",
+            "touching wildlife",
+            "adult-like authority"
+          ]
+        },
+        {
+          "spreadNumber": 5,
+          "enteringState": "softening",
+          "trigger": "Mama asks how to notice safely",
+          "outwardExpression": "thoughtful head tilt, then gestures to eyes, ears, hands",
+          "leavingState": "curious and inventive",
+          "intensity": "medium",
+          "avoidSignals": [
+            "generic front-facing grin",
+            "touching wildlife",
+            "adult-like authority"
+          ]
+        },
+        {
+          "spreadNumber": 6,
+          "enteringState": "curious and inventive",
+          "trigger": "snail leaves a silver trail",
+          "outwardExpression": "low crouch at safe distance, wide attentive eyes, pencil draws a swirl",
+          "leavingState": "absorbed",
+          "intensity": "low",
+          "avoidSignals": [
+            "generic front-facing grin",
+            "touching wildlife",
+            "adult-like authority"
+          ]
+        },
+        {
+          "spreadNumber": 7,
+          "enteringState": "absorbed",
+          "trigger": "scratching sound and curling pill bug",
+          "outwardExpression": "one hand pauses midair, body steps back, gaze stays gentle",
+          "leavingState": "careful and fascinated",
+          "intensity": "medium",
+          "avoidSignals": [
+            "generic front-facing grin",
+            "touching wildlife",
+            "adult-like authority"
+          ]
+        },
+        {
+          "spreadNumber": 8,
+          "enteringState": "careful and fascinated",
+          "trigger": "Jo asks for a turn and she recalls his hurt",
+          "outwardExpression": "glance to Jo's face, scoots sideways, open palm offers space",
+          "leavingState": "empathetic and connected",
+          "intensity": "high",
+          "avoidSignals": [
+            "generic front-facing grin",
+            "touching wildlife",
+            "adult-like authority"
+          ]
+        },
+        {
+          "spreadNumber": 9,
+          "enteringState": "empathetic and connected",
+          "trigger": "Jo identifies the ant trail",
+          "outwardExpression": "warm closed-mouth smile toward Jo, notebook angled so both see",
+          "leavingState": "companionable",
+          "intensity": "medium",
+          "avoidSignals": [
+            "generic front-facing grin",
+            "touching wildlife",
+            "adult-like authority"
+          ]
+        },
+        {
+          "spreadNumber": 10,
+          "enteringState": "companionable",
+          "trigger": "one box remains",
+          "outwardExpression": "inviting gaze to Jo, open questioning hand, then both faces tilt to wind",
+          "leavingState": "purposeful together",
+          "intensity": "medium",
+          "avoidSignals": [
+            "generic front-facing grin",
+            "touching wildlife",
+            "adult-like authority"
+          ]
+        },
+        {
+          "spreadNumber": 11,
+          "enteringState": "purposeful together",
+          "trigger": "Jo predicts rain and a drop hits box four",
+          "outwardExpression": "eyes jump from Jo to drop, shoulders lift in delighted laugh",
+          "leavingState": "delighted and satisfied",
+          "intensity": "high",
+          "avoidSignals": [
+            "generic front-facing grin",
+            "touching wildlife",
+            "adult-like authority"
+          ]
+        },
+        {
+          "spreadNumber": 12,
+          "enteringState": "delighted and satisfied",
+          "trigger": "blue butterfly crosses the window",
+          "outwardExpression": "still body, soft eyes following flight, small quiet smile",
+          "leavingState": "content and wondering",
+          "intensity": "low",
+          "avoidSignals": [
+            "generic front-facing grin",
+            "touching wildlife",
+            "adult-like authority"
+          ]
+        }
+      ]
+    },
+    {
+      "characterName": "Jo",
+      "beats": [
+        {
+          "spreadNumber": 1,
+          "enteringState": "eager younger companion",
+          "trigger": "Nora announces the walk",
+          "outwardExpression": "small quick steps beside Mama, eyes on Nora's notebook",
+          "leavingState": "ready to help",
+          "intensity": "low",
+          "avoidSignals": [
+            "babyish caricature",
+            "being mocked",
+            "touching wildlife"
+          ]
+        },
+        {
+          "spreadNumber": 3,
+          "enteringState": "ready to help",
+          "trigger": "a sparrow appears",
+          "outwardExpression": "arm lifts toward bird, mouth open from shout; after Nora's words shoulders sink",
+          "leavingState": "hurt and quiet",
+          "intensity": "medium",
+          "avoidSignals": [
+            "babyish caricature",
+            "being mocked",
+            "touching wildlife"
+          ]
+        },
+        {
+          "spreadNumber": 4,
+          "enteringState": "hurt and quiet",
+          "trigger": "Mama names Jo's hope",
+          "outwardExpression": "chin lifts slightly toward Nora while hands hold backpack straps",
+          "leavingState": "cautiously hopeful",
+          "intensity": "low",
+          "avoidSignals": [
+            "babyish caricature",
+            "being mocked",
+            "touching wildlife"
+          ]
+        },
+        {
+          "spreadNumber": 7,
+          "enteringState": "cautiously hopeful",
+          "trigger": "pill bug curls",
+          "outwardExpression": "mirrors Nora's backward step, hands close, eyes fixed on bug",
+          "leavingState": "careful alongside Nora",
+          "intensity": "low",
+          "avoidSignals": [
+            "babyish caricature",
+            "being mocked",
+            "touching wildlife"
+          ]
+        },
+        {
+          "spreadNumber": 8,
+          "enteringState": "careful alongside Nora",
+          "trigger": "Nora offers a real turn",
+          "outwardExpression": "body leans into shared space, small finger points from a safe distance",
+          "leavingState": "confident participant",
+          "intensity": "medium",
+          "avoidSignals": [
+            "babyish caricature",
+            "being mocked",
+            "touching wildlife"
+          ]
+        },
+        {
+          "spreadNumber": 9,
+          "enteringState": "confident participant",
+          "trigger": "ants carry crumbs toward a crack",
+          "outwardExpression": "eyes follow trail, one hand near notebook without taking it",
+          "leavingState": "proud noticing partner",
+          "intensity": "medium",
+          "avoidSignals": [
+            "babyish caricature",
+            "being mocked",
+            "touching wildlife"
+          ]
+        },
+        {
+          "spreadNumber": 10,
+          "enteringState": "proud noticing partner",
+          "trigger": "Nora asks what else they notice",
+          "outwardExpression": "looks to Nora, then feels cheek and studies leaves",
+          "leavingState": "alert observer",
+          "intensity": "medium",
+          "avoidSignals": [
+            "babyish caricature",
+            "being mocked",
+            "touching wildlife"
+          ]
+        },
+        {
+          "spreadNumber": 11,
+          "enteringState": "alert observer",
+          "trigger": "wind and flipped leaves",
+          "outwardExpression": "points upward while telling Nora rain is coming, then runs beside her",
+          "leavingState": "delighted contributor",
+          "intensity": "high",
+          "avoidSignals": [
+            "babyish caricature",
+            "being mocked",
+            "touching wildlife"
+          ]
+        },
+        {
+          "spreadNumber": 12,
+          "enteringState": "delighted contributor",
+          "trigger": "Nora reviews marks and butterfly passes",
+          "outwardExpression": "stands shoulder-to-shoulder with Nora, gaze calmly following butterfly",
+          "leavingState": "quietly connected",
+          "intensity": "low",
+          "avoidSignals": [
+            "babyish caricature",
+            "being mocked",
+            "touching wildlife"
+          ]
+        }
+      ]
+    },
+    {
+      "characterName": "Mama",
+      "beats": [
+        {
+          "spreadNumber": 1,
+          "enteringState": "calmly accompanying",
+          "trigger": "the children set out",
+          "outwardExpression": "relaxed walking posture just behind them",
+          "leavingState": "attentive",
+          "intensity": "low",
+          "avoidSignals": [
+            "commanding point",
+            "solving the notebook task",
+            "looming over children"
+          ]
+        },
+        {
+          "spreadNumber": 4,
+          "enteringState": "attentive",
+          "trigger": "Nora blames Jo and Jo droops",
+          "outwardExpression": "kneels at their level, open hands, gaze includes both children",
+          "leavingState": "supportive witness",
+          "intensity": "medium",
+          "avoidSignals": [
+            "commanding point",
+            "solving the notebook task",
+            "looming over children"
+          ]
+        },
+        {
+          "spreadNumber": 5,
+          "enteringState": "supportive witness",
+          "trigger": "the path reaches the creek",
+          "outwardExpression": "walks slightly behind, quiet mouth and open listening posture",
+          "leavingState": "available but non-directive",
+          "intensity": "low",
+          "avoidSignals": [
+            "commanding point",
+            "solving the notebook task",
+            "looming over children"
+          ]
+        },
+        {
+          "spreadNumber": 11,
+          "enteringState": "available but non-directive",
+          "trigger": "rain begins",
+          "outwardExpression": "turns home with one guiding arm indicating the path, children still leading",
+          "leavingState": "warmly protective",
+          "intensity": "medium",
+          "avoidSignals": [
+            "commanding point",
+            "solving the notebook task",
+            "looming over children"
+          ]
+        },
+        {
+          "spreadNumber": 12,
+          "enteringState": "warmly protective",
+          "trigger": "children watch from home",
+          "outwardExpression": "stands behind and to the side, attention on their shared calm",
+          "leavingState": "content",
+          "intensity": "low",
+          "avoidSignals": [
+            "commanding point",
+            "solving the notebook task",
+            "looming over children"
+          ]
+        }
+      ]
+    }
+  ]
+}

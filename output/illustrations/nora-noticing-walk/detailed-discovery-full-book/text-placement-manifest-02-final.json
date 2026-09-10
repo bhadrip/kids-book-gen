@@ -1,0 +1,295 @@
+{
+  "schemaVersion": 1,
+  "projectId": "2d5fb544-4f95-4d3c-a284-33fc959f1162",
+  "placementRevision": 2,
+  "mode": "final_art_placement",
+  "status": "ready_for_review",
+  "sources": {
+    "storyRevision": 3,
+    "visualBibleRevision": 1,
+    "continuityProofRevision": 2,
+    "illustrationRevision": 2,
+    "typographyProfileRevision": 2,
+    "productionProfileRevision": 1
+  },
+  "reading": {
+    "readerAge": 4,
+    "readingMode": "parent_read_aloud",
+    "language": "en",
+    "direction": "ltr"
+  },
+  "spreads": [
+    {
+      "spreadId": 1,
+      "sourceImage": "spread-01-final-v1.png",
+      "composite": "composed-spread-01-v1.png",
+      "position": "upper_right",
+      "bounds": [
+        828,
+        48,
+        1488,
+        311
+      ],
+      "treatment": "scrim",
+      "border": "none",
+      "font": "Arial Regular",
+      "fontSizePx": 34,
+      "leadingPx": 43,
+      "capacity": "pass",
+      "protectedSubjectOverlap": "none",
+      "minimumEstimatedContrast": 19.9,
+      "contrastStatus": "pass"
+    },
+    {
+      "spreadId": 2,
+      "sourceImage": "spread-02-final-v1.png",
+      "composite": "composed-spread-02-v1.png",
+      "position": "upper_right",
+      "bounds": [
+        828,
+        48,
+        1488,
+        268
+      ],
+      "treatment": "scrim",
+      "border": "none",
+      "font": "Arial Regular",
+      "fontSizePx": 34,
+      "leadingPx": 43,
+      "capacity": "pass",
+      "protectedSubjectOverlap": "none",
+      "minimumEstimatedContrast": 19.9,
+      "contrastStatus": "pass"
+    },
+    {
+      "spreadId": 3,
+      "sourceImage": "spread-03-final-v1.png",
+      "composite": "composed-spread-03-v1.png",
+      "position": "lower_right",
+      "bounds": [
+        828,
+        756,
+        1488,
+        976
+      ],
+      "treatment": "scrim",
+      "border": "none",
+      "font": "Arial Regular",
+      "fontSizePx": 34,
+      "leadingPx": 43,
+      "capacity": "pass",
+      "protectedSubjectOverlap": "none",
+      "minimumEstimatedContrast": 19.51,
+      "contrastStatus": "pass"
+    },
+    {
+      "spreadId": 4,
+      "sourceImage": "spread-04-final-v1.png",
+      "composite": "composed-spread-04-v1.png",
+      "position": "upper_right",
+      "bounds": [
+        828,
+        48,
+        1488,
+        225
+      ],
+      "treatment": "scrim",
+      "border": "none",
+      "font": "Arial Regular",
+      "fontSizePx": 34,
+      "leadingPx": 43,
+      "capacity": "pass",
+      "protectedSubjectOverlap": "none",
+      "minimumEstimatedContrast": 19.43,
+      "contrastStatus": "pass"
+    },
+    {
+      "spreadId": 5,
+      "sourceImage": "spread-05-final-v1.png",
+      "composite": "composed-spread-05-v1.png",
+      "position": "upper_right",
+      "bounds": [
+        828,
+        48,
+        1488,
+        311
+      ],
+      "treatment": "scrim",
+      "border": "none",
+      "font": "Arial Regular",
+      "fontSizePx": 34,
+      "leadingPx": 43,
+      "capacity": "pass",
+      "protectedSubjectOverlap": "none",
+      "minimumEstimatedContrast": 19.59,
+      "contrastStatus": "pass"
+    },
+    {
+      "spreadId": 6,
+      "sourceImage": "spread-06-final-v1.png",
+      "composite": "composed-spread-06-v1.png",
+      "position": "upper_right",
+      "bounds": [
+        828,
+        48,
+        1488,
+        268
+      ],
+      "treatment": "scrim",
+      "border": "none",
+      "font": "Arial Regular",
+      "fontSizePx": 34,
+      "leadingPx": 43,
+      "capacity": "pass",
+      "protectedSubjectOverlap": "none",
+      "minimumEstimatedContrast": 19.75,
+      "contrastStatus": "pass"
+    },
+    {
+      "spreadId": 7,
+      "sourceImage": "spread-07-final-v2.png",
+      "composite": "composed-spread-07-v1.png",
+      "position": "upper_left",
+      "bounds": [
+        48,
+        48,
+        708,
+        311
+      ],
+      "treatment": "scrim",
+      "border": "none",
+      "font": "Arial Regular",
+      "fontSizePx": 34,
+      "leadingPx": 43,
+      "capacity": "pass",
+      "protectedSubjectOverlap": "none",
+      "minimumEstimatedContrast": 20.29,
+      "contrastStatus": "pass"
+    },
+    {
+      "spreadId": 8,
+      "sourceImage": "spread-08-final-v1.png",
+      "composite": "composed-spread-08-v1.png",
+      "position": "upper_right",
+      "bounds": [
+        828,
+        48,
+        1488,
+        354
+      ],
+      "treatment": "scrim",
+      "border": "none",
+      "font": "Arial Regular",
+      "fontSizePx": 34,
+      "leadingPx": 43,
+      "capacity": "pass",
+      "protectedSubjectOverlap": "none",
+      "minimumEstimatedContrast": 19.67,
+      "contrastStatus": "pass"
+    },
+    {
+      "spreadId": 9,
+      "sourceImage": "spread-09-final-v2.png",
+      "composite": "composed-spread-09-v1.png",
+      "position": "upper_right",
+      "bounds": [
+        828,
+        48,
+        1488,
+        311
+      ],
+      "treatment": "scrim",
+      "border": "none",
+      "font": "Arial Regular",
+      "fontSizePx": 34,
+      "leadingPx": 43,
+      "capacity": "pass",
+      "protectedSubjectOverlap": "none",
+      "minimumEstimatedContrast": 20.14,
+      "contrastStatus": "pass"
+    },
+    {
+      "spreadId": 10,
+      "sourceImage": "spread-10-final-v2.png",
+      "composite": "composed-spread-10-v1.png",
+      "position": "lower_right",
+      "bounds": [
+        828,
+        713,
+        1488,
+        976
+      ],
+      "treatment": "scrim",
+      "border": "none",
+      "font": "Arial Regular",
+      "fontSizePx": 34,
+      "leadingPx": 43,
+      "capacity": "pass",
+      "protectedSubjectOverlap": "none",
+      "minimumEstimatedContrast": 19.43,
+      "contrastStatus": "pass"
+    },
+    {
+      "spreadId": 11,
+      "sourceImage": "spread-11-final-v2.png",
+      "composite": "composed-spread-11-v1.png",
+      "position": "lower_right",
+      "bounds": [
+        828,
+        670,
+        1488,
+        976
+      ],
+      "treatment": "scrim",
+      "border": "none",
+      "font": "Arial Regular",
+      "fontSizePx": 34,
+      "leadingPx": 43,
+      "capacity": "pass",
+      "protectedSubjectOverlap": "none",
+      "minimumEstimatedContrast": 19.43,
+      "contrastStatus": "pass"
+    },
+    {
+      "spreadId": 12,
+      "sourceImage": "spread-12-final-v2.png",
+      "composite": "composed-spread-12-v1.png",
+      "position": "upper_left",
+      "bounds": [
+        48,
+        48,
+        488,
+        312
+      ],
+      "treatment": "scrim",
+      "border": "none",
+      "font": "Arial Regular",
+      "fontSizePx": 34,
+      "leadingPx": 43,
+      "capacity": "pass",
+      "protectedSubjectOverlap": "none",
+      "minimumEstimatedContrast": 20.53,
+      "contrastStatus": "pass"
+    }
+  ],
+  "outputs": {
+    "cover": "composed-cover-v1.png",
+    "wholeBookOverview": "final-composed-contact-sheet-v1.jpg",
+    "finalComposites": [
+      "composed-spread-01-v1.png",
+      "composed-spread-02-v1.png",
+      "composed-spread-03-v1.png",
+      "composed-spread-04-v1.png",
+      "composed-spread-05-v1.png",
+      "composed-spread-06-v1.png",
+      "composed-spread-07-v1.png",
+      "composed-spread-08-v1.png",
+      "composed-spread-09-v1.png",
+      "composed-spread-10-v1.png",
+      "composed-spread-11-v1.png",
+      "composed-spread-12-v1.png"
+    ],
+    "pdf": "/Users/padmaja/Documents/kids-book-gen/output/pdf/noras-noticing-walk-storybook.pdf"
+  },
+  "deferredChecks": []
+}
