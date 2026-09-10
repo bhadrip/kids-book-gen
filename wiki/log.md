@@ -1,5 +1,11 @@
 # Wiki maintenance log
 
+## 2026-09-09
+
+- Added the reusable text-image and reader-facing production review skill for
+  transition bridges, action direction, accessible contrast, and proof-marker
+  leakage.
+
 ## 2026-07-25
 
 - Initialized the project wiki without changing existing product specifications.
