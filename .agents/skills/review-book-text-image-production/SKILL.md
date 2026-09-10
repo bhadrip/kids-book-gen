@@ -15,6 +15,8 @@ an incoherent or inaccessible book.
 - intended reader age and reading mode;
 - exact story revision and current page/spread mapping;
 - current `BookPlan`, `VisualBible`, and continuity ledger when available;
+- current text-placement manifest and candidate review when available;
+- typography and production profiles used for the composed artifact;
 - whether page numbers, labels, or other navigation marks are intentionally
   reader-facing.
 
@@ -43,6 +45,18 @@ If the source text or page order is unavailable, report the affected checks as
    obstruction, overflow, accidental raster text, proof labels, spread numbers,
    crop, and reading order. Treat an internal locator as a defect when it reaches
    the final book without an explicit reader purpose.
+   Treat faces and eyes, communicative hands/gestures, character interactions,
+   story-critical props, and decisive actions as protected subject regions. A
+   translucent treatment still obstructs any protected subject it crosses.
+   Inspect the composed page, not merely the illustration's nominal text-safe
+   corner; move or reshape the text container when generated staging occupies
+   that corner.
+   When a placement manifest exists, verify its selected candidate against the
+   final composed art and ensure proof-mode contrast was rerun rather than
+   carried forward as a pass. Inspect leading alternatives when placement
+   affects a protected subject, gaze/movement path, focal hierarchy, or reveal.
+   Absence of a manifest is not itself a defect for legacy books, but the final
+   composed-page checks remain required.
 7. Assign the likely owning artifact for each issue: story, performance plan,
    VisualBible/continuity ledger, BookPlan, illustration, or PDF/layout.
 8. Record a bounded correction, preservation locks, success criteria, and the

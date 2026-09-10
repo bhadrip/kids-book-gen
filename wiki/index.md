@@ -6,10 +6,13 @@ Persistent project knowledge for research, product design, and implementation.
 
 - [Children's-book skill workflow](../.agents/skills/README.md)
 - [Ages 3–5 picture-book preferences and reader fit](pages/concepts/ages-3-5-picture-book-fit.md)
+- [Page-specific picture-book text placement](pages/concepts/page-specific-picture-book-text-placement.md)
 - [Book generation stages](pages/project/book-generation-stages.md)
 - [Quality and likeability control](pages/project/quality-and-likeability-control.md)
 - [Reader age configuration gap](pages/project/reader-age-configuration-gap.md)
 - [Preschool behavior story skill](pages/project/preschool-behavior-story-skill.md)
+- [Book continuity proof skill](pages/project/book-continuity-proof-skill.md)
+- [Book text-placement skill](pages/project/book-text-placement-skill.md)
 - [Text-image and production review skill](pages/project/text-image-production-review-skill.md)
 - [Printable 12-stage workflow poster](../output/pdf/picture-book-generation-workflow-poster.pdf)
 - [Printable preschool story sheets](../output/pdf/preschool-story-sheets.pdf)
@@ -17,6 +20,7 @@ Persistent project knowledge for research, product design, and implementation.
 ## Sources
 
 - [Preschool picture-book research synthesis, July 2026](pages/sources/preschool-picture-book-research-2026-07.md)
+- [Picture-book text-placement research, September 2026](pages/sources/picture-book-text-placement-research-2026-09.md)
 
 ## Canonical project specifications
 

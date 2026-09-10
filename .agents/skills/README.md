@@ -17,14 +17,17 @@ flowchart TB
     Performance --> Bible["build-visual-bible"]
     Bible --> Proof["build-book-continuity-proof"]
 
+    Proof --> Placement["plan-book-text-placement<br/>(proof mode)"]
     Proof --> ProofEmotion["review-book-emotional-arc"]
     Proof --> ProofProps["review-book-environment-prop-continuity"]
+    Placement --> ProofBrief["build-book-revision-brief"]
     ProofEmotion --> ProofBrief["build-book-revision-brief"]
     ProofProps --> ProofBrief
     ProofBrief --> ContinuityGate{"Continuity ready?"}
     ContinuityGate -->|Fix planning| Performance
     ContinuityGate -->|Yes| Illustrate["illustrate-preschool-story"]
 
+    Illustrate --> FinalPlacement["plan-book-text-placement<br/>(final-art mode)"]
     Illustrate --> CharacterReview["evaluate-book-characters"]
     Illustrate --> FinalEmotion["review-book-emotional-arc"]
     Illustrate --> FinalProps["review-book-environment-prop-continuity"]
@@ -33,6 +36,7 @@ flowchart TB
     CharacterReview --> FinalBrief["build-book-revision-brief"]
     FinalEmotion --> FinalBrief
     FinalProps --> FinalBrief
+    FinalPlacement --> ProductionReview
     ProductionReview --> FinalBrief
     FinalBrief --> FinalGate{"Book ready?"}
     FinalGate -->|Fix planning| Performance
