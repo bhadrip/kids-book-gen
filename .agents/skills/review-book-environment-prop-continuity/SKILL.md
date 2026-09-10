@@ -36,19 +36,27 @@ image-execution checks `not_evaluable`.
      world details;
    - props: identity, defining traits, state, location, holder/owner, transfer,
      movement, damage, repair, consumption, and justified absence.
-5. Evaluate every applicable page, then compare neighboring pages and the full
-   sequence. Test important pages once with text hidden.
-6. Distinguish contradiction from permitted change. Accept a change only when
+5. Treat landmark topology as a tracked environment fact: inside/outside
+   containment, left/right/front/rear relationships, paths between landmarks,
+   and camera axis. A landmark may leave the crop, but it may not cross a
+   boundary, swap sides, or move along a path without an explicit story event
+   or declared viewpoint reset.
+6. Evaluate every applicable page, then compare neighboring pages and the full
+   sequence. Test important pages once with text hidden. For every regenerated
+   page, run a three-page regression window (`previous -> changed -> next`), or
+   the available two-page window at a book end, and score both boundaries
+   separately.
+7. Distinguish contradiction from permitted change. Accept a change only when
    the story, plan, or visible action explains it.
-7. Separate the likely source: story, continuity plan, spread plan, storyboard,
+8. Separate the likely source: story, continuity plan, spread plan, storyboard,
    illustration execution, sequence, or unknown.
-8. Consolidate checks caused by one defect into one finding. Choose one primary
+9. Consolidate checks caused by one defect into one finding. Choose one primary
    domain, `environment` or `prop`, and link related domains rather than
    duplicating instructions.
-9. Report successful continuity to preserve and bounded revision suggestions.
+10. Report successful continuity to preserve and bounded revision suggestions.
    Never regenerate, rewrite, or replace an approved artifact without explicit
    user authorization.
-10. When asked to save the review, copy `assets/review-template.md`, complete
+11. When asked to save the review, copy `assets/review-template.md`, complete
     only evidence-supported fields, and follow the repository's wiki/index/log
     rules for durable knowledge.
 

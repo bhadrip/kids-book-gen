@@ -34,6 +34,10 @@ If the source text or page order is unavailable, report the affected checks as
 4. Audit every adjacent page. Require a recoverable textual or visual bridge
    for a new character, location, time, plan, transformed object, or action-
    direction reversal. A possible off-page event is not a bridge.
+   For every regenerated page, also audit the complete three-page window
+   (`previous -> changed -> next`), or the available two-page window at a book
+   end. Record both boundaries separately; passing one boundary is not a local
+   sequence pass.
 5. Compare text and image in both directions:
    - hide the text and state what the image establishes;
    - hide the image and state what the text establishes;
@@ -43,11 +47,18 @@ If the source text or page order is unavailable, report the affected checks as
    obstruction, overflow, accidental raster text, proof labels, spread numbers,
    crop, and reading order. Treat an internal locator as a defect when it reaches
    the final book without an explicit reader purpose.
+   Treat faces and eyes, communicative hands/gestures, and the decisive action
+   as protected subject regions. A translucent panel still counts as an
+   obstruction when it crosses one of these regions. Inspect each composed page,
+   not merely the illustration's nominal text-safe corner; move or reshape the
+   text container when generated staging occupies that corner.
 7. Assign the likely owning artifact for each issue: story, performance plan,
    VisualBible/continuity ledger, BookPlan, illustration, or PDF/layout.
 8. Record a bounded correction, preservation locks, success criteria, and the
    specialist evaluators that must rerun. Do not rewrite or regenerate during a
    review.
+   A localized correction must name both neighboring pages as regression scope,
+   even when those neighbors remain preserved rather than regenerated.
 9. When saving a report, copy [assets/review-template.md](assets/review-template.md)
    and follow repository index/log rules.
 
@@ -59,6 +70,8 @@ If the source text or page order is unavailable, report the affected checks as
 - Text over variable artwork needs a sufficiently opaque panel, local scrim, or
   other treatment that makes the threshold stable across the entire text box.
   Do not approve contrast from a palette swatch or average page color.
+- Accessibility includes subject visibility: no reader text or panel may cover
+  a face or eyes, meaning-bearing gesture, or story-critical action.
 - Do not encode meaning using color alone. Preserve a clear reading order and
   keep text out of visually busy focal action.
 - If contrast cannot be measured reliably, mark it `not_evaluable` and require

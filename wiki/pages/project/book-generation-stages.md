@@ -75,6 +75,26 @@ pipeline](../../../spec/04-agent-pipeline.md).
 
 ## Revision behavior
 
+```mermaid
+flowchart LR
+    Feedback[Parent or evaluator feedback] --> Brief[Dependency-aware revision brief]
+    Brief --> Locks[Update story or visual locks]
+    Locks --> Topology[Lock environment topology and camera axis]
+    Topology --> Proof[Continuity proof]
+    Proof --> Regenerate[Regenerate only failing pages]
+    Regenerate --> Window[Previous - changed - next regression]
+    Window -->|fails| Brief
+    Window -->|passes| Whole[Whole-book contact-sheet review]
+    Whole -->|fails| Brief
+    Whole -->|passes| PDF[Accessible final PDF]
+```
+
+- A page is never approved from isolated inspection after regeneration.
+- Fixed landmarks retain containment and relative position across camera crops.
+- Neighbor pages are regression scope, not automatic regeneration scope.
+- Final text panels must avoid faces, eyes, communicative hands, and decisive
+  actions even when those subjects occupy the nominal text-safe corner.
+
 - Fix blockers before preferences.
 - Change one mechanism or bounded cluster at a time.
 - State what must be preserved.
