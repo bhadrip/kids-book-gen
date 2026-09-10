@@ -47,6 +47,9 @@ into a reviewer finding.
    item. A fix is not complete because a file changed.
    Directional or environment-topology repairs require both a three-page-window
    audit and a complete-book contact-sheet pass before closure.
+   Layout repairs that move text require a composed-page occlusion check for
+   faces, eyes, communicative hands, and the decisive action on every changed
+   page, followed by the full-book contact-sheet pass.
 8. Mark decisions that need parent approval. Do not rewrite, regenerate, delete,
    commit, or change approval state while building the brief unless separately
    authorized.

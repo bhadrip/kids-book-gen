@@ -92,6 +92,8 @@ flowchart LR
 - A page is never approved from isolated inspection after regeneration.
 - Fixed landmarks retain containment and relative position across camera crops.
 - Neighbor pages are regression scope, not automatic regeneration scope.
+- Final text panels must avoid faces, eyes, communicative hands, and decisive
+  actions even when those subjects occupy the nominal text-safe corner.
 
 - Fix blockers before preferences.
 - Change one mechanism or bounded cluster at a time.
