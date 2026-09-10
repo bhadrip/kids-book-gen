@@ -16,6 +16,11 @@ domain.
 4. Run the narrowest relevant checks while working, then the required handoff
    checks from `development.md`.
 
+When changing a reusable skill under `.agents/skills/`, read the canonical
+[skill workflow](.agents/skills/README.md). Add, remove, rename, or reroute a
+skill there in the same change so the Mermaid diagram continues to represent
+every repository skill and its actual `SKILL.md` contract.
+
 For a parent-facing UI change, also read
 [spec/08-ux-guidelines.md](spec/08-ux-guidelines.md) and follow its required
 screen-state and accessibility evidence checklist.
