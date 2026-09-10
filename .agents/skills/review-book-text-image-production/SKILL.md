@@ -34,6 +34,10 @@ If the source text or page order is unavailable, report the affected checks as
 4. Audit every adjacent page. Require a recoverable textual or visual bridge
    for a new character, location, time, plan, transformed object, or action-
    direction reversal. A possible off-page event is not a bridge.
+   For every regenerated page, also audit the complete three-page window
+   (`previous -> changed -> next`), or the available two-page window at a book
+   end. Record both boundaries separately; passing one boundary is not a local
+   sequence pass.
 5. Compare text and image in both directions:
    - hide the text and state what the image establishes;
    - hide the image and state what the text establishes;
@@ -48,6 +52,8 @@ If the source text or page order is unavailable, report the affected checks as
 8. Record a bounded correction, preservation locks, success criteria, and the
    specialist evaluators that must rerun. Do not rewrite or regenerate during a
    review.
+   A localized correction must name both neighboring pages as regression scope,
+   even when those neighbors remain preserved rather than regenerated.
 9. When saving a report, copy [assets/review-template.md](assets/review-template.md)
    and follow repository index/log rules.
 

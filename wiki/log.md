@@ -1,16 +1,11 @@
 # Wiki maintenance log
 
-## 2026-09-09 - Revision brief
-
-- Added the dependency-aware book revision brief skill for consolidating parent
-  and evaluator findings into bounded successor work with preservation locks
-  and required reruns.
-
 ## 2026-09-09
 
-- Added the reusable text-image and reader-facing production review skill for
-  transition bridges, action direction, accessible contrast, and proof-marker
-  leakage.
+- Strengthened visual-continuity skills after a real-book false pass. Recurring
+  locations now require topology and camera-axis checks; regenerated pages
+  require predecessor/changed/successor regression review plus a full-book
+  contact-sheet pass. Updated the stage flowchart to expose this repair loop.
 
 ## 2026-07-25
 

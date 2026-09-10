@@ -40,8 +40,13 @@ into a reviewer finding.
    stale; do not spend on image corrections before the new story/plans pass.
 6. For every repair, state what must remain unchanged and which sibling pages
    must not be regenerated.
+   For a page-level visual repair, include its predecessor and successor as
+   regression-review scope. Neighbors remain reusable unless evidence shows
+   they also violate the controlling lock.
 7. Define the exact validators to rerun and the evidence needed to close the
    item. A fix is not complete because a file changed.
+   Directional or environment-topology repairs require both a three-page-window
+   audit and a complete-book contact-sheet pass before closure.
 8. Mark decisions that need parent approval. Do not rewrite, regenerate, delete,
    commit, or change approval state while building the brief unless separately
    authorized.
