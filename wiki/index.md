@@ -4,6 +4,7 @@ Persistent project knowledge for research, product design, and implementation.
 
 ## Reader and book design
 
+- [Children's-book skill workflow](../.agents/skills/README.md)
 - [Ages 3–5 picture-book preferences and reader fit](pages/concepts/ages-3-5-picture-book-fit.md)
 - [Book generation stages](pages/project/book-generation-stages.md)
 - [Quality and likeability control](pages/project/quality-and-likeability-control.md)

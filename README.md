@@ -12,6 +12,8 @@ yet include accounts, shared infrastructure, staging, or production hosting.
 The current product decisions, research, and implementation roadmap live in
 [`spec/`](spec/README.md) and [`tasks/mlp-v0.md`](tasks/mlp-v0.md).
 The living system map is in [ARCHITECTURE.md](ARCHITECTURE.md).
+The reusable authoring, planning, illustration, and review skills are connected
+in the [children's-book skill workflow](.agents/skills/README.md).
 
 ## Generated book example
 

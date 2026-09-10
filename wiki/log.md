@@ -80,3 +80,8 @@
   dramatic-throughline check, and production handoff metadata.
 - Added a four-page printable preschool story collection, with one complete
   age-four read-aloud story per US Letter sheet, and indexed the PDF.
+
+## 2026-09-09
+
+- Added the canonical reusable-skill workflow and instructed future skill
+  changes to update its Mermaid diagram in the same pull request.
