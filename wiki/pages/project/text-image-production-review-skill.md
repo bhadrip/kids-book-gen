@@ -13,3 +13,9 @@ specialist evaluators that must rerun.
 
 The skill does not rewrite stories, regenerate images, or replace the emotional
 and environment/prop reviewers.
+
+The protected-region taxonomy, multi-candidate placement algorithm, automation
+boundary, and layout contract are documented in
+[Page-specific picture-book text placement](../concepts/page-specific-picture-book-text-placement.md).
+The upstream implementation contract is owned by the
+[Book text-placement skill](book-text-placement-skill.md).

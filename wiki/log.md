@@ -91,3 +91,19 @@
 
 - Added the canonical reusable-skill workflow and instructed future skill
   changes to update its Mermaid diagram in the same pull request.
+
+## 2026-09-10
+
+- Ingested research on professional picture-book text placement for ages 3–5,
+  preserving the source memo and bibliography under `wiki/raw/`.
+- Added `build-book-continuity-proof` for economical sequential black-and-white
+  storyboards, normally three four-spread sheets for a 12-spread book.
+- Added `plan-book-text-placement` to overlay exact text digitally, compare
+  page-specific candidates, protect narrative subjects and reading paths, and
+  escalate unsafe or ambiguous spreads before final illustration.
+- Added a final-art placement mode so color contrast, texture, lighting, and
+  production checks deferred from monochrome proofs are rerun before the
+  independent text-image production review.
+- Recorded that universal safe corners, preschool type-size floors, saliency
+  thresholds, and permissible subject-overlap values are not established rules;
+  project heuristics require professional calibration and physical proof review.
