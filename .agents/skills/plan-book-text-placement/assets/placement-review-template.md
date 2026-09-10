@@ -9,6 +9,7 @@
 - Visual Bible revision:
 - Continuity proof or illustration revision:
 - Typography profile:
+- Text treatment and border policy:
 - Production profile:
 - Placement revision:
 
@@ -27,11 +28,13 @@
 - Placement variety and consistency:
 - Page-turn integrity:
 - Issues to preserve or revise:
+- Source-panel scale/aspect consistency:
+- Monochrome palette integrity:
 
 ## Spread decisions
 
 | Spread | Selected candidate | Hard gates | Alternatives | Decision | Reason |
-| ------ | ------------------ | ---------- | ------------ | -------- | ------ |
+| --- | --- | --- | --- | --- | --- |
 
 ## Findings requiring action
 
