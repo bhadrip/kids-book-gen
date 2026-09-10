@@ -1,5 +1,11 @@
 # Wiki maintenance log
 
+## 2026-09-09 - Revision brief
+
+- Added the dependency-aware book revision brief skill for consolidating parent
+  and evaluator findings into bounded successor work with preservation locks
+  and required reruns.
+
 ## 2026-09-09
 
 - Added the reusable text-image and reader-facing production review skill for
