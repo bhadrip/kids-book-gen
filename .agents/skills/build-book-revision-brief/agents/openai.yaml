@@ -1,0 +1,3 @@
+interface:
+  display_name: "Build Book Revision Brief"
+  short_description: "Turn review findings into an artifact-level repair plan"
