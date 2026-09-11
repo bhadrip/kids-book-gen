@@ -1,0 +1,57 @@
+{
+  "schemaVersion": 1,
+  "promptVersion": "layered-stitcher-prototype-v1",
+  "generatedAt": "2026-09-11",
+  "mode": "built-in image_gen",
+  "model": null,
+  "requestSettings": {
+    "quality": null,
+    "size": null,
+    "note": "The built-in tool did not expose model, quality, or requested size controls. Observed output dimensions are validated by the compositor and documented in the experiment report."
+  },
+  "assets": [
+    {
+      "file": "assets/meadow-background.png",
+      "prompt": "Use case: illustration-story\nAsset type: reusable children's-book environment layer for a TypeScript scene compositor\nPrimary request: Create a wide, polished gouache-and-colored-pencil illustration of a gentle woodland meadow path in early morning.\nScene/backdrop: winding ochre path through soft grass, small wildflowers, rounded bushes, a few distant trees, pale turquoise sky, subtle paper texture.\nComposition/framing: landscape picture-book spread; eye-level view; open foreground and middle ground for placing a character; quiet negative space in the upper right for separately rendered story text.\nLighting/mood: warm, hopeful, calm morning light.\nConstraints: environment only; no characters, animals, people, text, lettering, signs, borders, watermark, or cast shadow belonging to an absent character. Keep the ground plane readable so a transparent character can be composited convincingly."
+    },
+    {
+      "file": "assets/pip-standing.png",
+      "prompt": "Use case: illustration-story\nAsset type: reusable transparent character cutout for a layered children's-book compositor\nPrimary request: Create one charming young red-panda child character named Pip, standing in a relaxed three-quarter view facing toward the right.\nSubject: full body visible from ears through feet; rusty orange fur, cream muzzle and inner ears, dark brown lower legs and ringed tail; teal short overalls with two round wooden buttons; small mustard-yellow neckerchief; friendly curious expression.\nStyle/medium: polished gouache and colored pencil children's-book illustration with soft imperfect edges and subtle paper grain.\nComposition/framing: character centered with generous transparent padding, neutral upright pose, arms relaxed, feet clearly separated, tail visible.\nLighting/mood: soft warm daylight from upper left.\nConstraints: genuinely transparent background and preserved alpha; single character only; no floor, scenery, props, text, border, watermark, or cast shadow; clean silhouette without white halo."
+    },
+    {
+      "file": "assets/pip-walking.png",
+      "reference": "assets/pip-standing.png",
+      "prompt": "Use case: identity-preserve\nAsset type: replacement transparent character pose after alpha validation failed\nInput images: Image 1 is the approved identity and style reference. Do not edit or reuse the prior checkerboard result.\nPrimary request: Render Pip taking one gentle walking step toward the right, with one foot raised slightly and both arms naturally balancing.\nConstraints: preserve the exact same red-panda identity, face, fur markings, body proportions, teal short overalls, two wooden buttons, mustard-yellow neckerchief, gouache-and-colored-pencil texture, warm upper-left lighting, scale, and friendly curious expression from Image 1. Full body and ringed tail visible.\nTransparency requirement: output actual transparent pixels outside the character silhouette. Do not draw, depict, imitate, or bake in a gray-and-white checkerboard. No solid background of any color. No floor, scenery, cast shadow, props, text, border, watermark, extra limbs, or extra character. Clean alpha edges without a white halo."
+    },
+    {
+      "file": "assets/red-kite.png",
+      "prompt": "Use case: illustration-story\nAsset type: reusable transparent prop cutout for a layered children's-book compositor\nPrimary request: Create one small diamond-shaped red paper kite with two short wooden cross spars and a loose cream ribbon tail with three teal bow ties.\nStyle/medium: polished gouache and colored pencil children's-book illustration with soft imperfect edges and subtle paper grain, matching warm morning light from upper left.\nComposition/framing: complete kite and tail visible, angled slightly upward toward the right, centered with generous transparent padding.\nConstraints: genuinely transparent background and preserved alpha; prop only; no hand, character, scenery, floor, text, border, watermark, or cast shadow; clean silhouette without white halo."
+    },
+    {
+      "file": "not-committed/pip-worried-baked-checkerboard.png",
+      "committed": false,
+      "reference": "assets/pip-standing.png",
+      "outcome": "rejected: no alpha channel",
+      "elapsedMs": 23125,
+      "prompt": "Use case: identity-preserve\nAsset type: replacement transparent character-expression layer for a children's-book compositor\nInput images: Image 1 is the approved Pip character asset and the edit target.\nPrimary request: Change only Pip's facial expression from friendly curiosity to mild, child-readable worry. Lift the inner eyebrows slightly, open the mouth into a small soft \"o\", and make the eyes attentive toward the upper right. The emotion should feel concerned but safe, not frightened or sad.\nInvariants: Preserve the exact same red-panda identity, head and body shape, fur markings and colors, full-body standing three-quarter pose, limb and tail positions, teal short overalls, two wooden buttons, mustard-yellow neckerchief, lighting from upper left, scale, gouache-and-colored-pencil texture, and transparent padding from Image 1.\nTransparency requirement: output genuine transparent pixels outside the character silhouette. No checkerboard, solid background, floor, scenery, cast shadow, props, text, border, watermark, extra limbs, or extra character. Clean alpha edges without a white halo."
+    },
+    {
+      "file": "assets/pip-worried.png",
+      "reference": "assets/pip-standing.png",
+      "outcome": "accepted: alpha channel present",
+      "elapsedMs": 42270,
+      "prompt": "Use case: identity-preserve\nAsset type: replacement transparent character-expression layer after alpha validation failed\nInput images: Image 1 is the approved identity, pose, and style reference. Do not edit or reuse the prior checkerboard result.\nPrimary request: Render Pip with only a mildly worried facial expression: inner eyebrows lifted slightly, mouth open in a small soft \"o\", eyes attentive toward the upper right. Concerned but safe, not frightened or sad.\nInvariants: Preserve the exact same red-panda identity, head and body shape, fur markings and colors, full-body standing three-quarter pose, limb and tail positions, teal short overalls, two wooden buttons, mustard-yellow neckerchief, warm upper-left lighting, scale, gouache-and-colored-pencil texture, and generous padding from Image 1.\nTransparency requirement: output ACTUAL TRANSPARENT PIXELS outside Pip's silhouette. Do not draw, depict, imitate, flatten, or bake in a gray-and-white checkerboard. No solid background of any color. No floor, scenery, cast shadow, props, text, border, watermark, extra limbs, or extra character. Clean alpha edges without a white halo."
+    },
+    {
+      "file": "assets/page-four-single-prompt-art.png",
+      "references": [
+        "assets/meadow-background.png",
+        "assets/pip-standing.png",
+        "assets/red-kite.png"
+      ],
+      "outcome": "accepted: opaque full-page art",
+      "elapsedMs": 39931,
+      "prompt": "Use case: illustration-story\nOutput intent: one complete, cohesive landscape children's-book page illustration for direct comparison with a layered compositor\nInput images and roles:\n- Image 1: approved meadow environment and exact visual-continuity reference.\n- Image 2: approved Pip red-panda character identity, clothing, proportions, and style reference.\n- Image 3: approved red kite identity and style reference.\nScene: In the same early-morning meadow, the red kite has swooped low toward the right side. Pip stands near the center-left watching it with mild, child-readable worry: inner eyebrows lifted slightly, eyes attentive toward the upper right, mouth open in a small soft \"o\". Concerned but safe, not frightened or sad. A thin kite string curves naturally between Pip and the kite.\nComposition: 3:2 landscape, equivalent to 1536 by 1024. Keep Pip full-body and grounded on the path. Keep the kite fully visible in the lower-right/mid-right area. Preserve generous quiet negative space in the upper right for a text box.\nStyle and lighting: polished gouache and colored-pencil children's-book illustration, subtle paper grain, warm early-morning light from the upper left, coherent contact shadow and atmospheric integration.\nContinuity constraints: preserve Pip's exact red-panda identity, fur markings and colors, body proportions, teal short overalls with two wooden buttons, mustard-yellow neckerchief, and ringed tail from Image 2. Preserve the kite's red diamond, wooden cross spars, cream tail, and three teal bows from Image 3. Preserve the path, large left tree, sunrise, distant hills, bushes, rocks, and flower placement from Image 1 as closely as possible.\nNo text, letters, border, watermark, extra characters, duplicate kite, or extra props."
+    }
+  ]
+}

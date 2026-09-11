@@ -9,6 +9,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build --webpack",
+    "demo:stitcher": "node --experimental-strip-types scripts/render-layered-stitcher-demo.mjs",
     "start": "next start",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
