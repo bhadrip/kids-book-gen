@@ -1,0 +1,4 @@
+interface:
+  display_name: "Build Book Continuity Proof"
+  short_description: "Create low-cost line proofs for book continuity review"
+  default_prompt: "Use $build-book-continuity-proof to create an ordered black-and-white storyboard proof of this children's book before final illustration."
