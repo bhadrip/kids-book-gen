@@ -21,3 +21,10 @@ flowchart TD
 The fallback can be removed after every supported installation and validation
 path understands the portable manifest. Until then it is retained to test the
 same package with older ingestion paths.
+
+## Brand assets
+
+- `assets/logo.png` is the 1024 × 1024 marketplace logo.
+- `assets/composer-icon.png` is the 256 × 256 small-surface icon.
+- Both files use the same transparent, text-free mark so it remains recognizable
+  at small sizes.

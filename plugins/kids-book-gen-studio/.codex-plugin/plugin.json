@@ -16,6 +16,8 @@
     "developerName": "pmadhavan",
     "category": "Education",
     "capabilities": ["Write"],
+    "composerIcon": "./assets/composer-icon.png",
+    "logo": "./assets/logo.png",
     "defaultPrompt": [
       "Create a gentle preschool story about taking turns.",
       "Help me turn a behavior goal into a picture-book story.",
