@@ -22,6 +22,23 @@ The fallback can be removed after every supported installation and validation
 path understands the portable manifest. Until then it is retained to test the
 same package with older ingestion paths.
 
+## Bundled skills
+
+Version 0.2.0 packages every children's-book skill committed on `main` when
+this release was assembled:
+
+- `preschool-behavior-story`
+- `evaluate-story-quality`
+- `evaluate-book-characters`
+- `build-book-continuity-proof`
+- `plan-book-text-placement`
+- `review-book-emotional-arc`
+- `review-book-environment-prop-continuity`
+- `review-book-text-image-production`
+
+Skills still under development are added only after their canonical copies
+land on `main`.
+
 ## Brand assets
 
 - `assets/logo.png` is the 1024 × 1024 marketplace logo.
