@@ -68,6 +68,9 @@ typeface, type size, trim, binding, or treatment stales the prior placement.
    reserved fields, upper/lower bands, side columns, shifted or reshaped
    regions, treatment-backed regions, and separate text-area layouts. Do not
    restrict candidates to four corners.
+   In proof-placement mode, start with borderless text over intentional quiet
+   space. A visible box, outline, or opaque panel is a fallback that requires a
+   recorded readability reason; it is not the default proof treatment.
 6. Reject any candidate that fails production geometry, capacity, protected
    subjects, reading order, page-turn integrity, or—on final art—local contrast.
    A translucent treatment still obstructs any protected subject it crosses.
@@ -78,6 +81,11 @@ typeface, type size, trim, binding, or treatment stales the prior placement.
 8. Render the selected candidate and up to two leading alternatives as separate
    digital overlays. Review the complete open spread and the previous/current/
    next window, not only an isolated page.
+   Reject a detached text band when it compresses, crops, or resizes the art
+   differently from neighboring spreads merely to avoid a protected region.
+   Route that spread to a bounded composition reproof with intentional negative
+   space. A separate text area is acceptable only when it is an intentional,
+   book-consistent layout system or a parent-approved exception.
 9. Select only when all hard gates pass and one candidate is clearly preferable.
    Otherwise request human review or the least-upstream bounded revision.
 10. Save the manifest and review sheet using
@@ -91,6 +99,8 @@ typeface, type size, trim, binding, or treatment stales the prior placement.
 - The complete treatment footprint does not cover a hard-protected region.
 - Text blocks have an unambiguous spoken, visual, and digital order.
 - Placement does not expose, cover, or compete with a planned page-turn reveal.
+- Text treatment does not introduce an unexplained border, box, detached band,
+  or page-scale change that breaks the whole-book layout rhythm.
 - In final-art mode, contrast is measured locally against the final composited
   background. A box-average or palette-swatch result is not a pass.
 
@@ -128,6 +138,20 @@ a restrained treatment outside protected content; use a separate text area;
 rebalance the spread; revise illustration composition; revise pagination; then
 revise prose only through the story-approval workflow. If none is acceptable,
 block placement rather than hiding narrative information or undersizing type.
+
+## Proof rendering integrity
+
+- Preserve the source panel's aspect ratio and scale across the review set.
+  Do not shrink one illustration under a text band as a collision workaround.
+- Keep proof treatment genuinely monochrome. If generated source art retains
+  selective color, mark the affected sheet `needs_reproof`; grayscale
+  conversion may support diagnosis but does not make the generated proof pass.
+- Render story copy as a separate deterministic layer. Default to borderless
+  text in planned negative space. When readability needs support, prefer a soft
+  borderless wash or scrim whose complete footprint clears protected regions.
+- A visible border is permitted only when it is part of an explicit,
+  book-wide, parent-approved design system. Record that decision in the
+  typography profile and apply it consistently.
 
 ## Boundaries and handoff
 

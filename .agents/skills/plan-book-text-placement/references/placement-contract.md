@@ -37,6 +37,7 @@ spreads:
       alignment:
       lines: []
       treatment: none | opaque_panel | translucent_panel | scrim | gradient | separate_area | integrated
+      border: none | explicit_approved_system
       padding:
     protectedRegions:
       - regionId:
@@ -87,3 +88,11 @@ deferredChecks: []
   reproducible from the manifest.
 - A changed source revision identifies stale placement records rather than
   silently overwriting them.
+- Every proof-placement record states whether the text background and border
+  are absent, a borderless readability treatment, or part of an explicitly
+  approved system.
+- Candidate selection records any change to source-panel aspect ratio, crop, or
+  scale. A collision workaround that changes only one spread's art scale fails
+  whole-book rhythm and must request reproof.
+- Monochrome proof sources record a palette-integrity check. Selective retained
+  color is `needs_reproof`, even when a grayscale diagnostic derivative exists.
