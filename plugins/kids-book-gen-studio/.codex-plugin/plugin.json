@@ -1,0 +1,27 @@
+{
+  "name": "kids-book-gen-studio",
+  "version": "0.1.0",
+  "description": "Create and review emotionally engaging, developmentally appropriate children's books.",
+  "author": {
+    "name": "pmadhavan"
+  },
+  "homepage": "https://github.com/bhadrip/kids-book-gen",
+  "repository": "https://github.com/bhadrip/kids-book-gen",
+  "keywords": ["children", "picture-books", "stories", "education"],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Kids Book Gen Studio",
+    "shortDescription": "Create thoughtful picture-book stories for young children.",
+    "longDescription": "Create developmentally appropriate children's-book stories through character purpose, emotion, agency, and natural consequences. The first release packages the preschool behavior-story workflow and does not require a server connection.",
+    "developerName": "pmadhavan",
+    "category": "Education",
+    "capabilities": ["Write"],
+    "composerIcon": "./assets/composer-icon.png",
+    "logo": "./assets/logo.png",
+    "defaultPrompt": [
+      "Create a gentle preschool story about taking turns.",
+      "Help me turn a behavior goal into a picture-book story.",
+      "Write a 12-spread read-aloud for a four-year-old."
+    ]
+  }
+}
