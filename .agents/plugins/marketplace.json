@@ -5,16 +5,16 @@
   },
   "plugins": [
     {
-      "name": "children-book-studio",
+      "name": "kids-book-gen-studio",
       "source": {
         "source": "local",
-        "path": "./plugins/children-book-studio"
+        "path": "./plugins/kids-book-gen-studio"
       },
       "policy": {
         "installation": "AVAILABLE",
         "authentication": "ON_INSTALL"
       },
-      "category": "Productivity"
+      "category": "Education"
     }
   ]
 }

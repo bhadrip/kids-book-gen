@@ -19,7 +19,7 @@ Source epic:
 
 | ID | Task | Status | Dependency | Evidence required |
 | --- | --- | --- | --- | --- |
-| SKP-01 | Scaffold `children-book-studio` with compatibility and portable manifests. | **done** | None | Both manifests validate and use the same name and version. |
+| SKP-01 | Scaffold `kids-book-gen-studio` with compatibility and portable manifests. | **done** | None | The root portable manifest is canonical; the compatibility manifest remains a fallback and both use the same name and version. |
 | SKP-02 | Add a repository marketplace entry for local installation. | **done** | SKP-01 | Marketplace validation resolves the plugin path. |
 | SKP-03 | Package `preschool-behavior-story` as the first complete workflow. | **done** | SKP-01 | Plugin and packaged skill validators pass with all required resources present. |
 | SKP-04 | Add fixture prompts for story creation and negative routing. | **not started** | SKP-03 | Passing fixtures cover valid, underspecified, unsafe, and out-of-scope requests. |
