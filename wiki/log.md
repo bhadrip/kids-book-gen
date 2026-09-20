@@ -107,3 +107,12 @@
 - Recorded that universal safe corners, preschool type-size floors, saliency
   thresholds, and permissible subject-overlap values are not established rules;
   project heuristics require professional calibration and physical proof review.
+
+## 2026-09-19
+
+- Versioned the story-quality rubric to `story-quality-text-v3` and made
+  spatial-continuity and motivational-bridge coverage mandatory for every
+  adjacent spread pair in both the repository skill and packaged plugin.
+- Strengthened output validation so missing audit coverage, overstated spatial
+  or motivational scores, inconsistent hard gates, and `ready` recommendations
+  with unresolved transitions are rejected.

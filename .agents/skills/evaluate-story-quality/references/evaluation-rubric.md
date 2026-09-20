@@ -1,6 +1,6 @@
 # Story-quality text rubric
 
-Version: `story-quality-text-v2`
+Version: `story-quality-text-v3`
 
 ## Result vocabulary
 
@@ -38,6 +38,11 @@ multiple pieces of story-specific evidence.
   through its climax; secondary behaviors deepen that pursuit or arise as its
   consequence rather than starting a new lesson, goal, or problem after the
   primary question resolves.
+- `STRUCT-SPATIAL-01` — Locations, entrances, exits, and meaningful changes in
+  physical arrangement remain recoverable from the text across adjacent units.
+- `STRUCT-MOTIVATION-01` — New questions, guesses, plans, attempts, and reactions
+  follow from a recoverable desire, observation, statement, clue, consequence,
+  or explicitly tentative line of thought.
 
 ### Predicted engagement
 
@@ -106,6 +111,8 @@ Fail a gate when its named dimension is `not_evident` or `weak`:
 - `GATE-ESCALATION` → `STRUCT-ESCALATION-01`
 - `GATE-RESOLUTION` → `STRUCT-RESOLUTION-01`
 - `GATE-THROUGHLINE` → `STRUCT-THROUGHLINE-01`
+- `GATE-SPATIAL` → `STRUCT-SPATIAL-01`
+- `GATE-MOTIVATION` → `STRUCT-MOTIVATION-01`
 - `GATE-AGENCY` → `STRUCT-CHOICE-01`
 - `GATE-COMPREHENSION` → `LANG-REFERENTS-01` and `LANG-INFERENCE-01`
 
@@ -115,18 +122,30 @@ high-risk interpretation and require human review.
 
 ## Evidence requirements
 
-Before assigning structure or inference results, audit all adjacent-unit
-changes in location, pursued object, plan, or knowledge state. For each change,
-identify its source unit, destination unit, and recoverable textual trigger.
-A clue that first appears at the destination does not by itself explain why the
-protagonist went there. Do not infer a missing bridge from planned or possible
-illustrations.
+Before assigning structure or inference results, audit every adjacent-unit pair
+for both spatial continuity and motivational bridging. For each pair, identify
+its source unit, destination unit, status, observation, and recoverable textual
+trigger. A clue that first appears at the destination does not by itself explain
+why the protagonist went there or began a new line of action. Do not infer a
+missing bridge from planned or possible illustrations.
+
+Intentional uncertainty about a private feeling or motive is not automatically
+a defect. External story facts must remain recoverable: where characters are,
+how a meaningful move occurs, and what observation or established concern
+prompts another character's next question, guess, plan, attempt, or reaction.
+Plausibility is not a substitute for textual evidence.
 
 `STRUCT-CAUSE-01` cannot be `strong` or `distinctive` when any major adjacent
 transition lacks a textual trigger. For ages 3–5, `LANG-INFERENCE-01` cannot be
 above `functional` when understanding a major transition requires inventing an
 unstated clue, choice, or spatial relation. A minor atmospheric cut that does
 not affect the protagonist's pursuit need not lower either result.
+
+`STRUCT-SPATIAL-01` cannot exceed `functional` when a transition's spatial
+continuity is ambiguous and cannot exceed `weak` when a required move is
+missing. Apply the same caps to `STRUCT-MOTIVATION-01` for ambiguous or missing
+motivational bridges. Any `ambiguous` or `missing` transition blocks a `ready`
+recommendation until the smallest necessary bridge is supplied.
 
 For `STRUCT-THROUGHLINE-01`, state the primary dramatic question, its answer
 unit, and the job of every later unit. A late sequence is not unified merely

@@ -8,24 +8,31 @@
     "readerProfileVersion",
     "artifact",
     "reader",
+    "transitionAudit",
     "dimensions",
     "hardGates",
     "summary"
   ],
   "properties": {
     "schemaVersion": { "const": 1 },
-    "rubricVersion": { "const": "story-quality-text-v2" },
+    "rubricVersion": { "const": "story-quality-text-v3" },
     "readerProfileVersion": { "const": "reader-profiles-v1" },
     "evaluatorModel": { "type": ["string", "null"] },
     "artifact": {
       "type": "object",
-      "required": ["path", "sha256", "title", "unitCount"],
+      "required": ["path", "sha256", "title", "unitCount", "unitOrder"],
       "properties": {
         "path": { "type": "string", "minLength": 1 },
         "sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
         "title": { "type": "string", "minLength": 1 },
         "revision": { "type": ["integer", "null"], "minimum": 1 },
-        "unitCount": { "type": "integer", "minimum": 1 }
+        "unitCount": { "type": "integer", "minimum": 1 },
+        "unitOrder": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "type": "integer", "minimum": 1 }
+        }
       },
       "additionalProperties": false
     },
@@ -45,6 +52,25 @@
         }
       },
       "additionalProperties": false
+    },
+    "transitionAudit": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "fromUnit",
+          "toUnit",
+          "spatialContinuity",
+          "motivationalBridge"
+        ],
+        "properties": {
+          "fromUnit": { "type": "integer", "minimum": 1 },
+          "toUnit": { "type": "integer", "minimum": 1 },
+          "spatialContinuity": { "$ref": "#/$defs/transitionCheck" },
+          "motivationalBridge": { "$ref": "#/$defs/transitionCheck" }
+        },
+        "additionalProperties": false
+      }
     },
     "dimensions": {
       "type": "array",
@@ -139,6 +165,20 @@
           ]
         },
         "highestValueRevision": { "type": ["string", "null"] }
+      },
+      "additionalProperties": false
+    }
+  },
+  "$defs": {
+    "transitionCheck": {
+      "type": "object",
+      "required": ["status", "observation", "textualBridge"],
+      "properties": {
+        "status": {
+          "enum": ["clear", "ambiguous", "missing", "not_applicable"]
+        },
+        "observation": { "type": "string", "minLength": 1 },
+        "textualBridge": { "type": ["string", "null"] }
       },
       "additionalProperties": false
     }
