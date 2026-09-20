@@ -127,3 +127,10 @@
 - Strengthened proof generation and review for cross-request fixed-fixture
   continuity and dignity-safe intimate child scenes, including plausible
   clothing state and opaque concealment of private body areas.
+- Added per-spread `full_scene`, `layered`, and `hybrid` proof routing with a
+  manifest-backed asset registry, alpha/anchor/hash provenance, interaction
+  gates, bounded fallback, and explicit support for the repository's optional
+  layered compositor.
+- Added one portable standard-library contact-sheet assembler that copies exact
+  story text, emits SVG plus mapping JSON, validates complete reading order,
+  and replaces book-specific assembly scripts.
