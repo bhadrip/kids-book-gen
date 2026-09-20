@@ -23,6 +23,12 @@ Bible, or continuity ledger.
 - parent must-show, must-keep, and must-avoid details;
 - intended page or spread order.
 
+Recurring characters, locations, and plot-bearing props also need exact
+reference assets when the book's continuity depends on their visual identity.
+If a required recurring reference is missing, create a neutral identification
+reference through the upstream visual-planning workflow or report the gap; do
+not hide the missing lock inside scene prompts.
+
 If a required package is missing, stale, or contradictory, report the lineage
 problem instead of inventing continuity facts. A draft proof may be made from
 unapproved inputs only when it is clearly labeled non-authoritative.
@@ -33,15 +39,28 @@ unapproved inputs only when it is clearly labeled non-authoritative.
 2. Build the proof manifest defined in
    [references/output-contract.md](references/output-contract.md). Copy only
    spread-relevant locks into each panel entry.
-3. Choose the fewest image requests that preserve evaluability. The image model
-   may generate several sequential source sheets or individual replacement
-   panels when one request would make faces, actions, or props unreadable. These
-   are generation intermediates, not the parent-facing contact sheet. Do not
-   claim savings merely because the artwork is monochrome.
-4. Generate neutral storyboard line art using the `imagegen` skill. Use black
-   lines on white, sparse or no gray, and no finished color, painterly effects,
-   textures, decorative detail, typography, logos, or watermarks.
-5. Keep generated drawings free of labels and story text. After accepting the
+3. Read [references/generation-strategy.md](references/generation-strategy.md)
+   and select `full_scene`, `layered`, or `hybrid` for every spread. Record the
+   reason, reused assets, generated assets, and any fallback. Do not assume one
+   strategy fits the whole book.
+4. Build an asset registry before generation. Record every approved character,
+   environment, prop, or action-cluster reference with its revision, role,
+   dimensions, content hash when available, alpha status when relevant,
+   anchors, and permitted reuse. Generate a neutral recurring-environment
+   reference before scene art when stable fixture geometry is not already
+   represented visually.
+5. Choose the fewest image requests that preserve evaluability. A `full_scene`
+   route may use sequential source sheets or individual panels. A `layered`
+   route generates only missing transparent assets, then reuses approved
+   backgrounds, character poses, and props through deterministic composition.
+   A `hybrid` route reuses stable layers but generates interacting characters,
+   hands, props, occlusion, foam, fabric, or shadows as one integrated action
+   cluster. These are generation intermediates, not the parent-facing contact
+   sheet. Do not claim savings merely because artwork is monochrome or layered.
+6. Generate missing raster art using the `imagegen` skill. Use black lines on
+   white, sparse or no gray, and no finished color, painterly effects, textures,
+   decorative detail, typography, logos, or watermarks.
+7. Keep generated drawings free of labels and story text. After accepting the
    panel art, assemble exactly one master contact sheet for the complete book.
    Add `SPREAD <number>` deterministically above every drawing and the exact
    approved text for that spread deterministically below it. The below-panel
@@ -49,27 +68,37 @@ unapproved inputs only when it is clearly labeled non-authoritative.
    scene artwork. Preserve reading order and record separate pixel and
    normalized bounds for the drawing and review caption. Never ask the image
    model to render spread numbers, review captions, or story text.
-6. Make continuity-critical evidence visible at normal proof size: character
+8. Make continuity-critical evidence visible at normal proof size: character
    silhouette and relative scale, face/gaze when emotionally necessary, hands
    and contact, entrances and fixed landmarks, and every important prop's
    identity, holder, location, and state.
    For recurring environments, show enough fixed landmarks to verify
    inside/outside containment and the action path. Keep a declared camera axis
    during consequential motion, or include an explicit neutral reset panel.
-7. Inspect each generated source sheet and each master-sheet panel crop before
-   accepting it. Split or regenerate only an unreadable sheet or panel; do not
-   regenerate passing siblings for polish.
-8. Assemble the one numbered, captioned master sheet from accepted panels
-   without changing their aspect ratio or relative scale. Copy each review
-   caption byte-for-byte from the approved story mapping; do not summarize or
-   reline it editorially. Record the source request for every panel, prompt,
-   model/request settings when available, source revisions, master-sheet
-   filename, grid, labels, drawing bounds, and review-caption bounds.
-9. For bathing, dressing, toileting, medical care, or similar intimate child
-   scenes, use age-appropriate dignity-safe staging. Require opaque occlusion or
-   careful framing of every private body area and prohibit visible private
-   anatomy. Do not solve privacy by leaving ordinary clothes on a child when the
-   depicted action requires those clothes to be removed.
+9. Inspect each generated source sheet, composed panel, and master-sheet panel
+   crop before accepting it. Split or regenerate only an unreadable sheet or
+   panel; do not
+   regenerate passing siblings for polish. For layered or hybrid work, inspect
+   edges, anchors, z-order, scale, gaze/contact, interaction, occlusion,
+   lighting, and contact shadows; exact asset reuse does not prove that the
+   assembled action is coherent.
+10. Assemble the one numbered, captioned master sheet from accepted panels
+    without changing their aspect ratio or relative scale. Copy each review
+    caption byte-for-byte from the approved story mapping; do not summarize or
+    reline it editorially. Record the source request for every panel, prompt,
+    model/request settings when available, source revisions, master-sheet
+    filename, grid, labels, drawing bounds, and review-caption bounds.
+    Prefer the bundled deterministic
+    [contact-sheet assembler](scripts/assemble_master_contact_sheet.py) when the
+    sources are PNG files. Read
+    [references/contact-sheet-assembly.md](references/contact-sheet-assembly.md)
+    before running it. The script emits a portable SVG and mapping JSON without
+    requiring an image model or third-party Python package.
+11. For bathing, dressing, toileting, medical care, or similar intimate child
+    scenes, use age-appropriate dignity-safe staging. Require opaque occlusion or
+    careful framing of every private body area and prohibit visible private
+    anatomy. Do not solve privacy by leaving ordinary clothes on a child when the
+    depicted action requires those clothes to be removed.
 
 ## Prompt construction
 
@@ -88,6 +117,12 @@ Do not paste the whole manuscript into the image prompt. Do not use vague
 emotion labels where observable face, gaze, hands, posture, or proximity is
 required.
 
+For generated reusable assets, state the asset role, required transparent
+background, anchor, intended scale, approved identity reference, permitted
+reuse, and the interaction it must or must not contain. For a hybrid action
+cluster, include every element whose contact or occlusion must be solved
+together; do not split a gripping hand from its object merely to maximize reuse.
+
 ## Acceptance gate
 
 A proof package is ready for review only when:
@@ -102,6 +137,13 @@ A proof package is ready for review only when:
 - drawing and review-caption bounds are recorded separately, and the manifest
   identifies the exact story revision used to verify each caption;
 - every panel maps to exact source revisions in the manifest;
+- every spread records a generation strategy and the exact generated or reused
+  assets that produced it;
+- every layered bitmap has validated transparency when required, stable anchors,
+  dimensions, and content provenance;
+- every layered or hybrid composition passes interaction, occlusion, edge,
+  lighting, and contact-shadow inspection rather than relying on asset identity
+  alone;
 - recurring characters are distinguishable and relatively scaled;
 - plot-bearing actions and cause-before-reaction staging are visible;
 - continuity-critical landmarks and prop facts are large enough to inspect;
@@ -146,6 +188,8 @@ successor. They must not trigger final illustration automatically.
 ## Deliverables
 
 - `continuity-proof-manifest.json`;
+- asset registry plus per-spread `full_scene`, `layered`, or `hybrid` routing
+  decisions;
 - one versioned, numbered master contact sheet for the complete book, with exact
   approved review text beneath every drawing;
 - generation-only source sheets and any replacement panel images needed for
