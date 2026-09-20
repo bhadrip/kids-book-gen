@@ -32,6 +32,13 @@ protected regions, emotionally critical interactions, climaxes, page-turn
 reveals, and upstream illustration or pagination changes. The final composed
 book remains subject to the independent text-image production review.
 
+The skill includes a portable standard-library renderer for proof placement.
+It consumes a human-authored spec of protected regions, candidate bounds,
+decisions, and rationales; validates approved profile lineage, safe margins,
+capacity, and hard-region overlap; then emits exact-copy candidate SVGs, one
+numbered whole-book overview, and a schema-versioned manifest. The renderer is
+deterministic and does not invent visual judgments.
+
 ## Related knowledge
 
 - [Page-specific picture-book text placement](../concepts/page-specific-picture-book-text-placement.md)

@@ -106,6 +106,11 @@ typeface, type size, trim, binding, or treatment stales the prior placement.
    digital overlays. Review the complete open spread, the previous/current/next
    window, and the one complete numbered master sheet, not only an isolated
    page.
+   When raster proof panels and complete approved profiles are available, use
+   `scripts/render_placement_review.py` to render the overlays and one numbered
+   whole-book overview deterministically. Supply a human-authored placement spec
+   containing protected regions, candidate bounds, decisions, and rationales;
+   the renderer validates rather than invents those judgments.
    Reject a detached text band when it compresses, crops, or resizes the art
    differently from neighboring spreads merely to avoid a protected region.
    Route that spread to a bounded composition reproof with intentional negative

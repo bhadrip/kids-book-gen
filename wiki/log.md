@@ -138,3 +138,7 @@
   landscape books pinned at the left edge. The skill now records an explicit
   option decision and complete versioned production and typography values before
   generating placement candidates.
+- Added a portable standard-library proof-placement renderer that validates
+  approved production and typography lineage, exact-copy capacity, safe margins,
+  and hard-protected regions before emitting candidate SVGs, one numbered
+  whole-book overview, and a schema-versioned manifest.
