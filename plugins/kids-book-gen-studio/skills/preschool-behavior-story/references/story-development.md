@@ -55,7 +55,8 @@ it must not become a new problem or lesson after the first question resolves.
 
 ## Stage C — Spread outline
 
-Default to approximately 12 spreads:
+Use the approved target count when supplied. Otherwise default to 12 spreads.
+The supported range is 12–14. For the 12-spread default:
 
 - Spreads 1–3: attachment—character, purpose, personality, recurring phrase.
 - Spreads 4–6: conflict—a genuine reaction without immediate resolution.
@@ -63,6 +64,10 @@ Default to approximately 12 spreads:
 - Spreads 9–10: agency—the child makes a small, achievable choice.
 - Spread 11: a positive, natural consequence.
 - Spread 12: emotional payoff, celebration, and an ordinary-life continuation.
+
+For 13 or 14 spreads, use the additional beats to deepen an established
+attempt, consequence, emotional bridge, or resolution. Do not introduce a new
+goal, lesson, or post-climax problem merely to fill the selected count.
 
 For each spread produce:
 

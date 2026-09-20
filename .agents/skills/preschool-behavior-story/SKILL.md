@@ -16,7 +16,9 @@ Collect or reasonably infer:
 - a recognizable real-world conflict where that behavior is difficult;
 - optional child interests, setting, and personalization;
 - parent style, defaulting to gentle-curious;
-- length, defaulting to 12 spreads.
+- target spread count from the approved project or format profile when present,
+  otherwise defaulting to 12 spreads. Support 12–14 spreads; do not add filler
+  merely to reach a larger count.
 
 Translate abstract or negative lessons into safe, observable actions. For
 example, interpret “do not waste food” as taking a small serving, asking for
@@ -91,3 +93,11 @@ Revise until all three tests pass:
   naturally in daily life?
 
 Educational usefulness alone is insufficient if the story is not enjoyable.
+
+## Spread-count contract
+
+Use one spread count for the complete artifact lineage. Record it in the story
+spec and preserve it in every downstream map, performance plan, proof, and book
+plan. The supported range is 12–14 spreads. When no parent-approved project or
+format profile selects a count, use 12. A change in count creates a successor
+story revision and requires renewed story approval.
