@@ -15,7 +15,7 @@ flowchart TB
     StoryGate -->|Yes| Performance["build-character-performance-plan"]
 
     Performance --> Bible["build-visual-bible"]
-    Bible --> Proof["build-book-continuity-proof"]
+    Bible --> Proof["build-book-continuity-proof<br/>one numbered master sheet"]
 
     Proof --> Placement["plan-book-text-placement<br/>(proof mode)"]
     Proof --> ProofEmotion["review-book-emotional-arc"]

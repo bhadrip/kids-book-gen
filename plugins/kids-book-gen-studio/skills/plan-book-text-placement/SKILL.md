@@ -19,7 +19,8 @@ model to render it into proof or final art.
 - intended reader age, reading mode, language, and reading direction;
 - current `SpreadMap` or `BookPlan` with exact page/spread text;
 - current `VisualBible`, continuity ledger, and character-performance plan;
-- accepted continuity-proof sheets and manifest, or ordered final illustrations;
+- accepted numbered master continuity-proof sheet and manifest, legacy ordered
+  proof sheets, or ordered final illustrations;
 - trim, bleed, binding/gutter, safe-margin, and output-format profile;
 - typography profile with font, weight, permitted sizes, leading, alignment,
   panel treatments, padding, and an approved minimum type size.
@@ -34,10 +35,14 @@ force a result.
 
 Use black-and-white continuity proofs to approve spatial intent, protected
 regions, text capacity, reading path, and layout rhythm before expensive final
-art. For a typical 12-spread book, consume the existing three sequential
-four-spread proof sheets. Crop or enlarge their panels deterministically for
-inspection; request a bounded reproof only when the source panel lacks enough
-evidence.
+art. Prefer the proof manifest's single numbered master contact sheet. Crop or
+enlarge every panel deterministically from its recorded drawing bounds. Exclude
+any exact-story review caption printed below the drawing: it is proof metadata
+for human comprehension, not a placement candidate or evidence that separate
+text has been selected for the final book. Request a
+bounded reproof only when the source panel lacks enough evidence. Legacy
+multi-sheet proofs remain supported when their manifest maps every panel
+unambiguously.
 
 Monochrome proof placement cannot approve final color contrast, texture
 interference, finished lighting, or print reproduction. Record these as
@@ -52,8 +57,14 @@ typeface, type size, trim, binding, or treatment stales the prior placement.
 
 ## Workflow
 
-1. Verify source lineage and page order. For contact sheets, map every panel to
-   exactly one manifest spread before analyzing it.
+1. Verify source lineage and page order. For a master contact sheet, verify that
+   every visible `SPREAD <number>` label matches one manifest entry and its
+   recorded crop, and that any below-panel review caption exactly matches the
+   approved story revision. Reject duplicate, missing, model-rendered, or
+   ambiguous identifiers as `not_evaluable`; do not guess. A mismatched caption
+   is a proof-assembly/lineage failure, not a placement failure. For legacy
+   contact sheets, map every panel to exactly one manifest spread before
+   analyzing it.
 2. Read [references/placement-contract.md](references/placement-contract.md)
    and create a placement record for every spread.
 3. Render the exact copy at permitted typography settings. Calculate line
@@ -79,8 +90,9 @@ typeface, type size, trim, binding, or treatment stales the prior placement.
    robustness, adjacent-spread rhythm, and visual integration. Treat scores and
    thresholds as project heuristics, never publishing standards.
 8. Render the selected candidate and up to two leading alternatives as separate
-   digital overlays. Review the complete open spread and the previous/current/
-   next window, not only an isolated page.
+   digital overlays. Review the complete open spread, the previous/current/next
+   window, and the one complete numbered master sheet, not only an isolated
+   page.
    Reject a detached text band when it compresses, crops, or resizes the art
    differently from neighboring spreads merely to avoid a protected region.
    Route that spread to a bounded composition reproof with intentional negative
@@ -143,6 +155,12 @@ block placement rather than hiding narrative information or undersizing type.
 
 - Preserve the source panel's aspect ratio and scale across the review set.
   Do not shrink one illustration under a text band as a collision workaround.
+- Keep `SPREAD <number>` labels outside panel artwork and outside placement
+  candidates. A label is proof navigation, never story typography.
+- Keep below-panel exact-story review captions outside panel artwork and outside
+  placement candidates. Crop them away before generating candidates; their
+  typeface, size, wrapping, and below-panel position must never be inherited as
+  a final-book layout decision.
 - Keep proof treatment genuinely monochrome. If generated source art retains
   selective color, mark the affected sheet `needs_reproof`; grayscale
   conversion may support diagnosis but does not make the generated proof pass.

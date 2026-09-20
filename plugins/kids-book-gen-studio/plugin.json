@@ -1,7 +1,7 @@
 {
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "kids-book-gen-studio",
-  "version": "0.2.0",
+  "version": "0.2.2",
   "description": "Create, plan, and review emotionally engaging, developmentally appropriate children's books.",
   "author": {
     "name": "pmadhavan",
@@ -9,7 +9,13 @@
   },
   "homepage": "https://github.com/bhadrip/kids-book-gen",
   "repository": "https://github.com/bhadrip/kids-book-gen",
-  "keywords": ["children", "picture-books", "storybooks", "preschool", "education"],
+  "keywords": [
+    "children",
+    "picture-books",
+    "storybooks",
+    "preschool",
+    "education"
+  ],
   "extensions": {
     "com.openai": {
       "interface": {

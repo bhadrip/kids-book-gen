@@ -9,6 +9,9 @@ delivery and decoding expectations. Do not infer ability from age alone.
 
 - Prefer immediate, concrete goals and visible cause/effect.
 - Expect strong support for chronology, motives, and required inference.
+- Expect location changes and new questions or attempts to have explicit,
+  concrete bridges rather than relying on an unseen illustration or adult
+  reconstruction.
 - Favor pattern, recurrence, and participation with meaningful variation.
 - Prefer fewer simultaneous characters, locations, hidden motives, or time
   shifts.

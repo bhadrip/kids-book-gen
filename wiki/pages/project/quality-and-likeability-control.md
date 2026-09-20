@@ -55,6 +55,14 @@ For ages 3–5, an unexplained move cannot receive a strong causal-structure or
 inference-fit result merely because a later illustration could supply the
 missing connection.
 
+Rubric version `story-quality-text-v3` makes that audit an enforceable output
+contract: every adjacent spread pair records spatial continuity and the
+motivational bridge for a new question, guess, plan, attempt, or reaction. It
+distinguishes acceptable uncertainty about a character's private feelings from
+missing external facts such as where characters moved or what prompted another
+character's next response. Ambiguous or missing bridges prevent a `ready`
+recommendation.
+
 ### 4. Human expert/parent gates
 
 Use human judgment at intent, story, visual identity, sample spread, and final
