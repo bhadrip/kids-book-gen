@@ -116,3 +116,14 @@
 - Strengthened output validation so missing audit coverage, overstated spatial
   or motivational scores, inconsistent hard gates, and `ready` recommendations
   with unresolved transitions are rejected.
+- Changed continuity-proof delivery from several parent-facing sheets to one
+  deterministically assembled, numbered master contact sheet. Updated text
+  placement and both continuity reviewers to validate manifest-backed panel
+  labels and crops while retaining legacy multi-sheet compatibility.
+- Added exact approved story text beneath every master-sheet drawing as
+  deterministic human-review metadata, with separate drawing/caption bounds.
+  Placement and visual-review skills now crop out those captions when testing
+  image evidence or proposing final-book text placement.
+- Strengthened proof generation and review for cross-request fixed-fixture
+  continuity and dignity-safe intimate child scenes, including plausible
+  clothing state and opaque concealment of private body areas.

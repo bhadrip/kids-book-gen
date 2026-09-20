@@ -19,6 +19,25 @@ Use **proof-only continuity** when only a PDF or page images are available. Stat
 that the review can assess readability and continuity but cannot verify fidelity
 to an approved plan.
 
+## Contact-sheet evidence
+
+Prefer one numbered master contact sheet plus its proof manifest when reviewing
+a storyboard proof. Verify that each visible `SPREAD <number>` label is outside
+the drawing and matches exactly one manifest entry and recorded panel bound.
+Inspect the complete master sheet for sequence rhythm, then crop or enlarge
+individual panels from the recorded drawing bounds for expression, gaze,
+gesture, and interaction evidence. Exact story text below a drawing is human-
+review context only: it can establish the intended beat, but must be hidden or
+cropped when deciding whether the performance is visible. Do not treat the
+caption position or typography as final-book text placement.
+
+Support legacy multi-sheet proofs when their manifest maps every panel
+unambiguously. If a spread number is missing, duplicated, model-rendered, or
+inconsistent with the manifest, mark the affected transition `not_evaluable`
+instead of guessing or treating the mapping problem as an emotional failure.
+When a bounded reproof replaces one panel, compare its predecessor and successor
+and require a successor master sheet that preserves all passing siblings.
+
 ## Review workflow
 
 1. Identify the exact book, proof, page, and planning-artifact revisions.
@@ -31,8 +50,9 @@ to an approved plan.
    affect the emotional meaning or safety of a scene.
 5. Compare each transition with observable evidence: trigger, expression, pose,
    gesture, gaze, staging, distance, and interaction.
-6. Compare neighboring pages and the whole sequence. Flag emotional sameness,
-   abrupt jumps, missing bridges, contradictions, and prohibited signals.
+6. Compare neighboring pages and the complete numbered master sheet. Flag
+   emotional sameness, abrupt jumps, missing bridges, contradictions, and
+   prohibited signals.
 7. Separate the likely source of each issue: story text, emotional plan, spread
    plan, illustration execution, or cross-page sequence.
 8. Report strengths that must be preserved as well as actionable findings. Do

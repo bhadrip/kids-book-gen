@@ -57,6 +57,11 @@ If the source text or page order is unavailable, report the affected checks as
    affects a protected subject, gaze/movement path, focal hierarchy, or reveal.
    Absence of a manifest is not itself a defect for legacy books, but the final
    composed-page checks remain required.
+   For bathing, dressing, toileting, medical care, or similar intimate child
+   scenes, verify that the pictured clothing state makes sense for the action,
+   private body areas are fully concealed by opaque staging, and the solution
+   preserves the child's dignity without introducing implausible ordinary
+   clothes or unsafe body positions.
 7. Assign the likely owning artifact for each issue: story, performance plan,
    VisualBible/continuity ledger, BookPlan, illustration, or PDF/layout.
 8. Record a bounded correction, preservation locks, success criteria, and the
