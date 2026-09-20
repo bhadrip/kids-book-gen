@@ -9,7 +9,7 @@ const optionalText = (maximum: number) =>
     z.string().trim().min(1).max(maximum).optional(),
   );
 
-const spreadNumberSchema = z.number().int().min(1).max(13);
+const spreadNumberSchema = z.number().int().min(1).max(14);
 
 export const emotionalBeatSchema = z.object({
   spreadNumber: spreadNumberSchema,
@@ -23,7 +23,7 @@ export const emotionalBeatSchema = z.object({
 
 export const emotionalArcCharacterSchema = z.object({
   characterName: z.string().trim().min(1).max(120),
-  beats: z.array(emotionalBeatSchema).min(1).max(13),
+  beats: z.array(emotionalBeatSchema).min(1).max(14),
 });
 
 export const emotionalArcSchema = z.object({
@@ -59,14 +59,15 @@ export const spreadMapSchema = z
     generatedAt: z.string().datetime(),
     model: z.string().trim().min(1),
     parentSteering: optionalText(1_000),
-    spreads: z.array(spreadMapEntrySchema).length(13),
+    spreads: z.array(spreadMapEntrySchema).min(12).max(14),
   })
   .superRefine((value, context) => {
     value.spreads.forEach((spread, index) => {
       if (spread.spreadNumber !== index + 1)
         context.addIssue({
           code: "custom",
-          message: "Spread map entries must cover spreads 1–13 in order.",
+          message:
+            "Spread map entries must match the selected 12–14 spread count and be numbered consecutively from 1.",
           path: ["spreads", index, "spreadNumber"],
         });
     });
@@ -101,9 +102,22 @@ export const visualPlanDraftSchema = z.object({
   emotionalArc: z.object({
     characters: z.array(emotionalArcCharacterSchema).min(1).max(8),
   }),
-  spreadMap: z.object({
-    spreads: z.array(spreadMapEntrySchema).length(13),
-  }),
+  spreadMap: z
+    .object({
+      spreads: z.array(spreadMapEntrySchema).min(12).max(14),
+    })
+    .superRefine((value, context) => {
+      value.spreads.forEach((spread, index) => {
+        if (spread.spreadNumber !== index + 1) {
+          context.addIssue({
+            code: "custom",
+            message:
+              "Draft spread map entries must be numbered consecutively from 1.",
+            path: ["spreads", index, "spreadNumber"],
+          });
+        }
+      });
+    }),
 });
 export type VisualPlanDraft = z.infer<typeof visualPlanDraftSchema>;
 

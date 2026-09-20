@@ -131,41 +131,54 @@ export const selectedDirectionSchema = z.object({
   selectedAt: z.string().datetime(),
 });
 
-export const storyPackageSchema = z.object({
-  schemaVersion: z.literal(1),
-  projectId: projectIdSchema,
-  generatedAt: z.string().datetime(),
-  model: z.string().trim().min(1),
-  revision: z.number().int().positive(),
-  sourceDirectionTitle: z.string().trim().min(1),
-  parentSteering: optionalText(1_000),
-  readerConfiguration: readerConfigurationSchema.optional(),
-  title: z.string().trim().min(1).max(120),
-  characters: z
-    .array(
-      z.object({
-        name: z.string().trim().min(1),
-        role: z.string().trim().min(1),
-        description: z.string().trim().min(1),
-      }),
-    )
-    .min(1),
-  promise: z.string().trim().min(1),
-  arc: z.object({
-    beginning: z.string().trim().min(1),
-    middle: z.string().trim().min(1),
-    ending: z.string().trim().min(1),
-  }),
-  spreads: z
-    .array(
-      z.object({
-        number: z.number().int().min(1).max(13),
-        beat: z.string().trim().min(1),
-        text: z.string().trim().min(1),
-      }),
-    )
-    .length(13),
-});
+export const storyPackageSchema = z
+  .object({
+    schemaVersion: z.literal(1),
+    projectId: projectIdSchema,
+    generatedAt: z.string().datetime(),
+    model: z.string().trim().min(1),
+    revision: z.number().int().positive(),
+    sourceDirectionTitle: z.string().trim().min(1),
+    parentSteering: optionalText(1_000),
+    readerConfiguration: readerConfigurationSchema.optional(),
+    title: z.string().trim().min(1).max(120),
+    characters: z
+      .array(
+        z.object({
+          name: z.string().trim().min(1),
+          role: z.string().trim().min(1),
+          description: z.string().trim().min(1),
+        }),
+      )
+      .min(1),
+    promise: z.string().trim().min(1),
+    arc: z.object({
+      beginning: z.string().trim().min(1),
+      middle: z.string().trim().min(1),
+      ending: z.string().trim().min(1),
+    }),
+    spreads: z
+      .array(
+        z.object({
+          number: z.number().int().min(1).max(14),
+          beat: z.string().trim().min(1),
+          text: z.string().trim().min(1),
+        }),
+      )
+      .min(12)
+      .max(14),
+  })
+  .superRefine((value, context) => {
+    value.spreads.forEach((spread, index) => {
+      if (spread.number !== index + 1) {
+        context.addIssue({
+          code: "custom",
+          message: "Story spreads must be consecutively numbered from 1.",
+          path: ["spreads", index, "number"],
+        });
+      }
+    });
+  });
 export type StoryPackage = z.infer<typeof storyPackageSchema>;
 
 export const storyQualityEvaluationSchema = z.object({

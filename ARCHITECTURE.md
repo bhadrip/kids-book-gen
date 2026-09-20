@@ -87,7 +87,7 @@ save an idea with an exact reader age from 3 through 10 and a separate reading
 mode, choose a structured or custom story mood that is enforced during generation
 and hidden evaluation, choose an idea to explore through character action rather
 than a stated lesson, iterate on reader-profile-tuned directions, select one,
-revise and approve a 13-spread
+revise and approve a 12–14-spread
 story, generate and minimally review a versioned visual spread plan backed by
 an internal emotional arc, approve its exact revision, choose a curated art
 direction from six bundled same-scene visual previews, regenerate versioned
@@ -147,6 +147,11 @@ flowchart LR
 direction revisions, selected direction, story revisions, and approval
 decisions are schema-versioned JSON artifacts. Story drafts also pass one hidden
 quality evaluation with at most one automatic rewrite before parent review.
+Story and visual-plan artifact schemas accept 12–14 consecutively numbered
+spreads so repository and plugin skills can act as clients without adding
+filler. The current Studio text-provider prompts, UI copy, fixtures, and fixed
+16-page production flow still target 13 story spreads; making those producers
+fully configuration-driven is intentionally deferred.
 `StoryWorkflowService` owns the text workflow; routes do not import the OpenAI
 SDK. Legacy briefs without reader details remain readable but new text generation
 is blocked until confirmation. Directions, stories, and hidden evaluations carry
@@ -248,3 +253,4 @@ The authoritative task status and evidence remain in
 | 2026-08-01 | Kept story-text revision in Step 3, removed sample-only text editing from Step 4, and clarified the parent-facing visual-approval handoff.                                                                                                 | `src/lib/visuals/`, `src/app/projects/[projectId]/look/`, `spec/09-artifact-catalog.md`, `e2e/home.spec.ts`                                                                   |
 | 2026-08-23 | Aligned the approved-story handoff with Step 4's actual first action, renamed the checkpoint “Plan and approve the pictures,” exposed its four parent-facing parts, and hid obsolete story approval controls.                              | `src/app/projects/[projectId]/story/`, `src/app/projects/[projectId]/look/`, `src/components/project-journey.tsx`, `src/lib/projects/project-progress.ts`, `e2e/home.spec.ts` |
 | 2026-08-01 | Added an adapter-backed local reusable-character library; selected designs are saved once and reused through project-local pinned copies without new character-draft generation.                                                           | `src/lib/characters/`, `src/lib/visuals/`, `e2e/home.spec.ts`                                                                                                                 |
+| 2026-09-19 | Allowed skill and plugin clients to preserve an approved 12–14 spread count through story and visual-plan schemas without filler; Studio producers remain fixed at 13 pending later UI work.                                               | `.agents/skills/preschool-behavior-story/`, `plugins/kids-book-gen-studio/skills/preschool-behavior-story/`, `src/lib/projects/`, `src/lib/visuals/`                          |
