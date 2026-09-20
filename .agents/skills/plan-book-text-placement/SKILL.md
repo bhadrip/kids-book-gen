@@ -26,8 +26,14 @@ model to render it into proof or final art.
   panel treatments, padding, and an approved minimum type size.
 
 If exact copy, page mapping, typography, or production geometry is missing,
-mark the affected placement `not_evaluable`; do not invent it or shrink text to
-force a result.
+read [references/parent-profile-options.md](references/parent-profile-options.md).
+When one of its format-specific catalogs matches the parent's stated output,
+present its complete options with their tradeoffs and wait for an explicit
+selection or customization. An option labeled recommended is still only a
+proposal. Do not start placement analysis, silently select an option, or treat
+prior books' hard-coded layout values as approval. If no catalog matches, or
+the parent does not select one, mark the affected placement `not_evaluable`;
+do not invent values or shrink text to force a result.
 
 ## Modes
 
@@ -65,42 +71,54 @@ typeface, type size, trim, binding, or treatment stales the prior placement.
    is a proof-assembly/lineage failure, not a placement failure. For legacy
    contact sheets, map every panel to exactly one manifest spread before
    analyzing it.
-2. Read [references/placement-contract.md](references/placement-contract.md)
+2. Resolve the production and typography configuration. When either profile is
+   absent, present only the matching parent-facing options defined in
+   [references/parent-profile-options.md](references/parent-profile-options.md),
+   record the proposal, and stop for explicit approval. After selection, write
+   versioned production, typography, and decision artifacts with every exact
+   value; preserve rejected options as proposal history. A casual preference
+   expressed before the options were shown is not a profile decision.
+3. Read [references/placement-contract.md](references/placement-contract.md)
    and create a placement record for every spread.
-3. Render the exact copy at permitted typography settings. Calculate line
+4. Render the exact copy at permitted typography settings. Calculate line
    breaks, glyph bounds, padding, and the complete panel/scrim/gradient
    footprint. Do not go below the approved type floor.
-4. Mark hard-protected regions: faces and expression features, communicative
+5. Mark hard-protected regions: faces and expression features, communicative
    hands/gestures, character interactions, decisive actions, critical props or
    clues, and page-turn reveals. Mark soft-protected bodies/silhouettes, gaze
    corridors, gesture extensions, movement paths, focal areas, leading lines,
    and emphasis-producing negative space.
-5. Generate materially different candidates from natural quiet regions,
+6. Generate materially different candidates from natural quiet regions,
    reserved fields, upper/lower bands, side columns, shifted or reshaped
    regions, treatment-backed regions, and separate text-area layouts. Do not
    restrict candidates to four corners.
    In proof-placement mode, start with borderless text over intentional quiet
    space. A visible box, outline, or opaque panel is a fallback that requires a
    recorded readability reason; it is not the default proof treatment.
-6. Reject any candidate that fails production geometry, capacity, protected
+7. Reject any candidate that fails production geometry, capacity, protected
    subjects, reading order, page-turn integrity, or—on final art—local contrast.
    A translucent treatment still obstructs any protected subject it crosses.
-7. Score survivors for narrative clearance, contrast when evaluable, quietness,
+8. Score survivors for narrative clearance, contrast when evaluable, quietness,
    fit, reading order, gaze/movement compatibility, hierarchy, production
    robustness, adjacent-spread rhythm, and visual integration. Treat scores and
    thresholds as project heuristics, never publishing standards.
-8. Render the selected candidate and up to two leading alternatives as separate
+9. Render the selected candidate and up to two leading alternatives as separate
    digital overlays. Review the complete open spread, the previous/current/next
    window, and the one complete numbered master sheet, not only an isolated
    page.
+   When raster proof panels and complete approved profiles are available, use
+   `scripts/render_placement_review.py` to render the overlays and one numbered
+   whole-book overview deterministically. Supply a human-authored placement spec
+   containing protected regions, candidate bounds, decisions, and rationales;
+   the renderer validates rather than invents those judgments.
    Reject a detached text band when it compresses, crops, or resizes the art
    differently from neighboring spreads merely to avoid a protected region.
    Route that spread to a bounded composition reproof with intentional negative
    space. A separate text area is acceptable only when it is an intentional,
    book-consistent layout system or a parent-approved exception.
-9. Select only when all hard gates pass and one candidate is clearly preferable.
-   Otherwise request human review or the least-upstream bounded revision.
-10. Save the manifest and review sheet using
+10. Select only when all hard gates pass and one candidate is clearly preferable.
+    Otherwise request human review or the least-upstream bounded revision.
+11. Save the manifest and review sheet using
     [assets/placement-review-template.md](assets/placement-review-template.md).
 
 ## Hard gates

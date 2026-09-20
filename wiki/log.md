@@ -127,3 +127,18 @@
 - Strengthened proof generation and review for cross-request fixed-fixture
   continuity and dignity-safe intimate child scenes, including plausible
   clothing state and opaque concealment of private body areas.
+- Added per-spread `full_scene`, `layered`, and `hybrid` proof routing with a
+  manifest-backed asset registry, alpha/anchor/hash provenance, interaction
+  gates, bounded fallback, and explicit support for the repository's optional
+  layered compositor.
+- Added one portable standard-library contact-sheet assembler that copies exact
+  story text, emits SVG plus mapping JSON, validates complete reading order,
+  and replaces book-specific assembly scripts.
+- Added parent-facing text-placement profile choices for home-print US Letter
+  landscape books pinned at the left edge. The skill now records an explicit
+  option decision and complete versioned production and typography values before
+  generating placement candidates.
+- Added a portable standard-library proof-placement renderer that validates
+  approved production and typography lineage, exact-copy capacity, safe margins,
+  and hard-protected regions before emitting candidate SVGs, one numbered
+  whole-book overview, and a schema-versioned manifest.

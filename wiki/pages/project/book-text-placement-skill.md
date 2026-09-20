@@ -17,11 +17,27 @@ Proof mode approves spatial intent, text capacity, reading path, and book-wide
 placement rhythm. It defers final color contrast, texture, lighting, and print
 reproduction. Final-art mode reruns those checks on the exact composed pages.
 
+When production or typography values are missing, the skill may present a
+matching catalog of complete parent-facing options instead of asking the parent
+to invent technical measurements. The first catalog covers home-print US Letter
+landscape sheets pinned at the left edge and offers balanced-overlay,
+larger-read-aloud, and opaque-panel treatments. Every option exposes exact
+margins, type sizes, leading, treatment, and padding. A recommendation remains
+a proposal until the parent explicitly selects it; the selected values are
+saved as versioned production, typography, and decision artifacts.
+
 The skill can select a mechanically clear routine placement, but requests human
 review for close alternatives, expressive or integrated typography, uncertain
 protected regions, emotionally critical interactions, climaxes, page-turn
 reveals, and upstream illustration or pagination changes. The final composed
 book remains subject to the independent text-image production review.
+
+The skill includes a portable standard-library renderer for proof placement.
+It consumes a human-authored spec of protected regions, candidate bounds,
+decisions, and rationales; validates approved profile lineage, safe margins,
+capacity, and hard-region overlap; then emits exact-copy candidate SVGs, one
+numbered whole-book overview, and a schema-versioned manifest. The renderer is
+deterministic and does not invent visual judgments.
 
 ## Related knowledge
 

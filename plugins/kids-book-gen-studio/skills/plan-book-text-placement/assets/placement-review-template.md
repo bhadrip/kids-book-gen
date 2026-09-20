@@ -11,6 +11,8 @@
 - Typography profile:
 - Text treatment and border policy:
 - Production profile:
+- Parent profile options offered:
+- Parent-selected option and decision revision:
 - Placement revision:
 
 ## Status
@@ -34,7 +36,7 @@
 ## Spread decisions
 
 | Spread | Selected candidate | Hard gates | Alternatives | Decision | Reason |
-| --- | --- | --- | --- | --- | --- |
+| ------ | ------------------ | ---------- | ------------ | -------- | ------ |
 
 ## Findings requiring action
 

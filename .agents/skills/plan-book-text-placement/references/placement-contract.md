@@ -5,11 +5,49 @@ text in illustration pixels. Use normalized spread coordinates in addition to
 output-unit measurements so decisions can be reproduced at final resolution.
 
 ```yaml
-schemaVersion: 1
+schemaVersion: 2
 projectId:
 placementRevision:
 mode: proof_placement | final_art_placement
 status: ready_for_review | revision_required | not_evaluable
+configuration:
+  catalogVersion:
+  offeredOptionIds: []
+  selectedOptionId:
+  decisionRevision:
+  decisionStatus: proposed | approved | rejected | superseded
+  selectionSource: parent | custom
+  decisionArtifact:
+  productionProfile:
+    profileId:
+    revision:
+    sheetWidthInches:
+    sheetHeightInches:
+    orientation:
+    bleedInches:
+    safeMarginsInches:
+      top:
+      right:
+      bottom:
+      left:
+    bindingEdge:
+    pinnedEdgeExclusionInches:
+  typographyProfile:
+    profileId:
+    revision:
+    font:
+    weight:
+    selectedSizePoints:
+    permittedSizeRangePoints: []
+    minimumSizePoints:
+    leadingPoints:
+    alignment:
+    hyphenation:
+    treatment:
+    treatmentColor:
+    treatmentOpacity:
+    border:
+    paddingPoints:
 sources:
   storyRevision:
   spreadMapOrBookPlanRevision:
@@ -81,6 +119,14 @@ deferredChecks: []
 
 ## Required evidence
 
+- Schema version 1 manifests remain readable as legacy artifacts. New or
+  successor placement manifests use schema version 2 and record the complete
+  approved configuration.
+- `decisionStatus` is `approved` before placement candidates are generated or
+  scored. The selected option ID, separate versioned profiles, and parent or
+  custom selection source agree exactly.
+- A recommended option is never treated as approval. Rejected and superseded
+  options remain recoverable from the decision artifact.
 - Every spread appears exactly once and maps to its source image or proof panel.
 - For a master proof, every `sourcePanelLabel` matches the visible deterministic
   spread label and the proof manifest; ambiguous or model-rendered labels are
