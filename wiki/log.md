@@ -134,3 +134,7 @@
 - Added one portable standard-library contact-sheet assembler that copies exact
   story text, emits SVG plus mapping JSON, validates complete reading order,
   and replaces book-specific assembly scripts.
+- Added parent-facing text-placement profile choices for home-print US Letter
+  landscape books pinned at the left edge. The skill now records an explicit
+  option decision and complete versioned production and typography values before
+  generating placement candidates.
