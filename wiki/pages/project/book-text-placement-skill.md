@@ -6,7 +6,9 @@ continuity proof and revalidates it on finished color art.
 
 It consumes the one numbered master proof sheet and its exact panel mapping,
 while retaining compatibility with legacy multi-sheet proofs. It crops each
-panel, overlays exact story text digitally, protects faces, gestures,
+recorded drawing area and excludes any exact-story review caption printed
+below it. The caption is proof metadata, not a candidate placement. The skill
+then overlays exact story text digitally, protects faces, gestures,
 interactions, critical props, focal action, gaze/movement paths, and reveals,
 and evaluates several candidate placements. The image model never renders the
 story words or spread numbers.

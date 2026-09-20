@@ -38,14 +38,19 @@ masterContactSheet:
   columns:
   spreadOrder: []
   labelPolicy: deterministic_outside_drawing
+  reviewCaptionPolicy: deterministic_exact_story_text_below_drawing
   accepted: false
   panels:
     - spreadId:
       label:
+      reviewCaption:
+      reviewCaptionSourceRevision:
       sourceSheetId:
       sourcePanelBounds:
-      masterPanelBoundsPixels:
-      masterPanelBoundsNormalized:
+      masterDrawingBoundsPixels:
+      masterDrawingBoundsNormalized:
+      masterReviewCaptionBoundsPixels:
+      masterReviewCaptionBoundsNormalized:
 panels:
   - spreadId:
     sequenceIndex:
@@ -82,10 +87,14 @@ prop presence, ownership, state, or deliberate absence implicit.
 `sourceSheets` are generation intermediates and may be one sheet, several
 sheets, or replacement panels. `masterContactSheet` is the sole parent-facing
 sequence artifact. It must contain every intended spread exactly once, in
-reading order, with a deterministic `SPREAD <number>` label outside each
-drawing. Do not treat source-sheet labels or image-model lettering as valid
-identifiers. Record panel bounds in both pixels and normalized master-sheet
-coordinates so every evaluator can reproduce the crop.
+reading order, with a deterministic `SPREAD <number>` label above each drawing
+and the exact approved spread text below it. The below-panel text is
+`reviewCaption` metadata for human sequence review. It is not final-book text
+placement, a placement candidate, or part of the generated drawing. Do not
+treat source-sheet labels or image-model lettering as valid identifiers.
+Record drawing and review-caption bounds separately in both pixels and
+normalized master-sheet coordinates so evaluators can reproduce an art-only
+crop and exclude review metadata when needed.
 
 ## Prompt record
 
@@ -101,9 +110,10 @@ For every request, record:
 - acceptance or rejection reason.
 
 Also record the deterministic master-sheet assembly operation: ordered source
-panel filenames and bounds, output dimensions, grid rows and columns, label
-font/settings, and final filename. Assembly is not an image-generation request
-and does not increase `requestCount`.
+panel filenames and bounds, output dimensions, grid rows and columns, label and
+review-caption font/settings, caption wrapping method, exact-text verification,
+and final filename. Assembly is not an image-generation request and does not
+increase `requestCount`.
 
 ## Validation report
 
@@ -115,6 +125,8 @@ status: ready_for_review | needs_reproof | blocked
 master_sheet:
   filename:
   spread_labels_verified: false
+  exact_review_captions_verified: false
+  drawing_caption_bounds_separate: false
   panel_mapping_verified: false
 accepted_spreads: []
 needs_reproof: []

@@ -29,7 +29,11 @@ Prefer one numbered master contact sheet plus its proof manifest for storyboard
 review. Verify that each visible `SPREAD <number>` label sits outside the
 drawing and matches exactly one manifest entry and recorded panel bound. Inspect
 the complete sheet for paths, recurring locations, nonadjacent returns, and prop
-timelines, then crop or enlarge panels for scoring at normal proof size.
+timelines, then crop or enlarge panels from the recorded drawing bounds for
+scoring at normal proof size. Exact story text below a drawing is review
+metadata: use it to confirm the intended beat, but hide or crop it when judging
+what the image itself establishes. Do not score its typography or below-panel
+position as final-book layout.
 
 Support legacy multi-sheet proofs when their manifest is unambiguous. A missing,
 duplicate, model-rendered, or mismatched spread number makes the affected panel
@@ -53,6 +57,10 @@ boundaries and require a successor master sheet that preserves passing siblings.
 5. Evaluate every applicable page, then compare neighboring pages and the full
    numbered master sheet. Test important pages once with story text hidden;
    deterministic spread-number labels may remain visible outside the drawings.
+   Compare every appearance of a recurring location together—not only within
+   image-generation source-sheet groups—and explicitly check the silhouette,
+   proportions, construction, and landmark relationships of large fixed
+   fixtures such as tubs, beds, doors, and windows.
 6. Distinguish contradiction from permitted change. Accept a change only when
    the story, plan, or visible action explains it.
 7. Separate the likely source: story, continuity plan, spread plan, storyboard,

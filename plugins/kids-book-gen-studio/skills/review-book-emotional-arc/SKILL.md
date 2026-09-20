@@ -25,7 +25,11 @@ Prefer one numbered master contact sheet plus its proof manifest when reviewing
 a storyboard proof. Verify that each visible `SPREAD <number>` label is outside
 the drawing and matches exactly one manifest entry and recorded panel bound.
 Inspect the complete master sheet for sequence rhythm, then crop or enlarge
-individual panels for expression, gaze, gesture, and interaction evidence.
+individual panels from the recorded drawing bounds for expression, gaze,
+gesture, and interaction evidence. Exact story text below a drawing is human-
+review context only: it can establish the intended beat, but must be hidden or
+cropped when deciding whether the performance is visible. Do not treat the
+caption position or typography as final-book text placement.
 
 Support legacy multi-sheet proofs when their manifest maps every panel
 unambiguously. If a spread number is missing, duplicated, model-rendered, or

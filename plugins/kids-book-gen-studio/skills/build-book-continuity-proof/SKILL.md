@@ -43,9 +43,12 @@ unapproved inputs only when it is clearly labeled non-authoritative.
    textures, decorative detail, typography, logos, or watermarks.
 5. Keep generated drawings free of labels and story text. After accepting the
    panel art, assemble exactly one master contact sheet for the complete book.
-   Add `SPREAD <number>` deterministically outside every drawing, preserve
-   reading order, and record exact pixel and normalized panel bounds. Never ask
-   the image model to render the spread numbers or story text.
+   Add `SPREAD <number>` deterministically above every drawing and the exact
+   approved text for that spread deterministically below it. The below-panel
+   copy is a human-review caption, not a final-book placement candidate and not
+   scene artwork. Preserve reading order and record separate pixel and
+   normalized bounds for the drawing and review caption. Never ask the image
+   model to render spread numbers, review captions, or story text.
 6. Make continuity-critical evidence visible at normal proof size: character
    silhouette and relative scale, face/gaze when emotionally necessary, hands
    and contact, entrances and fixed landmarks, and every important prop's
@@ -56,10 +59,17 @@ unapproved inputs only when it is clearly labeled non-authoritative.
 7. Inspect each generated source sheet and each master-sheet panel crop before
    accepting it. Split or regenerate only an unreadable sheet or panel; do not
    regenerate passing siblings for polish.
-8. Assemble the one numbered master sheet from accepted panels without changing
-   their aspect ratio or relative scale. Record the source request for every
-   panel, prompt, model/request settings when available, source revisions,
-   master-sheet filename, grid, labels, and panel bounds.
+8. Assemble the one numbered, captioned master sheet from accepted panels
+   without changing their aspect ratio or relative scale. Copy each review
+   caption byte-for-byte from the approved story mapping; do not summarize or
+   reline it editorially. Record the source request for every panel, prompt,
+   model/request settings when available, source revisions, master-sheet
+   filename, grid, labels, drawing bounds, and review-caption bounds.
+9. For bathing, dressing, toileting, medical care, or similar intimate child
+   scenes, use age-appropriate dignity-safe staging. Require opaque occlusion or
+   careful framing of every private body area and prohibit visible private
+   anatomy. Do not solve privacy by leaving ordinary clothes on a child when the
+   depicted action requires those clothes to be removed.
 
 ## Prompt construction
 
@@ -86,10 +96,20 @@ A proof package is ready for review only when:
 - every intended spread appears exactly once and in reading order;
 - every drawing has the correct visible `SPREAD <number>` label outside its
   image area, with no duplicate, missing, or model-rendered identifiers;
+- every drawing has its exact approved spread text immediately below it as a
+  deterministic review caption, with no omission, paraphrase, duplication, or
+  model-rendered lettering;
+- drawing and review-caption bounds are recorded separately, and the manifest
+  identifies the exact story revision used to verify each caption;
 - every panel maps to exact source revisions in the manifest;
 - recurring characters are distinguishable and relatively scaled;
 - plot-bearing actions and cause-before-reaction staging are visible;
 - continuity-critical landmarks and prop facts are large enough to inspect;
+- recurring fixed fixtures retain the same silhouette, proportions,
+  construction, and landmark relationships across every panel where they
+  appear, not merely within one source-generation sheet;
+- intimate child scenes use plausible clothing state and opaque, dignified
+  staging with no visible private anatomy;
 - adjacent panels can be compared without ambiguous numbering or order;
 - every changed panel has been checked in a predecessor/changed/successor
   window, with both boundaries recorded separately;
@@ -103,11 +123,14 @@ an unevaluable panel into a continuity failure.
 
 First pass the accepted numbered master sheet, manifest, exact story text
 mapping, and planning revisions to `plan-book-text-placement`. The placement
-skill crops or enlarges panels from the recorded bounds and adds deterministic
-text overlays without asking the image model to render words. It may request a
-bounded reproof when a face, gesture, prop, or focal action is too small to
-protect reliably; the corrected panel is then reassembled into a successor
-master sheet without regenerating passing siblings.
+skill must crop from the recorded drawing bounds and exclude the below-panel
+review captions. Those captions provide human reading context only; they are
+not evidence of a selected location, treatment, type size, or final-book
+layout. The placement skill adds separate deterministic candidate overlays
+without asking the image model to render words. It may request a bounded
+reproof when a face, gesture, prop, or focal action is too small to protect
+reliably; the corrected panel is then reassembled into a successor master
+sheet without regenerating passing siblings.
 
 Then pass the proof package to:
 
@@ -123,12 +146,13 @@ successor. They must not trigger final illustration automatically.
 ## Deliverables
 
 - `continuity-proof-manifest.json`;
-- one versioned, numbered master contact sheet for the complete book;
+- one versioned, numbered master contact sheet for the complete book, with exact
+  approved review text beneath every drawing;
 - generation-only source sheets and any replacement panel images needed for
   provenance or bounded repair;
 - `continuity-proof-prompts.md`;
 - `continuity-proof-validation.md` with lineage, readability results,
   unresolved questions, request count, and review readiness;
-- exact panel bounds or another deterministic panel-to-spread mapping usable by
-  the text-placement stage;
+- separate exact drawing and review-caption bounds, plus deterministic
+  panel-to-spread mapping usable by the text-placement stage;
 - provenance and downstream staleness notes.
