@@ -4,11 +4,12 @@
 plans page-specific story-text placement after the economical black-and-white
 continuity proof and revalidates it on finished color art.
 
-For a typical 12-spread book, it consumes the existing three sequential
-four-spread proof sheets. It maps and crops each panel, overlays exact story text
-digitally, protects faces, gestures, interactions, critical props, focal action,
-gaze/movement paths, and reveals, and evaluates several candidate placements.
-The image model never renders the story words.
+It consumes the one numbered master proof sheet and its exact panel mapping,
+while retaining compatibility with legacy multi-sheet proofs. It crops each
+panel, overlays exact story text digitally, protects faces, gestures,
+interactions, critical props, focal action, gaze/movement paths, and reveals,
+and evaluates several candidate placements. The image model never renders the
+story words or spread numbers.
 
 Proof mode approves spatial intent, text capacity, reading path, and book-wide
 placement rhythm. It defers final color contrast, texture, lighting, and print

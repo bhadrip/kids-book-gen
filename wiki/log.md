@@ -116,3 +116,7 @@
 - Strengthened output validation so missing audit coverage, overstated spatial
   or motivational scores, inconsistent hard gates, and `ready` recommendations
   with unresolved transitions are rejected.
+- Changed continuity-proof delivery from several parent-facing sheets to one
+  deterministically assembled, numbered master contact sheet. Updated text
+  placement and both continuity reviewers to validate manifest-backed panel
+  labels and crops while retaining legacy multi-sheet compatibility.

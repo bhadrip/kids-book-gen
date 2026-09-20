@@ -33,16 +33,19 @@ unapproved inputs only when it is clearly labeled non-authoritative.
 2. Build the proof manifest defined in
    [references/output-contract.md](references/output-contract.md). Copy only
    spread-relevant locks into each panel entry.
-3. Choose the fewest image requests that preserve evaluability. Prefer four
-   sequential contact sheets of roughly four spreads each for a typical
-   12–16-spread book. Use smaller groups when expressions, object states, or
-   geometry would become unreadable. Do not claim savings merely because the
-   artwork is monochrome.
+3. Choose the fewest image requests that preserve evaluability. The image model
+   may generate several sequential source sheets or individual replacement
+   panels when one request would make faces, actions, or props unreadable. These
+   are generation intermediates, not the parent-facing contact sheet. Do not
+   claim savings merely because the artwork is monochrome.
 4. Generate neutral storyboard line art using the `imagegen` skill. Use black
    lines on white, sparse or no gray, and no finished color, painterly effects,
    textures, decorative detail, typography, logos, or watermarks.
-5. Put the panel identifier outside each drawing. Keep panel order unambiguous.
-   Never ask the image model to render story text.
+5. Keep generated drawings free of labels and story text. After accepting the
+   panel art, assemble exactly one master contact sheet for the complete book.
+   Add `SPREAD <number>` deterministically outside every drawing, preserve
+   reading order, and record exact pixel and normalized panel bounds. Never ask
+   the image model to render the spread numbers or story text.
 6. Make continuity-critical evidence visible at normal proof size: character
    silhouette and relative scale, face/gaze when emotionally necessary, hands
    and contact, entrances and fixed landmarks, and every important prop's
@@ -50,10 +53,13 @@ unapproved inputs only when it is clearly labeled non-authoritative.
    For recurring environments, show enough fixed landmarks to verify
    inside/outside containment and the action path. Keep a declared camera axis
    during consequential motion, or include an explicit neutral reset panel.
-7. Inspect each generated sheet before accepting it. Split or regenerate only
-   an unreadable sheet or panel; do not regenerate passing siblings for polish.
-8. Assemble an ordered proof package and record the prompt, model/request
-   settings when available, source revisions, and accepted image filenames.
+7. Inspect each generated source sheet and each master-sheet panel crop before
+   accepting it. Split or regenerate only an unreadable sheet or panel; do not
+   regenerate passing siblings for polish.
+8. Assemble the one numbered master sheet from accepted panels without changing
+   their aspect ratio or relative scale. Record the source request for every
+   panel, prompt, model/request settings when available, source revisions,
+   master-sheet filename, grid, labels, and panel bounds.
 
 ## Prompt construction
 
@@ -76,7 +82,10 @@ required.
 
 A proof package is ready for review only when:
 
+- exactly one parent-facing master contact sheet contains the complete book;
 - every intended spread appears exactly once and in reading order;
+- every drawing has the correct visible `SPREAD <number>` label outside its
+  image area, with no duplicate, missing, or model-rendered identifiers;
 - every panel maps to exact source revisions in the manifest;
 - recurring characters are distinguishable and relatively scaled;
 - plot-bearing actions and cause-before-reaction staging are visible;
@@ -92,12 +101,13 @@ an unevaluable panel into a continuity failure.
 
 ## Review handoff
 
-First pass the accepted ordered proof, manifest, exact story text mapping, and
-planning revisions to `plan-book-text-placement`. For a typical 12-spread book,
-retain the normal three sequential four-spread sheets; the placement skill crops
-or enlarges panels and adds deterministic text overlays without asking the image
-model to render words. It may request a bounded reproof when a face, gesture,
-prop, or focal action is too small to protect reliably.
+First pass the accepted numbered master sheet, manifest, exact story text
+mapping, and planning revisions to `plan-book-text-placement`. The placement
+skill crops or enlarges panels from the recorded bounds and adds deterministic
+text overlays without asking the image model to render words. It may request a
+bounded reproof when a face, gesture, prop, or focal action is too small to
+protect reliably; the corrected panel is then reassembled into a successor
+master sheet without regenerating passing siblings.
 
 Then pass the proof package to:
 
@@ -113,7 +123,9 @@ successor. They must not trigger final illustration automatically.
 ## Deliverables
 
 - `continuity-proof-manifest.json`;
-- versioned contact sheets and any replacement panel images;
+- one versioned, numbered master contact sheet for the complete book;
+- generation-only source sheets and any replacement panel images needed for
+  provenance or bounded repair;
 - `continuity-proof-prompts.md`;
 - `continuity-proof-validation.md` with lineage, readability results,
   unresolved questions, request count, and review readiness;

@@ -24,7 +24,7 @@ same package with older ingestion paths.
 
 ## Bundled skills
 
-Version 0.2.0 packages every children's-book skill committed on `main` when
+Version 0.2.1 packages every children's-book skill committed on `main` when
 this release was assembled:
 
 - `preschool-behavior-story`

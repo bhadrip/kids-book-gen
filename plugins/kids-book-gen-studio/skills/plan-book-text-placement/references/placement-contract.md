@@ -28,6 +28,7 @@ spreads:
     sequenceIndex:
     exactText:
     sourceImage:
+    sourcePanelLabel:
     sourcePanelBounds:
     textConfiguration:
       font:
@@ -81,6 +82,9 @@ deferredChecks: []
 ## Required evidence
 
 - Every spread appears exactly once and maps to its source image or proof panel.
+- For a master proof, every `sourcePanelLabel` matches the visible deterministic
+  spread label and the proof manifest; ambiguous or model-rendered labels are
+  `not_evaluable`.
 - Every rejected candidate has at least one concrete rejection reason.
 - Every selected candidate records the measurements used for selection.
 - `deferred_to_final_art` is mandatory for color/texture contrast in proof mode.
@@ -96,3 +100,5 @@ deferredChecks: []
   whole-book rhythm and must request reproof.
 - Monochrome proof sources record a palette-integrity check. Selective retained
   color is `needs_reproof`, even when a grayscale diagnostic derivative exists.
+- The whole-book overview retains one complete numbered master sheet; candidate
+  detail views are crops and do not replace that sequence artifact.
