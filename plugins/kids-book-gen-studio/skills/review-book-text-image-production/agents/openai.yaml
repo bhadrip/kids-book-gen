@@ -1,0 +1,3 @@
+interface:
+  display_name: "Review Book Coherence"
+  short_description: "Check text-image coherence and accessible production"

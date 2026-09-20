@@ -1,0 +1,4 @@
+interface:
+  display_name: "Evaluate Book Characters"
+  short_description: "Review character clarity and continuity"
+  default_prompt: "Use $evaluate-book-characters to review the characters in this illustrated children’s book."

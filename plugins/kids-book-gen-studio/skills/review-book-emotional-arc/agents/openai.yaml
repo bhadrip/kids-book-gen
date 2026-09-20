@@ -1,0 +1,4 @@
+interface:
+  display_name: "Review Book Emotional Arc"
+  short_description: "Review emotional continuity in generated books"
+  default_prompt: "Use $review-book-emotional-arc to review this generated book for continuous, readable character emotions."

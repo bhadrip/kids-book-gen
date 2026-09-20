@@ -24,9 +24,9 @@ Source epic:
 | SKP-03 | Package `preschool-behavior-story` as the first complete workflow. | **done** | SKP-01 | Plugin and packaged skill validators pass with all required resources present. |
 | SKP-04 | Add fixture prompts for story creation and negative routing. | **not started** | SKP-03 | Passing fixtures cover valid, underspecified, unsafe, and out-of-scope requests. |
 | SKP-05 | Add a synchronization check between canonical and packaged skills. | **not started** | SKP-03 | CI detects missing or stale packaged files. |
-| SKP-06 | Package `evaluate-story-quality` and its validators. | **not started** | SKP-05 | Tavi and Turnip evaluations pass from plugin-owned resources. |
-| SKP-07 | Package the available specialist book-review skills. | **not started** | SKP-05 | Each reviewer routes correctly and supports its documented fallback mode. |
-| SKP-08 | Package performance, Visual Bible, proof, illustration, production-review, and revision-brief skills after they land on `main`. | **not started** | Corresponding skills merged; SKP-05 | Every transitive resource is bundled and every output contract validates. |
+| SKP-06 | Package `evaluate-story-quality` and its validators. | **done** | SKP-03 | Packaged skill and Python validators pass from plugin-owned resources. |
+| SKP-07 | Package the available specialist book-review skills. | **done** | SKP-03 | Character, emotional, environment/prop, and text-image production reviewers are bundled and validate. |
+| SKP-08 | Package planning and production skills after they land on `main`. | **in progress** | Corresponding skills merged | Continuity-proof and text-placement skills are bundled; performance, Visual Bible, illustration, and revision-brief remain pending until their canonical copies land on `main`. |
 | SKP-09 | Add cross-skill routing and handoff evaluations. | **not started** | SKP-06–08 | The canonical workflow's positive and negative routes pass repeatedly. |
 | SKP-10 | Test installation and use in fresh ChatGPT and Codex conversations. | **not started** | SKP-09 | Recorded installation, activation, fallback, and output evidence. |
 | SKP-11 | Prepare public listing, policies, starter prompts, and submission cases. | **not started** | SKP-10 | Complete listing plus at least five positive and three negative cases. |
