@@ -25,7 +25,7 @@ flowchart TB
     ProofProps --> ProofBrief
     ProofBrief --> ContinuityGate{"Continuity ready?"}
     ContinuityGate -->|Fix planning| Performance
-    ContinuityGate -->|Yes| Illustrate["illustrate-preschool-story"]
+    ContinuityGate -->|Yes| Illustrate["illustrate-preschool-story<br/>(optional 2D physics pose gate)"]
 
     Illustrate --> FinalPlacement["plan-book-text-placement<br/>(final-art mode)"]
     Illustrate --> CharacterReview["evaluate-book-characters"]

@@ -57,6 +57,7 @@ describe("layered scene composer", () => {
     expect(result.svg).toContain("data:image/png;base64,");
     expect(result.assets).toMatchObject([
       {
+        kind: "bitmap",
         layerId: "character",
         source: "character.png",
         width: 1,
@@ -65,6 +66,76 @@ describe("layered scene composer", () => {
         hasAlpha: true,
       },
     ]);
+  });
+
+  it("embeds a safe contained SVG as a reusable vector layer", async () => {
+    const directory = await mkdtemp(join(tmpdir(), "layered-scene-"));
+    await writeFile(
+      join(directory, "character.svg"),
+      '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 200"><circle cx="60" cy="60" r="40" fill="#799a92"/></svg>',
+    );
+
+    const result = await composeLayeredScene(
+      {
+        id: "vector-page",
+        title: "A vector sample",
+        width: 800,
+        height: 600,
+        layers: [
+          {
+            type: "vector",
+            id: "vector-character",
+            source: "character.svg",
+            x: 300,
+            y: 500,
+            width: 180,
+          },
+        ],
+      },
+      directory,
+    );
+
+    expect(result.svg).toContain("data:image/svg+xml;base64,");
+    expect(result.svg).toContain('data-layer-type="vector"');
+    expect(result.assets).toMatchObject([
+      {
+        kind: "vector",
+        layerId: "vector-character",
+        source: "character.svg",
+        width: 120,
+        height: 200,
+      },
+    ]);
+  });
+
+  it("rejects SVG assets with active or externally loaded content", async () => {
+    const directory = await mkdtemp(join(tmpdir(), "layered-scene-"));
+    await writeFile(
+      join(directory, "unsafe.svg"),
+      '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 10 10"><script>alert(1)</script></svg>',
+    );
+
+    await expect(
+      composeLayeredScene(
+        {
+          id: "unsafe-vector-page",
+          title: "Unsafe vector sample",
+          width: 100,
+          height: 100,
+          layers: [
+            {
+              type: "vector",
+              id: "unsafe-vector",
+              source: "unsafe.svg",
+              x: 50,
+              y: 100,
+              width: 50,
+            },
+          ],
+        },
+        directory,
+      ),
+    ).rejects.toThrow("prohibited active or external content");
   });
 
   it("rejects a required cutout when the PNG has no alpha channel", async () => {

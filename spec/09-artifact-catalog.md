@@ -179,6 +179,23 @@ Generated page image filenames are referenced by each `BookPage`; the filename
 is part of the validated artifact rather than a separate global naming
 contract.
 
+### Developer illustration-production plan
+
+[`IllustrationProductionPlan`](../src/lib/illustration-pipeline/illustration-production-plan.ts)
+is an implemented provider-neutral developer contract that sits downstream of
+the existing exact creative approvals. It records source revisions and hashes,
+page focal regions, performance intensities, physical actions, continuity locks,
+production units, contrast limits, and deterministic typography. The compiler
+derives conditional Rapier requirements, composition strategy, one-at-a-time
+generation queues, z-order, and hard review gates. Its CLI writes a compiled
+plan and per-page work orders to a caller-selected local directory.
+
+This operational artifact does not replace `BookPlan`, `BookPlanDecision`,
+`BookPage`, or `BookProductionJob`; it does not call a provider and is not yet
+used by a parent-facing route. Its output is ready for an illustration executor,
+not parent-approved final art. Parent-facing persistence, staleness, cost gates,
+and approval behavior remain unresolved until a later production integration.
+
 Current limitation: `BookPlan` is the closest implemented artifact to a spread
 map, but it does not explicitly model emotional before/after state, page-turn
 question, shot/composition plan, character performance, or sequence rhythm.
