@@ -1,4 +1,4 @@
 interface:
   display_name: "Illustrate Preschool Story"
   short_description: "Compose restrained, continuous picture-book art"
-  default_prompt: "Use $illustrate-preschool-story to preserve this preschool book's approved art while composing interaction-aware hybrid layers with controlled contrast and acting."
+  default_prompt: "Use $illustrate-preschool-story to compile this approved book into controlled page work orders, then create interaction-aware art with quiet contrast and restrained acting."
