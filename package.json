@@ -9,6 +9,9 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build --webpack",
+    "illustration:compile": "node --experimental-strip-types scripts/compile-illustration-production-plan.mjs",
+    "demo:final-pipeline": "node --experimental-strip-types scripts/render-turnip-final-pipeline-poc.mjs",
+    "demo:physics": "node --experimental-strip-types scripts/render-rapier-physics-proofs.mjs",
     "demo:stitcher": "node --experimental-strip-types scripts/render-layered-stitcher-demo.mjs",
     "start": "next start",
     "format": "prettier --write .",
@@ -21,6 +24,7 @@
     "e2e": "playwright test"
   },
   "dependencies": {
+    "@dimforge/rapier2d-deterministic-compat": "0.20.0",
     "next": "16.2.10",
     "openai": "^6.0.0",
     "playwright": "^1.61.1",

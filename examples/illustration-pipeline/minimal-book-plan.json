@@ -1,0 +1,112 @@
+{
+  "schemaVersion": 1,
+  "bookId": "minimal-garden-book",
+  "runId": "minimal-garden-book-run-1",
+  "createdAt": "2026-09-22T12:00:00.000Z",
+  "sourceLineage": {
+    "story": {
+      "artifactId": "story",
+      "revision": 1,
+      "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    },
+    "emotionalArc": {
+      "artifactId": "emotional-arc",
+      "revision": 1,
+      "sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+    },
+    "visualBible": {
+      "artifactId": "visual-bible",
+      "revision": 1,
+      "sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+    },
+    "continuityProof": {
+      "artifactId": "continuity-proof",
+      "revision": 1,
+      "sha256": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd"
+    },
+    "bookPlan": {
+      "artifactId": "book-plan",
+      "revision": 1,
+      "sha256": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
+    }
+  },
+  "canvas": {
+    "width": 1536,
+    "height": 1024,
+    "bleed": 0,
+    "safeInset": 72
+  },
+  "pages": [
+    {
+      "pageId": "story-01",
+      "sequence": 1,
+      "storyText": "Mae listened to the quiet garden.",
+      "focalRegion": {
+        "id": "mae-listening",
+        "x": 0.35,
+        "y": 0.2,
+        "width": 0.35,
+        "height": 0.55
+      },
+      "performances": [
+        {
+          "actorId": "mae",
+          "principal": true,
+          "intensity": 3,
+          "observableSignal": "Mae tilts her head and listens with a closed, relaxed mouth.",
+          "prohibitedSignals": [
+            "huge eyes",
+            "open-mouth surprise",
+            "flying limbs"
+          ]
+        }
+      ],
+      "action": {
+        "kind": "static",
+        "contacts": [],
+        "flexibleElements": [],
+        "buriedObjects": []
+      },
+      "continuityLocks": [
+        "Preserve the approved Mae reference exactly.",
+        "Keep the established garden layout and time of day."
+      ],
+      "productionUnits": [
+        {
+          "unitId": "quiet-garden",
+          "role": "environment",
+          "zIndex": 0,
+          "sourceAsset": {
+            "assetId": "garden-background",
+            "revision": 1,
+            "sha256": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+            "path": "assets/garden-background.png"
+          }
+        },
+        {
+          "unitId": "mae-listening-pose",
+          "role": "independent_asset",
+          "zIndex": 10,
+          "generationRequest": {
+            "requestId": "generate-mae-listening-pose",
+            "promptIntent": "Create only the approved character in the planned quiet listening pose at intensity 3.",
+            "referenceAssetIds": ["mae-reference", "garden-background"],
+            "includesTypography": false
+          }
+        }
+      ],
+      "contrast": {
+        "backgroundTreatment": "compressed_value_and_chroma",
+        "maximumCompetingRegions": 1,
+        "maximumAccentColors": 2
+      },
+      "typography": {
+        "renderedBy": "deterministic_layout",
+        "treatment": "direct_white",
+        "contrastRatio": 5.2,
+        "cornerRadius": 0,
+        "safeRegionId": "upper-left"
+      }
+    }
+  ]
+}

@@ -26,6 +26,22 @@ const bitmapLayerSchema = z.object({
   requireAlpha: z.boolean().default(true),
 });
 
+const vectorLayerSchema = z.object({
+  type: z.literal("vector"),
+  id: layerIdSchema,
+  source: z.string().trim().min(1).max(500),
+  x: finiteNumberSchema,
+  y: finiteNumberSchema,
+  width: finiteNumberSchema.positive(),
+  height: finiteNumberSchema.positive().optional(),
+  anchorX: finiteNumberSchema.min(0).max(1).default(0.5),
+  anchorY: finiteNumberSchema.min(0).max(1).default(1),
+  rotation: finiteNumberSchema.default(0),
+  flipX: z.boolean().default(false),
+  opacity: opacitySchema.default(1),
+  fit: z.enum(["contain", "cover", "stretch"]).default("contain"),
+});
+
 const ellipseLayerSchema = z.object({
   type: z.literal("ellipse"),
   id: layerIdSchema,
@@ -79,6 +95,7 @@ export const layeredSceneSchema = z
       .array(
         z.discriminatedUnion("type", [
           bitmapLayerSchema,
+          vectorLayerSchema,
           ellipseLayerSchema,
           pathLayerSchema,
           textBoxLayerSchema,
@@ -111,8 +128,19 @@ export type PngMetadata = {
 };
 
 export type ComposedBitmapAsset = PngMetadata & {
+  kind: "bitmap";
   layerId: string;
   source: string;
+  sha256: string;
+  bytes: number;
+};
+
+export type ComposedVectorAsset = {
+  kind: "vector";
+  layerId: string;
+  source: string;
+  width: number;
+  height: number;
   sha256: string;
   bytes: number;
 };
@@ -120,7 +148,7 @@ export type ComposedBitmapAsset = PngMetadata & {
 export type ComposedLayeredScene = {
   sceneId: string;
   svg: string;
-  assets: ComposedBitmapAsset[];
+  assets: (ComposedBitmapAsset | ComposedVectorAsset)[];
 };
 
 const pngSignature = Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]);
@@ -185,6 +213,7 @@ function preserveAspectRatio(fit: "contain" | "cover" | "stretch"): string {
 async function readContainedAsset(
   assetRoot: string,
   source: string,
+  extension: ".png" | ".svg",
 ): Promise<{ bytes: Buffer; path: string }> {
   const rootPath = await realpath(assetRoot);
   const requestedPath = resolve(rootPath, source);
@@ -199,15 +228,57 @@ async function readContainedAsset(
     throw new Error(`Asset ${source} is outside the configured asset root.`);
   }
 
-  if (!assetPath.toLowerCase().endsWith(".png")) {
-    throw new Error(`Asset ${source} must be a PNG in this prototype.`);
+  if (!assetPath.toLowerCase().endsWith(extension)) {
+    throw new Error(
+      `Asset ${source} must be a ${extension.slice(1).toUpperCase()}.`,
+    );
   }
 
   const bytes = await readFile(assetPath);
-  if (bytes.byteLength > 25 * 1024 * 1024) {
-    throw new Error(`Asset ${source} exceeds the 25 MiB prototype limit.`);
+  const maximumBytes =
+    extension === ".png" ? 25 * 1024 * 1024 : 2 * 1024 * 1024;
+  if (bytes.byteLength > maximumBytes) {
+    throw new Error(
+      `Asset ${source} exceeds the ${extension === ".png" ? "25 MiB" : "2 MiB"} prototype limit.`,
+    );
   }
   return { bytes, path: pathFromRoot };
+}
+
+function readSvgMetadata(bytes: Uint8Array): { width: number; height: number } {
+  const source = Buffer.from(bytes).toString("utf8");
+  const prohibited = [
+    /<script\b/i,
+    /<foreignObject\b/i,
+    /<!DOCTYPE\b/i,
+    /\son[a-z]+\s*=/i,
+    /(?:href|src)\s*=\s*["']\s*(?:https?:|\/\/)/i,
+    /url\(\s*["']?\s*(?:https?:|\/\/)/i,
+  ];
+  if (prohibited.some((pattern) => pattern.test(source))) {
+    throw new Error("The SVG contains prohibited active or external content.");
+  }
+
+  const svgTag = source.match(/<svg\b[^>]*>/i)?.[0];
+  if (!svgTag) throw new Error("The asset is not a valid SVG document.");
+
+  const viewBox = svgTag.match(
+    /viewBox\s*=\s*["']\s*[-+]?\d*\.?\d+(?:[eE][-+]?\d+)?[\s,]+[-+]?\d*\.?\d+(?:[eE][-+]?\d+)?[\s,]+(\d*\.?\d+(?:[eE][-+]?\d+)?)[\s,]+(\d*\.?\d+(?:[eE][-+]?\d+)?)\s*["']/i,
+  );
+  if (!viewBox?.[1] || !viewBox[2]) {
+    throw new Error("The SVG must declare a positive numeric viewBox.");
+  }
+  const width = Number(viewBox[1]);
+  const height = Number(viewBox[2]);
+  if (
+    !Number.isFinite(width) ||
+    !Number.isFinite(height) ||
+    width <= 0 ||
+    height <= 0
+  ) {
+    throw new Error("The SVG viewBox has invalid dimensions.");
+  }
+  return { width, height };
 }
 
 function renderTextBox(layer: z.output<typeof textBoxLayerSchema>): string {
@@ -229,13 +300,13 @@ export async function composeLayeredScene(
   assetRoot: string,
 ): Promise<ComposedLayeredScene> {
   const scene = layeredSceneSchema.parse(input);
-  const assets: ComposedBitmapAsset[] = [];
+  const assets: (ComposedBitmapAsset | ComposedVectorAsset)[] = [];
   const renderedLayers: string[] = [];
   const filters: string[] = [];
 
   for (const layer of scene.layers) {
     if (layer.type === "bitmap") {
-      const asset = await readContainedAsset(assetRoot, layer.source);
+      const asset = await readContainedAsset(assetRoot, layer.source, ".png");
       const metadata = readPngMetadata(asset.bytes);
       if (layer.requireAlpha && !metadata.hasAlpha) {
         throw new Error(
@@ -255,6 +326,32 @@ export async function composeLayeredScene(
         `<g id="${layer.id}" data-layer-type="bitmap" data-source="${escapeXml(asset.path)}" transform="${transform}" opacity="${compactNumber(layer.opacity)}"><image href="${dataUri}" x="${compactNumber(x)}" y="${compactNumber(y)}" width="${compactNumber(layer.width)}" height="${compactNumber(height)}" preserveAspectRatio="${preserveAspectRatio(layer.fit)}"/></g>`,
       );
       assets.push({
+        kind: "bitmap",
+        layerId: layer.id,
+        source: asset.path,
+        ...metadata,
+        sha256: createHash("sha256").update(asset.bytes).digest("hex"),
+        bytes: asset.bytes.byteLength,
+      });
+      continue;
+    }
+
+    if (layer.type === "vector") {
+      const asset = await readContainedAsset(assetRoot, layer.source, ".svg");
+      const metadata = readSvgMetadata(asset.bytes);
+      const height =
+        layer.height ?? layer.width * (metadata.height / metadata.width);
+      const x = -layer.width * layer.anchorX;
+      const y = -height * layer.anchorY;
+      const scaleX = layer.flipX ? -1 : 1;
+      const transform = `translate(${compactNumber(layer.x)} ${compactNumber(layer.y)}) rotate(${compactNumber(layer.rotation)}) scale(${scaleX} 1)`;
+      const dataUri = `data:image/svg+xml;base64,${asset.bytes.toString("base64")}`;
+
+      renderedLayers.push(
+        `<g id="${layer.id}" data-layer-type="vector" data-source="${escapeXml(asset.path)}" transform="${transform}" opacity="${compactNumber(layer.opacity)}"><image href="${dataUri}" x="${compactNumber(x)}" y="${compactNumber(y)}" width="${compactNumber(layer.width)}" height="${compactNumber(height)}" preserveAspectRatio="${preserveAspectRatio(layer.fit)}"/></g>`,
+      );
+      assets.push({
+        kind: "vector",
         layerId: layer.id,
         source: asset.path,
         ...metadata,
